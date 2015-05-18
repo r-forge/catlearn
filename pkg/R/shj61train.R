@@ -72,13 +72,17 @@ shj61train <- function(problem,blocks = 16) {
   makelist <- NULL
   for(blk in 1:blocks) { 
     # Load trials for one block
-    if(blk < 3) {
-      # Blocks 1 and 2 are shorter
-      block <- shj61[,,problem]
+    if(blk == 1) {
+      # Block 1 is randomized differently
+      blocka <- shj61[,,problem]
+      blocka <- blocka[sample(nrow(blocka)),]
+      blockb <- shj61[,,problem]
+      blockb <- blockb[sample(nrow(blockb)),]
+      block <- rbind(blocka,blockb)
     } else {
       block <- rbind(shj61[,,problem],shj61[,,problem]) 
+      block <- block[sample(nrow(block)),]
     }
-    block <- block[sample(nrow(block)),] # Randomize trial order
     block <- cbind(blk,block)
     makelist <- rbind(makelist,block)
   }
