@@ -1,0 +1,3 @@
+useDynLib(catlearn)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)

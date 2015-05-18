@@ -1,0 +1,11 @@
+Package: catlearn
+Type: Package
+Title: Computational models of category learning
+Version: 0.1
+Date: 2015-05-14
+Author: Andy Wills
+Maintainer: Andy Wills <andy@willslab.co.uk>
+Description: Compuational models of category learning, plus classic data sets against which to test them.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.11.6)
+LinkingTo: Rcpp
