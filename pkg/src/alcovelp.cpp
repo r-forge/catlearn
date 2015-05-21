@@ -2,7 +2,7 @@
 // Written in C++, using templates from Rcpp.h
 // About 6x faster than vectorized-where-possible R code
 // Andy Wills
-// 2014-11-17
+// 2015-05-19
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -63,14 +63,32 @@ NumericVector expratio(NumericVector act, double phi) {
   return prob;
 }
 
+// Background-noise ratio rule decision mechanism.
+NumericVector bnratio(NumericVector act, double phi) {
+  int n = act.size();
+  NumericVector prob(n);
+  int i;
+  double denom = 0.0;
+  for(i=0; i < n; i++) {
+      if(act[i] < 0) act[i] = 0;
+      denom += act[i];
+  }
+  denom += n * phi;
+  for(i=0; i < n; i++) {
+      prob[i] = ( act[i] + phi ) / denom;
+  }
+  return prob;
+}
+
+
 // Humble teacher
-NumericVector humble(NumericVector t, NumericVector ao) {
+NumericVector humbleteach(NumericVector t, NumericVector ao, double absval) {
   int i, n= t.size();
   NumericVector out(n);
   for(i=0;i < n; i++) {
     out[i] = t[i];
-    if(out[i] == 1) out[i] = max(NumericVector::create(1.0,ao[i]));
-    if(out[i] == -1) out[i] = min(NumericVector::create(-1.0,ao[i]));
+    if(out[i] == 1.0) out[i] = max(NumericVector::create(1.0,ao[i]));
+    if(out[i] == absval) out[i] = min(NumericVector::create(absval,ao[i]));
   }
   return out;
 }
@@ -151,9 +169,12 @@ NumericVector aupdate(NumericVector al, NumericVector delt) {
   return nal;
 }
 
-// Run a single trial of the ALCOVE network
-List alcovetrial(NumericVector x, NumericVector tin, NumericVector m, double c, double phi, double la, double lw, 
-double r, double q, NumericMatrix h, NumericVector alpha, NumericMatrix w) {
+// Run a single trial of the ALCOVE network 
+// Kruschke 1992 version
+List alcovetrial(NumericVector x, NumericVector tin, NumericVector m, double c,
+  double phi, double la, double lw, double r, double q, NumericMatrix h, 
+  NumericVector alpha, NumericMatrix w, bool humble,  std::string dec,
+  double absval) {
   int nin = x.size(), nhid = w.ncol(), nout = w.nrow();
   NumericMatrix ahmx(nin,nhid), deltaw(nout,nhid), nw(nout,nhid);
   NumericVector ah(nhid), ao(nout), prob(nout), t(nout), pe(nout), bp(nhid), deltaa(nin), na(nin);
@@ -161,8 +182,15 @@ double r, double q, NumericMatrix h, NumericVector alpha, NumericMatrix w) {
   ahmx = hmxcalc(h,x); // Stimulus to hidden node distances
   ah = ahcalc(ahmx,m,alpha,c,q,r); // Hidden node activations
   ao = aocalc(w,ah); // Output node activations
-  prob = expratio(ao,phi); // Response probability
-  t = humble(tin,ao); // Teaching signal (humble teacher)
+  
+  if(dec == "ER") prob = expratio(ao,phi); // Exponential ratio rule
+  if(dec == "BN") prob = bnratio(ao,phi); // Background noise ratio rule
+
+  if(humble) {
+    t = humbleteach(tin,ao,absval); // Teaching signal (humble teacher)    
+  } else {
+    t = tin; // (Strict teacher)
+  }
   pe = prederr(t,ao); // Prediction error
   deltaw = deltawcalc(lw,pe,ah);  // Delta for associative weights
   bp = bperr(ah,pe,w); // Back-prop of error
@@ -176,7 +204,12 @@ double r, double q, NumericMatrix h, NumericVector alpha, NumericMatrix w) {
 }
 
 // [[Rcpp::export]]
-NumericMatrix alcovelp(List st,NumericMatrix tr) {
+NumericMatrix alcovelp(
+  List st,
+  NumericMatrix tr,
+  std::string dec = "ER",
+  bool humble = true,
+  double absval = -1) {
   // ALCOVE list processor function
   // Takes in a set of parameters and a list of training items
   // Outputs by-trial response probabilities
@@ -193,7 +226,8 @@ NumericMatrix alcovelp(List st,NumericMatrix tr) {
   NumericVector initalpha = as<NumericVector>(st["alpha"]);
   NumericMatrix initw = as<NumericMatrix>(st["w"]);
   int colskip = as<int>(st["colskip"]);
-  int i, trial, items = tr.nrow(), nin = initalpha.size(), nhid = initw.ncol(), nout = initw.nrow();
+  int i, trial, items = tr.nrow(), nin = initalpha.size(), nhid = initw.ncol(),
+    nout = initw.nrow();
   NumericMatrix prob(items,nout);
   NumericVector x(nin);
   NumericVector t(nout);
@@ -224,11 +258,11 @@ NumericMatrix alcovelp(List st,NumericMatrix tr) {
     // Run one trial of ALCOVE
     if( tr(trial,0) == 2 ) 
     { // Code to freeze learning
-      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w); 
+      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w,humble,dec,absval);
     }
     else
     {
-      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w);
+      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w,humble,dec,absval);
     }
     
     // Retrive variables from returned list

@@ -1,4 +1,4 @@
-shj61train <- function(problem,blocks = 16) {
+shj61train <- function(problem,blocks = 16, absval = -1) {
   
   shj61 <- array(0,dim=c(8,9,6))
   colnames(shj61) <- c('stim','x1','x2','x3','t1','t2','m1','m2','m3') 
@@ -88,6 +88,13 @@ shj61train <- function(problem,blocks = 16) {
   }
   ctrl <- c(1,rep(0,nrow(makelist)-1))
   makelist <- cbind(ctrl,makelist)
+  
+  # If the value for category absence is not -1
+  # change the list to reflect this
+  if(absval != -1) {
+    makelist[makelist[,'t1'] == -1,'t1'] <- absval
+    makelist[makelist[,'t2'] == -1,'t2'] <- absval
+  }
   return(makelist)
 }
 

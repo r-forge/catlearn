@@ -6,14 +6,17 @@
 using namespace Rcpp;
 
 // alcovelp
-NumericMatrix alcovelp(List st, NumericMatrix tr);
-RcppExport SEXP catlearn_alcovelp(SEXP stSEXP, SEXP trSEXP) {
+NumericMatrix alcovelp(List st, NumericMatrix tr, std::string dec, bool humble, double absval);
+RcppExport SEXP catlearn_alcovelp(SEXP stSEXP, SEXP trSEXP, SEXP decSEXP, SEXP humbleSEXP, SEXP absvalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< List >::type st(stSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type tr(trSEXP);
-    __result = Rcpp::wrap(alcovelp(st, tr));
+    Rcpp::traits::input_parameter< std::string >::type dec(decSEXP);
+    Rcpp::traits::input_parameter< bool >::type humble(humbleSEXP);
+    Rcpp::traits::input_parameter< double >::type absval(absvalSEXP);
+    __result = Rcpp::wrap(alcovelp(st, tr, dec, humble, absval));
     return __result;
 END_RCPP
 }

@@ -7,12 +7,13 @@ Nosofsky et al. (1994) training blocks
 Create randomized training blocks for the Nosofsky et al. (1994) replication of Shepard et al. (1961), in a format suitable for category-learning models (e.g. \code{alcovelp}).
 }
 \usage{
-shj61train(problem,blocks)
+shj61train(problem, blocks, absval = -1)
 }
 \arguments{
   \item{problem}{Category structure type (1-6), as defined by Shepard et al. (1961)}
   \item{blocks}{Number of blocks to generate. Omit this argument to get the same
   number of blocks as the published study (16).}
+  \item{absval}{Teaching value to be used where category is absent.}
 }  
   
 \value{
@@ -30,7 +31,7 @@ A matrix is produced, with one row for each trial, and with the following column
 
 \code{x1, x2, x3} - input representation
 
-\code{t1, t2} - teaching signal
+\code{t1, t2} - teaching signal (1 = category present, absval = category absent)
 
 \code{m1, m2, m3} - Missing dimension flags (always set to zero in this
 experiment, indicating all input dimensions are present on all trials)
