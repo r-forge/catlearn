@@ -7,13 +7,15 @@ ALCOVE category learning model
 Kruschke's (1992) category learning model. 
 }
 \usage{
-alcovelp(st, tr, dec = 'ER', humble = TRUE, absval = -1)
+alcovelp(st, tr, dec = 'ER', humble = TRUE, 
+          attcon = FALSE, absval = -1)
 }
 \arguments{
   \item{st}{List of model parameters}
   \item{tr}{R-by-C matrix of training items}
   \item{dec}{String defining decision rule to be used}
   \item{humble}{Boolean specifying whether a humble or strict teacher is to be used}
+  \item{attcon}{Boolena specifying whether attention is constrained}
   \item{absval}{Real number specifying teaching value for category absence}
 }  
   
@@ -55,7 +57,7 @@ C = number of hidden units. If you are not sure what to use here, set all values
 
 Argument \code{tr} must be a matrix, where each row is one trial presented to the network. Trials are always presented in the order specified. The columns must be as described below, in the order described below:
   
-\code{ctrl} - vector of control codes. Available codes are: 0 = normal trial, 1 = reset network (i.e. set attention weights and associative strengths back to their initial values as specified in h and w (see below)). Control codes
+\code{ctrl} - vector of control codes. Available codes are: 0 = normal trial, 1 = reset network (i.e. set attention weights and associative strengths back to their initial values as specified in h and w (see below)), 2 = Freeze learning. Control codes
   are actioned before the trial is processed.
   
 \code{opt1, opt2, \dots} - optional columns, which may have any names you wish, and you may have as many as
@@ -75,20 +77,26 @@ Argument \code{dec}, if specified, must take one of the following values:
 
 Argument \code{humble} specifies whether a humble or strict teacher is to be used. The function of a humble teacher is specified in Kruschke (1992, Eq. 4b). In this implementation, the value -1 in Equation 4b is replaced by \code{absval}.
 
+Argument \code{attcon} specifies whether attention should be constrained or not. \emph{If you are not sure what to use here, set to FALSE}. Some implementations of ALCOVE (e.g. Nosofsky et al., 1994) constrain the sum of the attentional weights to always be 1 (personal communication, R. Nosofsky, June 2015). The implementation of attentional constraint in \emph{alcovelp} is the same as that used by Nosofsky et al. (1994), and present as an option in the source code available from Kruschke's website (Kruschke, 1991). 
+
 }
 
 \author{
 Andy Wills
 }
 \references{
+
+Kruschke, J. (1991). \emph{ALCOVE.c}. Retrieved 2015-07-20, \url{http://www.indiana.edu/~kruschke/articles/ALCOVE.c}
+
 Kruschke, J. (1992). ALCOVE: an exemplar-based connectionist model of 
 category learning. \emph{Psychological Review, 99}, 22--44
 
-  Nosofsky, R.M., Gluck, M.A., Plameri, T.J., McKinley, S.C. and Glauthier, P. 
+Nosofsky, R.M., Gluck, M.A., Plameri, T.J., McKinley, S.C. and Glauthier, P. 
   (1994). Comparing models of rule-based classification learning: A replication
   and extension of Shepaard, Hovland, and Jenkins (1961). \emph{Memory and Cognition, 
   22}, 352--369
 }
+
 \seealso{
 }
 \examples{

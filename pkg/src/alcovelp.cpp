@@ -169,12 +169,43 @@ NumericVector aupdate(NumericVector al, NumericVector delt) {
   return nal;
 }
 
+// Update attentional weights (constrained version)
+NumericVector aupdatecon(NumericVector al, NumericVector delt) {
+  int i, n = al.size();
+  double dltbar = 0.0;
+  double attsum = 0.0;
+  NumericVector nal(n);
+  // Take mean of deltas
+  for(i=0; i < n; i++) {
+        dltbar = dltbar + delt[i]/n;
+    }
+  // Subtract mean from deltas
+  for(i=0; i < n; i++) {
+        delt[i] = delt[i] - dltbar;
+    }
+  // Update attention weights, setting negatives to zero
+  for(i=0; i < n; i++) {
+      nal[i] = al[i] + delt[i];
+      if(nal[i] < 0) nal[i] = 0;
+  }
+  // Normalize attentional weights
+  for(i=0; i < n; i++) {
+      attsum = attsum + nal[i];
+  }
+  for(i=0; i < n; i++) {
+      nal[i] = nal[i] / attsum;
+  }
+  return nal;
+}
+
+
+
 // Run a single trial of the ALCOVE network 
 // Kruschke 1992 version
 List alcovetrial(NumericVector x, NumericVector tin, NumericVector m, double c,
   double phi, double la, double lw, double r, double q, NumericMatrix h, 
   NumericVector alpha, NumericMatrix w, bool humble,  std::string dec,
-  double absval) {
+  double absval, double attcon) {
   int nin = x.size(), nhid = w.ncol(), nout = w.nrow();
   NumericMatrix ahmx(nin,nhid), deltaw(nout,nhid), nw(nout,nhid);
   NumericVector ah(nhid), ao(nout), prob(nout), t(nout), pe(nout), bp(nhid), deltaa(nin), na(nin);
@@ -196,7 +227,11 @@ List alcovetrial(NumericVector x, NumericVector tin, NumericVector m, double c,
   bp = bperr(ah,pe,w); // Back-prop of error
   deltaa = delalphcalc(la,ahmx,m,bp,c); // Delta for attention weights
   nw = wupdate(w,deltaw); // Update associative weights
-  na = aupdate(alpha,deltaa); // Update attenional weights
+  if(attcon) {
+      na = aupdatecon(alpha,deltaa); // Update attenional weights (constrained)
+  } else {
+      na = aupdate(alpha,deltaa); // Update attenional weights (non-constrained)   
+  }
   
   return Rcpp::List::create(Rcpp::Named("alpha") = na,
                             Rcpp::Named("w") = nw,
@@ -209,6 +244,7 @@ NumericMatrix alcovelp(
   NumericMatrix tr,
   std::string dec = "ER",
   bool humble = true,
+  bool attcon = false,
   double absval = -1) {
   // ALCOVE list processor function
   // Takes in a set of parameters and a list of training items
@@ -258,11 +294,11 @@ NumericMatrix alcovelp(
     // Run one trial of ALCOVE
     if( tr(trial,0) == 2 ) 
     { // Code to freeze learning
-      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w,humble,dec,absval);
+      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w,humble,dec,absval,attcon);
     }
     else
     {
-      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w,humble,dec,absval);
+      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w,humble,dec,absval,attcon);
     }
     
     // Retrive variables from returned list

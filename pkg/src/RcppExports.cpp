@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // alcovelp
-NumericMatrix alcovelp(List st, NumericMatrix tr, std::string dec, bool humble, double absval);
-RcppExport SEXP catlearn_alcovelp(SEXP stSEXP, SEXP trSEXP, SEXP decSEXP, SEXP humbleSEXP, SEXP absvalSEXP) {
+NumericMatrix alcovelp(List st, NumericMatrix tr, std::string dec, bool humble, bool attcon, double absval);
+RcppExport SEXP catlearn_alcovelp(SEXP stSEXP, SEXP trSEXP, SEXP decSEXP, SEXP humbleSEXP, SEXP attconSEXP, SEXP absvalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -15,8 +15,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type tr(trSEXP);
     Rcpp::traits::input_parameter< std::string >::type dec(decSEXP);
     Rcpp::traits::input_parameter< bool >::type humble(humbleSEXP);
+    Rcpp::traits::input_parameter< bool >::type attcon(attconSEXP);
     Rcpp::traits::input_parameter< double >::type absval(absvalSEXP);
-    __result = Rcpp::wrap(alcovelp(st, tr, dec, humble, absval));
+    __result = Rcpp::wrap(alcovelp(st, tr, dec, humble, attcon, absval));
     return __result;
 END_RCPP
 }
