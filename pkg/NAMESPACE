@@ -1,3 +1,5 @@
 useDynLib(catlearn)
 exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
+importFrom("graphics", "axis", "box", "legend", "lines", "plot")
+importFrom("utils", "data")
