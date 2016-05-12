@@ -28,7 +28,7 @@
 
 \source{
   
-  Shin, H.J. &  Nosofsky, R.M. (192). Similarity-scaling studies of
+  Shin, H.J. &  Nosofsky, R.M. (1992). Similarity-scaling studies of
   dot-pattern classification and recognition. \emph{Journal
   of Experimental Psychology: General, 121}, 278--304.
 
