@@ -49,7 +49,8 @@ homa76ipolate <- function() {
     # chosen to be maximally dissimilar to existing bit4 stimulus One
     # chosen to be quite dissimilar, but not too similar to the other
     # extra
-    extras1 <- as.data.frame(cbind('cat3-L-extra',3,'old',4.0,
+    id <- c('cat3-L-extra-1','cat3-L-extra-2')
+    extras1 <- as.data.frame(cbind(id,3,'old',4.0,
                                    new1[c(26,29),1:6]))
     colnames(extras1) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -63,7 +64,8 @@ homa76ipolate <- function() {
     # Order by that distance
     new2 <- new2[order(new2dist),]
     # Two new stimuli - one maximally dissimilar, one averagely so.
-    extras2 <- as.data.frame(cbind('cat3-L-extra',3,'old',4.0,
+    id <- c('cat3-L-extra-3','cat3-L-extra-4')
+    extras2 <- as.data.frame(cbind(id,3,'old',4.0,
                                    new2[c(91,183),1:6]))
     colnames(extras2) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -77,7 +79,8 @@ homa76ipolate <- function() {
     # Order by that distance
     new3 <- new3[order(new3dist),]
     # Two new stimuli - one maximally dissimilar, one averagely so.
-    extras3 <- as.data.frame(cbind('cat3-L-extra',3,'old',4.0,
+    id <- c('cat3-L-extra-5','cat3-L-extra-6')
+    extras3 <- as.data.frame(cbind(id,3,'old',4.0,
                                    new3[c(232,464),1:6]))
     colnames(extras3) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -91,7 +94,8 @@ homa76ipolate <- function() {
     # Order by that distance
     new4 <- new4[order(new4dist),]
     # Two new stimuli - one maximally dissimilar, one averagely so.
-    extras4 <- as.data.frame(cbind('cat3-L-extra',3,'new',4.0,new4[c(328,656),1:6]))
+    id <- c('cat3-L-extra-7','cat3-L-extra-8')
+    extras4 <- as.data.frame(cbind(id,3,'new',4.0,new4[c(328,656),1:6]))
     colnames(extras4) <- c('id','cat','type','dist','D1','D2','D3','D4','D5','D6')
     # NOW... 6-bit distortions 
     bit6 <-  as.matrix(stims[stims$cat == 3 & stims$dist == 6, 5:10])
@@ -136,7 +140,7 @@ homa76ipolate <- function() {
     new5 <- new5[order(new5dist),]
     # Here's our extra stimuli from existing bit6 stimulus 1
     # Chosen to be maximally dissimilar to existing bit6 stimulus 1
-    extras5 <- as.data.frame(cbind('cat3-M-extra',3,'new',6.0,
+    extras5 <- as.data.frame(cbind('cat3-M-extra-1',3,'new',6.0,
                                    t(new5[405,1:6])))
     colnames(extras5) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -151,7 +155,7 @@ homa76ipolate <- function() {
     new6 <- new6[order(new6dist),]
     # Here's our extra stimuli from existing bit6 stimulus 1
     # Chosen to be maximally dissimilar to existing bit6 stimulus 1
-    extras6 <- as.data.frame(cbind('cat3-M-extra',3,'new',6.0,
+    extras6 <- as.data.frame(cbind('cat3-M-extra-2',3,'new',6.0,
                                    t(new6[440,1:6])))
     colnames(extras6) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -199,7 +203,7 @@ homa76ipolate <- function() {
     new7 <- new7[order(new7dist),]
     # Here's our extra stimuli from existing bit7.7 stimulus 2
     # Chosen to be maximally dissimilar to existing bit7.7 stimulus 2
-    extras7 <- as.data.frame(cbind('cat3-H-extra',3,'new',7.7,t(new7[434,1:6])))
+    extras7 <- as.data.frame(cbind('cat3-H-extra-1',3,'new',7.7,t(new7[434,1:6])))
     colnames(extras7) <- c('id','cat','type','dist','D1','D2','D3','D4','D5','D6')
     # Stimulus 4 - around 2.0 to 2.2 to proto
     new8 <- bit77extra[bit77extra[,'dist'] > 2.0 & bit77extra[,'dist'] <
@@ -212,7 +216,7 @@ homa76ipolate <- function() {
     new8 <- new8[order(new8dist),]
     # Here's our extra stimuli from existing bit77 stimulus 4
     # Chosen to be maximally dissimilar to existing bit77 stimulus 4
-    extras8 <- as.data.frame(cbind('cat3-H-extra',3,'new',7.7,
+    extras8 <- as.data.frame(cbind('cat3-H-extra-2',3,'new',7.7,
                                    t(new8[545,1:6])))
     colnames(extras8) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -270,7 +274,9 @@ homa76ipolate <- function() {
     new1 <- new1[order(new1dist),]
     # Here are our 4 extra stimuli - chosen to largely be different to
     # the existing old, but also different to each other.
-    extras1 <- as.data.frame(cbind('cat2-L-extra',2,'old',4.0,
+    id <- c('cat2-L-extra-1','cat2-L-extra-2','cat2-L-extra-3',
+            'cat2-L-extra-4')
+    extras1 <- as.data.frame(cbind(id,2,'old',4.0,
                                    new1[c(7,17,18,21),1:6]))
     colnames(extras1) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -285,7 +291,8 @@ homa76ipolate <- function() {
     new3 <- new3[order(new3dist),]
     # Two new stimuli - chosen to be different to existing new, but
     # also to each other
-    extras2 <- as.data.frame(cbind('cat2-L-extra',2,'new',4.0,
+    id <- c('cat2-L-extra-5','cat2-L-extra-6')
+    extras2 <- as.data.frame(cbind(id,2,'new',4.0,
                                    new3[c(6,20),1:6]))
     colnames(extras2) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -332,7 +339,7 @@ homa76ipolate <- function() {
     new5 <- new5[order(new5dist),]
     # Here's our extra stimuli from existing bit6 stimulus 1
     # Chosen to be maximally dissimilar to existing bit6 stimulus 1
-    extras3 <- as.data.frame(cbind('cat2-M-extra',2,'new',6.0,
+    extras3 <- as.data.frame(cbind('cat2-M-extra-1',2,'new',6.0,
                                    t(new5[33,1:6])))
     colnames(extras3) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -347,7 +354,7 @@ homa76ipolate <- function() {
     new6 <- new6[order(new6dist),]
     # Here's our extra stimuli from existing bit6 stimulus 1 Chosen to
     # be maximally dissimilar to existing bit6 stimulus 1
-    extras4 <- as.data.frame(cbind('cat2-M-extra',2,'new',6.0,
+    extras4 <- as.data.frame(cbind('cat2-M-extra-2',2,'new',6.0,
                                    t(new6[24,1:6])))
     colnames(extras4) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -394,7 +401,7 @@ homa76ipolate <- function() {
     new7 <- new7[order(new7dist),]
     # Here's our extra stimuli from existing bit7.7 stimulus 2
     # Chosen to be maximally dissimilar to existing bit7.7 stimulus 2
-    extras5 <- as.data.frame(cbind('cat2-H-extra',2,'new',7.7,
+    extras5 <- as.data.frame(cbind('cat2-H-extra-1',2,'new',7.7,
                                    t(new7[53,1:6])))
     colnames(extras5) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -409,7 +416,7 @@ homa76ipolate <- function() {
     new8 <- new8[order(new8dist),]
     # Here's our extra stimuli from existing bit77 stimulus 4 Chosen
     # to be maximally dissimilar to existing bit77 stimulus 4
-    extras6 <- as.data.frame(cbind('cat3-H-extra',2,'new',7.7,
+    extras6 <- as.data.frame(cbind('cat3-H-extra-2',2,'new',7.7,
                                    t(new8[41,1:6])))
     colnames(extras6) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -464,7 +471,8 @@ homa76ipolate <- function() {
     new1 <- new1[order(new1dist),]
     # Here are our 2 extra stimuli - chosen to largely be different to
     # the existing old, but also different to each other.
-    extras1 <- as.data.frame(cbind('cat1-L-extra',1,'old',4.0,
+    id <- c('cat1-L-extra-1','cat1-L-extra-2')
+    extras1 <- as.data.frame(cbind(id,1,'old',4.0,
                                    new1[c(3,16),1:6]))
     colnames(extras1) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -479,7 +487,7 @@ homa76ipolate <- function() {
     new3 <- new3[order(new3dist),]
     # Two new stimuli - chosen to be different to existing new, but
     # also to each other
-    extras2 <- as.data.frame(cbind('cat1-L-extra',1,'new',4.0,
+    extras2 <- as.data.frame(cbind('cat1-L-extra-3',1,'new',4.0,
                                    new3[c(6,23),1:6]))
     colnames(extras2) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -526,7 +534,7 @@ homa76ipolate <- function() {
     new5 <- new5[order(new5dist),]
     # Here's our extra stimuli from existing bit6 stimulus 1
     # Chosen to be maximally dissimilar to existing bit6 stimulus 1
-    extras3 <- as.data.frame(cbind('cat1-M-extra',1,'new',6.0,
+    extras3 <- as.data.frame(cbind('cat1-M-extra-1',1,'new',6.0,
                                    t(new5[3,1:6])))
     colnames(extras3) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -539,9 +547,9 @@ homa76ipolate <- function() {
     new6 <- cbind(new6,new6dist)
     # Order by that distance
     new6 <- new6[order(new6dist),]
-    # Here's our extra stimuli from existing bit6 stimulus 1
+    # Here's our extra stimuli from existing bit6 stimulus 2
     # Chosen to be maximally dissimilar to existing bit6 stimulus 1
-    extras4 <- as.data.frame(cbind('cat1-M-extra',1,'new',6.0,
+    extras4 <- as.data.frame(cbind('cat1-M-extra-2',1,'new',6.0,
                                    t(new6[6,1:6])))
     colnames(extras4) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -587,9 +595,9 @@ homa76ipolate <- function() {
     new7 <- cbind(new7,new7dist)
      # Order by that distance
     new7 <- new7[order(new7dist),]
-    # Here's our extra stimuli from existing bit7.7 stimulus 1
+    # Here's our extra stimuli from existing bit7.7 stimulus 2
     # Chosen to be maximally dissimilar to existing bit7.7 stimulus 1
-    extras5 <- as.data.frame(cbind('cat2-H-extra',1,'new',7.7,
+    extras5 <- as.data.frame(cbind('cat2-H-extra-1',1,'new',7.7,
                                    t(new7[4,1:6])))
     colnames(extras5) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')
@@ -604,7 +612,7 @@ homa76ipolate <- function() {
     new8 <- new8[order(new8dist),]
     # Here's our extra stimuli from existing bit77 stimulus 4 Chosen
     # to be maximally dissimilar to existing bit77 stimulus 4
-    extras6 <- as.data.frame(cbind('cat1-H-extra',1,'new',7.7,
+    extras6 <- as.data.frame(cbind('cat1-H-extra-2',1,'new',7.7,
                                    t(new8[4,1:6])))
     colnames(extras6) <- c('id','cat','type','dist','D1','D2','D3',
                            'D4','D5','D6')

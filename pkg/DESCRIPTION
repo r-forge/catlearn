@@ -1,8 +1,8 @@
 Package: catlearn
 Type: Package
 Title: Computational Models of Category Learning
-Version: 0.1.13
-Date: 2016-05-12
+Version: 0.1.14
+Date: 2016-05-13
 Author: Andy Wills
 Maintainer: Andy Wills <andy@willslab.co.uk>
 Description: Compuational models of category learning, plus classic data sets against which to test them.
