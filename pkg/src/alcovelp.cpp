@@ -1,13 +1,11 @@
-// ALCOVE model, implemented as a list processor
-// Written in C++, using templates from Rcpp.h
-// About 6x faster than vectorized-where-possible R code
-// Andy Wills
-// 2015-05-19
+// ALCOVE model, implemented as a list processor Written in C++, using
+// templates from Rcpp.h About 6x faster than
+// vectorized-where-possible R code
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Calculate distances on each dimension from presented
-// stimulus to each of hidden nodes (used twice in ALCOVE)
+// Calculate distances on each dimension from presented stimulus to
+// each of hidden nodes (used twice in ALCOVE)
 NumericMatrix hmxcalc(NumericMatrix h, NumericVector x) {
   int i, j, nrow = h.nrow(), ncol = h.ncol();
   NumericMatrix out(nrow,ncol);
@@ -20,7 +18,9 @@ NumericMatrix hmxcalc(NumericMatrix h, NumericVector x) {
 }
 
 // Calculate activation of hidden nodes
-NumericVector ahcalc(NumericMatrix hmx, NumericVector m, NumericVector alpha, double c, double q, double r) {
+NumericVector ahcalc(NumericMatrix hmx, NumericVector m, 
+		     NumericVector alpha, double c, double q, 
+		     double r) {
   int i, j, nrow = hmx.nrow(), ncol = hmx.ncol();
   NumericVector out(ncol);
   for(j=0;j < ncol; j++) {
@@ -80,7 +80,6 @@ NumericVector bnratio(NumericVector act, double phi) {
   return prob;
 }
 
-
 // Humble teacher
 NumericVector humbleteach(NumericVector t, NumericVector ao, double absval) {
   int i, n= t.size();
@@ -130,7 +129,8 @@ NumericVector bperr(NumericVector ah, NumericVector pe, NumericMatrix w) {
 }
 
 // Calculate delta for attentional weights
-NumericVector delalphcalc(double la, NumericMatrix hmx, NumericVector m, NumericVector bp, double c) {
+NumericVector delalphcalc(double la, NumericMatrix hmx, NumericVector m, 
+			  NumericVector bp, double c) {
   int i,j, nhid = hmx.ncol(), nin = hmx.nrow();
   NumericVector delt(nin);
   for(i=0; i < nin; i++) {
@@ -202,13 +202,16 @@ NumericVector aupdatecon(NumericVector al, NumericVector delt) {
 
 // Run a single trial of the ALCOVE network 
 // Kruschke 1992 version
-List alcovetrial(NumericVector x, NumericVector tin, NumericVector m, double c,
-  double phi, double la, double lw, double r, double q, NumericMatrix h, 
-  NumericVector alpha, NumericMatrix w, bool humble,  std::string dec,
-  double absval, double attcon) {
+
+List alcovetrial(NumericVector x, NumericVector tin, NumericVector m,
+		 double c, double phi, double la, double lw, double r, 
+		 double q, NumericMatrix h, NumericVector alpha, 
+		 NumericMatrix w, bool humble,  std::string dec,
+		 double absval, double attcon) {
   int nin = x.size(), nhid = w.ncol(), nout = w.nrow();
   NumericMatrix ahmx(nin,nhid), deltaw(nout,nhid), nw(nout,nhid);
-  NumericVector ah(nhid), ao(nout), prob(nout), t(nout), pe(nout), bp(nhid), deltaa(nin), na(nin);
+  NumericVector ah(nhid), ao(nout), prob(nout), t(nout), pe(nout);
+  NumericVector bp(nhid), deltaa(nin), na(nin);
   
   ahmx = hmxcalc(h,x); // Stimulus to hidden node distances
   ah = ahcalc(ahmx,m,alpha,c,q,r); // Hidden node activations
@@ -227,10 +230,11 @@ List alcovetrial(NumericVector x, NumericVector tin, NumericVector m, double c,
   bp = bperr(ah,pe,w); // Back-prop of error
   deltaa = delalphcalc(la,ahmx,m,bp,c); // Delta for attention weights
   nw = wupdate(w,deltaw); // Update associative weights
+
   if(attcon) {
-      na = aupdatecon(alpha,deltaa); // Update attenional weights (constrained)
+      na = aupdatecon(alpha,deltaa); // Update att. weights (constrained)
   } else {
-      na = aupdate(alpha,deltaa); // Update attenional weights (non-constrained)   
+      na = aupdate(alpha,deltaa); // Update att. weights (non-constrained)   
   }
   
   return Rcpp::List::create(Rcpp::Named("alpha") = na,
@@ -251,7 +255,9 @@ NumericMatrix alcovelp(
   // Outputs by-trial response probabilities
   
   // This clumsy section copies stuff out of an R List
-  // There seems to be no way in RCpp to get direct access to a List at input?
+  // There seems to be no way in RCpp to get direct access to a 
+  // List at input?
+
   double c = as<double>(st["c"]);
   double phi = as<double>(st["phi"]);
   double la = as<double>(st["la"]);
@@ -262,8 +268,8 @@ NumericMatrix alcovelp(
   NumericVector initalpha = as<NumericVector>(st["alpha"]);
   NumericMatrix initw = as<NumericMatrix>(st["w"]);
   int colskip = as<int>(st["colskip"]);
-  int i, trial, items = tr.nrow(), nin = initalpha.size(), nhid = initw.ncol(),
-    nout = initw.nrow();
+  int i, trial, items = tr.nrow(), nin = initalpha.size();
+  int nhid = initw.ncol(), nout = initw.nrow();
   NumericMatrix prob(items,nout);
   NumericVector x(nin);
   NumericVector t(nout);
@@ -294,11 +300,13 @@ NumericMatrix alcovelp(
     // Run one trial of ALCOVE
     if( tr(trial,0) == 2 ) 
     { // Code to freeze learning
-      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w,humble,dec,absval,attcon);
+      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w,humble,dec,
+			   absval,attcon);
     }
     else
     {
-      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w,humble,dec,absval,attcon);
+      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w,humble,dec,
+			   absval,attcon);
     }
     
     // Retrive variables from returned list
