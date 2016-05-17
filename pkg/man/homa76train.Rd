@@ -104,7 +104,4 @@ Andy Wills
   Human Learning and Memory, 2},322-330.
 
 }
-\seealso{
-}
-\examples{
-}
+

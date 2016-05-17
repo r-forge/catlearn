@@ -17,7 +17,6 @@
   homa76ipolate()
 
 }
-\arguments{}  
   
 \value{
 
@@ -74,7 +73,4 @@
   Experimental Psychology: General, 121}, 278--304.
   
 }
-\seealso{
-}
-\examples{
-}
+

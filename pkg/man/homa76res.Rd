@@ -13,7 +13,9 @@
 }
 \usage{data(shin92)}
 \format{
+  
   A data frame with the following columns:
+  
   \describe{
     
   \item{phase}{Experimental phase. Takes values : 'train','imm', '1wk',
@@ -52,8 +54,5 @@ These data were estimated from Figures 1 and 2 of Homa & Vosburgh
   [software]. \url{http://plotdigitizer.sourceforge.net/}
 
   }
-
-\examples{}
-  
 \keyword{datasets}
 

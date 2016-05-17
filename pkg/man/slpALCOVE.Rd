@@ -1,20 +1,16 @@
-\name{alcovelp}
-\alias{alcovelp}
+\name{slpALCOVE}
+\alias{slpALCOVE}
 \title{
 ALCOVE category learning model
 }
 \description{
   
-  Kruschke's (1992) category learning model.
-
-  NOTE: This version is deprecated, it is retained only for backwards
-  compatibility with v0.1 of the catlearn package. Use \code{slpALCOVE}
-  for all future work.
+Kruschke's (1992) category learning model. 
 
 }
 \usage{
 
-alcovelp(st, tr, dec = 'ER', humble = TRUE, attcon = FALSE, absval = -1,
+slpALCOVE(st, tr, dec = 'ER', humble = TRUE, attcon = FALSE, absval = -1,
           xtdo = FALSE)
 
 }
@@ -40,18 +36,22 @@ alcovelp(st, tr, dec = 'ER', humble = TRUE, attcon = FALSE, absval = -1,
 }  
   
 \value{
-  
-Matrix of response probabilities for each output unit on each trial. 
+
+  Returns a list containing three components: (1) matrix of response
+  probabilities for each output unit on each trial, (2) attentional
+  weights after final trial, (3) connection weights after final trial. 
 
 }
 
 \details{
 
-The functions works as a list processor. Specifically, it takes a matrix
-as an argument, where each row is one trial for the network, and the
-columns specify the input representation, teaching signals, and other
-control signals. It returns a matrix where each row is a trial, and the
-columns are the response probabilities at the output units.
+The functions works as a stateful list processor. Specifically, it takes
+a matrix as an argument, where each row is one trial for the network,
+and the columns specify the input representation, teaching signals, and
+other control signals. It returns a matrix where each row is a trial,
+and the columns are the response probabilities at the output units. It
+also returns the final state of the network (attention and connection
+weights), hence its description as a 'stateful' list processor.
 
 Argument \code{st} must be a list containing the following items:
 

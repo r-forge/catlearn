@@ -235,21 +235,106 @@ List alcovetrial(NumericVector x, NumericVector tin, NumericVector m,
       na = aupdatecon(alpha,deltaa); // Update att. weights (constrained)
   } else {
       na = aupdate(alpha,deltaa); // Update att. weights (non-constrained)   
-  }
-  
+  }  
   return Rcpp::List::create(Rcpp::Named("alpha") = na,
                             Rcpp::Named("w") = nw,
                             Rcpp::Named("prob") = prob);
 }
 
 // [[Rcpp::export]]
-NumericMatrix alcovelp(
-  List st,
-  NumericMatrix tr,
-  std::string dec = "ER",
-  bool humble = true,
-  bool attcon = false,
-  double absval = -1) {
+List slpALCOVE(List st, NumericMatrix tr, std::string dec = "ER",
+	       bool humble = true, bool attcon = false, 
+	       double absval = -1, bool xtdo = false) {
+  // ALCOVE stateful list processor function
+  // Takes in a set of parameters and a list of training items
+  // Outputs by-trial response probabilities, and final state.
+  
+  // This clumsy section copies stuff out of an R List
+  // There seems to be no way in RCpp to get direct access to a 
+  // List at input?
+  double c = as<double>(st["c"]);
+  double phi = as<double>(st["phi"]);
+  double la = as<double>(st["la"]);
+  double lw = as<double>(st["lw"]);
+  double r = as<double>(st["r"]);
+  double q = as<double>(st["q"]);
+  NumericMatrix h = as<NumericMatrix>(st["h"]);
+  NumericVector initalpha = as<NumericVector>(st["alpha"]);
+  NumericMatrix initw = as<NumericMatrix>(st["w"]);
+  int colskip = as<int>(st["colskip"]);
+  // End of particularly clumsy section
+  int i, j, trial, items = tr.nrow(), nin = initalpha.size();
+  int nhid = initw.ncol(), nout = initw.nrow();
+  NumericMatrix pstore(items,nout); // Storage of output probs
+  NumericVector x(nin);
+  NumericVector t(nout);
+  NumericVector alpha(nin);
+  NumericMatrix w(nout,nhid);
+  NumericVector m(nin);
+  List alcout;
+  alpha = initalpha;
+  w = initw;
+  // RUN THROUGH THE TRAINING LIST 
+  for(trial = 0; trial < items; trial++) {
+    if( tr(trial,0) == 1 ) { // Reset network to initial state
+      alpha = initalpha;
+      w = initw;
+    }
+    // Load input stimulus
+    for(i = colskip; i < nin+colskip; i++) {
+      x[i-colskip] = tr(trial,i);
+    }
+    // Load teaching signal
+    for(i = colskip+nin; i < colskip+nin+nout; i++) {
+      t[i-colskip-nin] = tr(trial,i);
+    }
+    // Load missing dimension flags
+    for(i = colskip+nin+nout; i < colskip+nin+nout+nin; i++) {
+      m[i-colskip-nin-nout] = tr(trial,i);
+    }
+    // Run one trial of ALCOVE
+    if( tr(trial,0) == 2 ) 
+    { // Code to freeze learning
+      alcout = alcovetrial(x,t,m,c,phi,0.0,0.0,r,q,h,alpha,w,humble,dec,
+			   absval,attcon);
+    }
+    else
+    {
+      alcout = alcovetrial(x,t,m,c,phi,la,lw,r,q,h,alpha,w,humble,dec,
+			   absval,attcon);
+    }
+    
+    // Retrieve variables from returned list
+    NumericVector alpharet = as<NumericVector>(alcout["alpha"]);
+    NumericMatrix wret = as<NumericMatrix>(alcout["w"]);
+    NumericVector probret = as<NumericVector>(alcout["prob"]);
+    // Update network state.
+    alpha = alpharet;
+    w = wret;
+    // Store probability for return
+    for(i = 0; i < nout; i++) {
+      pstore(trial,i) = probret[i];
+    }
+    // Extended output to console
+    if(xtdo) {
+      Rcpp::Rcout << "Trial: " << trial <<  std::endl << 
+	"Attention:" << std::endl << alpha << std::endl <<
+	"Weights:" << std::endl << w << std::endl;
+    } 
+
+  } // Run next trial
+  return Rcpp::List::create(Rcpp::Named("prob") = pstore,
+                            Rcpp::Named("alpha") = alpha,
+                            Rcpp::Named("w") = w);  
+}
+
+// Below this line, deprecated functions, retained only for backward
+// compatibility
+
+// [[Rcpp::export]]
+NumericMatrix alcovelp(List st, NumericMatrix tr, std::string dec = "ER",
+		       bool humble = true, bool attcon = false, 
+		       double absval = -1, bool xtdo = false) {
   // ALCOVE list processor function
   // Takes in a set of parameters and a list of training items
   // Outputs by-trial response probabilities
@@ -320,6 +405,12 @@ NumericMatrix alcovelp(
     for(i = 0; i < nout; i++) {
       prob(trial,i) = probret[i];
     }
+    // Extended output to console
+    if(xtdo) {
+      Rcpp::Rcout << "Trial: " << trial <<  std::endl << 
+	"Attention:" << std::endl << alpharet << std::endl <<
+	"Weights:" << std::endl << wret << std::endl;
+    } 
   } // Run next trial
   return prob;
 }

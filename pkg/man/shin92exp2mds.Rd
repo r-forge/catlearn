@@ -2,15 +2,20 @@
 \docType{data}
 \alias{shin92exp2mds}
 \title{Shin & Nosofsky (1992, Exp. 2) MDS solution}
-\description{  
+\description{
+  
   The \code{shin92exp2mds} data frame has 30 rows and 10 columns of data
   from a multi-dimensional scaling solution reported by Shin & Nosofsky
   (1992, Table A2). This solution comes from data collected in
-  Experiment 2 of that paper. 
+  Experiment 2 of that paper.
+  
 }
 \usage{data(shin92exp2mds)}
+
 \format{
+  
   A data frame with the following columns:
+  
   \describe{
     
     \item{id}{Unique identifier of form A2-catX-YY[-Z] where X is the
@@ -40,8 +45,6 @@
   }
 }
   
-\details{}
-
 \source{
   
   Shin, H.J. &  Nosofsky, R.M. (1992). Similarity-scaling studies of
@@ -50,6 +53,4 @@
 
   }
 
-\examples{}
-  
 \keyword{datasets}

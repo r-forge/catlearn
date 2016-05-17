@@ -1,16 +1,22 @@
 \name{shin92train}
 \alias{shin92train}
 \title{
+  
 Shin & Nosofsky (1992) training and transfer blocks
+
 }
 \description{
+  
   Create randomized training and transfer blocks for Experiment 3 of
   Shin & Nosofsky (1992), in a format suitable for category-learning
   models (e.g. \code{alcovelp}).
+  
 }
 \usage{
+
   shin92train(condition = 'equal3', learn.blocks = 8, trans.blocks = 3,
           absval = -1)
+
 }
 \arguments{
   
@@ -29,15 +35,20 @@ Shin & Nosofsky (1992) training and transfer blocks
 }  
   
 \value{
-R by C matrix, where each row is one trial, and the columns contain model input.
+  
+R by C matrix, where each row is one trial, and the columns contain
+model input.
+
 }
 
 \details{
-A matrix is produced, with one row for each trial, and with the following columns: 
+  
+A matrix is produced, with one row for each trial, and with the
+following columns:
 
 \code{ctrl} - Set to 1 (reset model) for trial 1, set to zero (normal
 trial) for all other training trials, and set to 2 (freeze learning) for
-all transfer trials. 
+all transfer trials.
 
 \code{cond} - 1 = equal3, 2 = equal10, 3 = unequal3, 4 = unequal10
 
@@ -63,14 +74,12 @@ trials). Note: ranges from m1 to m4 for Size 3 conditions.
 }
 
 \author{
-Andy Wills
+  
+  Andy Wills
+  
 }
 \references{
   Shin, H.J. (1992). Similarity-scaling studies of dot-pattern
   classification and recognition. \emph{Journal of Experimental
   Psychology: General, 121}, 278--304.
-}
-\seealso{
-}
-\examples{
 }

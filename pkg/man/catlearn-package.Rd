@@ -11,9 +11,6 @@ Computational Models of Category Learning
   Category learning models, implemented as list processors.
   
 }
-\details{
-
-}
 \author{
   
 Andy Wills
@@ -22,11 +19,4 @@ Maintainer: Andy Wills \email{andy@willslab.co.uk}
 
 }
 
-\references{
-  
-}
 \keyword{ package }
-\seealso{
-}
-\examples{
-}

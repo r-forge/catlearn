@@ -2,24 +2,27 @@
 \alias{ssecl}
 \title{Sum of squared errors}
 \description{
-Calculate sum of squared errors
+  
+  Calculate sum of squared errors
+  
 }
 \usage{ssecl(obs,exp)}
+
 \arguments{
+  
   \item{obs}{Vector of observed values}
+  
   \item{exp}{Vector of expected values}
+  
 }   
 \value{
-Returns sum of the squared differences.
-}
-\details{
+  
+  Returns sum of the squared differences.
+  
 }
 \author{
-Andy Wills
+  
+  Andy Wills
+  
 }
-\references{
-}
-\seealso{
-}
-\examples{
-}
+
