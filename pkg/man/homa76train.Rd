@@ -89,6 +89,10 @@ function uses the two non-interpolated stimuli, plus stimulus 'extra-1' -
 picked because it is generated from a typical old stimulus and is
 maximally distant from that stimulus.
 
+The output does not include the random stimuli Homa & Vosburgh (1976)
+included at the end of their test sessions (see p. 328). See
+\code{homa76ipolate} for further details.
+
 }
 
 \author{
