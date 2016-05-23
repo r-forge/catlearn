@@ -50,7 +50,9 @@
  This subset is then ordered by their Euclidean distance to the existing
  stimulus. One new stimulus is created that is maximally far from the
  existing stimulus. Another new stimulus is created that is averagely
- far from the existing stimulus.
+ far from the existing stimulus. Both stimuli are checked to ensure they
+ are closer to their own prototype than either of the other two
+ prototypes. 
 
  A similar process is used to generate the other stimuli. For more
  details, inspect the source code, which is extensively commented.
