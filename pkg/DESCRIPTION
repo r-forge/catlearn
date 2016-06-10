@@ -1,8 +1,8 @@
 Package: catlearn
 Type: Package
 Title: Catalog of Learning Models
-Version: 0.2.3
-Date: 2016-06-03
+Version: 0.2.14
+Date: 2016-06-10
 Author: Andy Wills
 Maintainer: Andy Wills <andy@willslab.co.uk>
 Description: Compuational models of learning, independently-replicated data sets against which to test them, and simulation vignettes.

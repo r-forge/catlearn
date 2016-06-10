@@ -2,22 +2,27 @@
 \alias{shin92train}
 \title{
   
-Shin & Nosofsky (1992) training and transfer blocks
+   Input representation of shin92 for models input-compatible with slpALCOVE.
 
-}
+ }
+ 
 \description{
   
-  Create randomized training and transfer blocks for Experiment 3 of
-  Shin & Nosofsky (1992), in a format suitable for category-learning
-  models (e.g. \code{alcovelp}).
+  Creates randomized training and transfer blocks for CIRP \code{shin92}
+  , in a format suitable for the \code{slpALCOVE} model, and any other
+  model that uses the same input representation format. The stimulus
+  co-ordinates come from a MDS solution reported by Shin & Nosofsky
+  (1992). 
   
 }
+
 \usage{
 
   shin92train(condition = 'equal3', learn.blocks = 8, trans.blocks = 3,
-          absval = -1)
+          absval = -1, format = 'mds', subjs = 1, seed = 8416)
 
 }
+
 \arguments{
   
   \item{condition}{Experimental condition 'equal3', 'equal10',
@@ -32,6 +37,15 @@ Shin & Nosofsky (1992) training and transfer blocks
   study (3).}
 
   \item{absval}{Teaching value to be used where category is absent.}
+
+  \item{format}{Specifies format used for input representation. Only one
+  format is currently suported, so this option is provided solely to
+  support future development.}
+
+  \item{subjs}{Number of simulated subjects to be run.}
+
+  \item{seed}{Sets the random seed}
+  
 }  
   
 \value{
@@ -71,6 +85,12 @@ absent)
 experiment, indicating all input dimensions are present on all
 trials). Note: ranges from m1 to m4 for Size 3 conditions. 
 
+Although the trial ordering is random, a random seed is used, so
+multiple calls of this function with the same parameters should produce
+the same output. This is usually desirable for reproducibility and
+stability of non-linear optimization. To get a different order, use the
+seed argument to set a different seed.
+
 }
 
 \author{
@@ -79,7 +99,15 @@ trials). Note: ranges from m1 to m4 for Size 3 conditions.
   
 }
 \references{
-  Shin, H.J. (1992). Similarity-scaling studies of dot-pattern
-  classification and recognition. \emph{Journal of Experimental
-  Psychology: General, 121}, 278--304.
+
+  Shin, H.J. &  Nosofsky, R.M. (1992). Similarity-scaling studies of
+  dot-pattern classification and recognition. \emph{Journal
+    of Experimental Psychology: General, 121}, 278--304.
+
+}
+
+\seealso{
+
+\code{\link{shin92}}, \code{\link{slpALCOVE}}    
+
 }

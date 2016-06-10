@@ -1,5 +1,8 @@
 shin92train <- function(condition = 'equal3', learn.blocks = 8,
-                        trans.blocks = 3, absval = -1) {
+                        trans.blocks = 3, absval = -1, format = 'mds',
+                        subjs = 1, seed = 8416) {
+    set.seed(seed) 
+    if(format != 'mds') print("Only MDS format is currently supported.")
     # Conditions are: equal3, equal10, unequal3, unequal10
     # Stimulus numbers refer to row of Table A3, A4.
     # SIZE 3
@@ -95,38 +98,43 @@ shin92train <- function(condition = 'equal3', learn.blocks = 8,
                    equal10 = rbind(s10train,s10trans), unequal3 =
                    rbind(s3train, s3trans), unequal10 =
                    rbind(s10train, s10trans))
-    # Build list
-    makelist <- NULL
-    makelist2 <- NULL
-    # Training phase
-    if(learn.blocks > 0) {    
-        phase <- 1
-        for(blk in 1:learn.blocks) {
-            block <- cbind(cond,phase,blk,train)
-            block <- block[sample(nrow(block)),]
-            makelist <- rbind(makelist,block)
-        }    
-        ctrl <- c(1,rep(0,nrow(makelist)-1))
-        makelist <- cbind(ctrl,makelist)
+    # Run 'subjs' times
+    finalist <- NULL
+    for(subj in 1:subjs) {
+                                        # Build list
+        makelist <- NULL
+        makelist2 <- NULL
+                                        # Training phase
+        if(learn.blocks > 0) {    
+            phase <- 1
+            for(blk in 1:learn.blocks) {
+                block <- cbind(cond,phase,blk,train)
+                block <- block[sample(nrow(block)),]
+                makelist <- rbind(makelist,block)
+            }    
+            ctrl <- c(1,rep(0,nrow(makelist)-1))
+            makelist <- cbind(ctrl,makelist)
+        }
+                                        # Test phase
+        if(trans.blocks > 0) {
+            phase <- 2
+            for(blk in 1:trans.blocks) {
+                block <- cbind(cond,phase,blk,test)
+                block <- block[sample(nrow(block)),]
+                makelist2 <- rbind(makelist2,block)
+            }    
+            ctrl <- 2
+            makelist2 <- cbind(ctrl,makelist2)
+        }
+                                        # Combine the two
+        finalist <- rbind(finalist,makelist,makelist2)
     }
-    # Test phase
-    if(trans.blocks > 0) {
-        phase <- 2
-        for(blk in 1:trans.blocks) {
-            block <- cbind(cond,phase,blk,test)
-            block <- block[sample(nrow(block)),]
-            makelist2 <- rbind(makelist2,block)
-        }    
-        ctrl <- 2
-        makelist2 <- cbind(ctrl,makelist2)
-    }
-    # Combine the two
-    makelist <- rbind(makelist,makelist2)
+    
     # If the value for category absence is not -1
     # change the list to reflect this
     if(absval != -1) {
-        makelist[makelist[,'t1'] == -1,'t1'] <- absval
-        makelist[makelist[,'t2'] == -1,'t2'] <- absval
+        finalist[finalist[,'t1'] == -1,'t1'] <- absval
+        finalist[finalist[,'t2'] == -1,'t2'] <- absval
     }
-    return(makelist)
+    return(finalist)
 }

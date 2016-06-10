@@ -9,11 +9,8 @@
   al., 1973) is the phenomenon that, as category size increases, the
   accuracy of generalization to new members of that category also
   increases. The equal-frequency conditions of Experiment 3 of Shin &
-  Nosofsky (1992) provide the data for this CIRP. Models pass this CIRP
-  if they predict higher mean accuracy for the novel stimuli of the
-  10-member category than for the novel stimuli of the 3-member
-  category.
-  
+  Nosofsky (1992) provide the data for this CIRP.
+    
 }
 \usage{data(shin92)}
 \format{
@@ -91,7 +88,11 @@
   category learning. \emph{The Psychology of Learning and Motivation}.
   
 }
-  
+
+\author{
+  Andy J. Wills \email{andy@willslab.co.uk}
+  }
+
 \seealso{
 
 \code{\link{shin92train}}    
