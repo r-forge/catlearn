@@ -263,7 +263,7 @@ List slpALCOVE(List st, NumericMatrix tr, std::string dec = "ER",
   NumericMatrix initw = as<NumericMatrix>(st["w"]);
   int colskip = as<int>(st["colskip"]);
   // End of particularly clumsy section
-  int i, j, trial, items = tr.nrow(), nin = initalpha.size();
+  int i, trial, items = tr.nrow(), nin = initalpha.size();
   int nhid = initw.ncol(), nout = initw.nrow();
   NumericMatrix pstore(items,nout); // Storage of output probs
   NumericVector x(nin);
