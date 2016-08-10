@@ -83,9 +83,10 @@
   as a function of number of instances defining the
   prototpe. \emph{Journal of Experimental Psychology, 101}, 116--122.
 
-  Wills, A.J., O'Connell, G., Inkster, A.B. & Edmunds, C.E.R. (2016). 
-  Relative adequacy of formal models: Concepts, tools, and examples in
-  category learning. \emph{The Psychology of Learning and Motivation}.
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
+  Progress in modeling through distributed collaboration: Concepts,
+  tools, and category-learning examples. \emph{The Psychology of
+  Learning and Motivation}.
   
 }
 
