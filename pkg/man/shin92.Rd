@@ -9,7 +9,7 @@
   al., 1973) is the phenomenon that, as category size increases, the
   accuracy of generalization to new members of that category also
   increases. The equal-frequency conditions of Experiment 3 of Shin &
-  Nosofsky (1992) provide the data for this CIRP.
+  Nosofsky (1992) provides the data for this CIRP.
     
 }
 \usage{data(shin92)}
@@ -29,7 +29,7 @@
     stimuli. Stimuli beginning 'P' are prototypes. The remaining stimuli
     are the 'old' (training) stimuli. }
     
-    \item{c2acc}{Mean probability, across particiapnts, of responding
+    \item{c2acc}{Mean probability, across participants, of responding
       that the item belongs to category 2.}
     
   }
@@ -63,7 +63,7 @@
   
   Shin, H.J. &  Nosofsky, R.M. (1992). Similarity-scaling studies of
   dot-pattern classification and recognition. \emph{Journal
-  of Experimental Psychology: General, 121}, 278--304.
+  of Experimental Psychology: General, 121}, 278-304.
 
 }
 
@@ -71,17 +71,17 @@
 
   DiNardo, M.J. & Toppino, T.C. (1984). Formation of ill-defined
   concepts as a function of category size and category
-  exposure. \emph{Bulletin of the Psychonomic Society, 22}, 317--320.
+  exposure. \emph{Bulletin of the Psychonomic Society, 22}, 317-320.
   
   Homa, D., Burruel, L. & Field, D. (1987). The changing composition of
   abstracted categories under manipulations of decisional change, choice
   difficulty, and category size. \emph{Journal of Experimental
-  Psychology: Learning, Memory, and Cognition, 13}, 401--412.
+  Psychology: Learning, Memory, and Cognition, 13}, 401-412.
   
   Homa, D., Cross, J., Cornell, D., Goldman, D. & Shwartz,
   S. (1973). Prototype abstraction and classification of new instances
   as a function of number of instances defining the
-  prototpe. \emph{Journal of Experimental Psychology, 101}, 116--122.
+  prototype. \emph{Journal of Experimental Psychology, 101}, 116-122.
 
   Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
   Progress in modeling through distributed collaboration: Concepts,
@@ -96,7 +96,7 @@
 
 \seealso{
 
-\code{\link{shin92train}}    
+\code{\link{shin92train}}, \code{\link{shin92oat}}    
 
   }
   
