@@ -3,13 +3,13 @@
 \docType{package}
 \title{
   
-CATalog of LEARNing models.
+Formal Modeling for Psychology.
 
 }
 \description{
-  
-  Learning models, plus archives of classic phenomena (CIRP), input
-  representations, and simulations.
+
+  Formal psychological models, independently-replicated data sets
+  against which to test them, and simulation archives.
 
 }
 
