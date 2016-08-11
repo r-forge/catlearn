@@ -79,7 +79,7 @@ E2 and E7, rather than the 63 trials reported by Nosofsky (1988).
 
 \author{
   
-  Andy Wills
+  Andy Wills & Garret O'Connell
   
 }
 \references{
