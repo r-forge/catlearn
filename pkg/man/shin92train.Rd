@@ -102,12 +102,12 @@ seed argument to set a different seed.
 
   Shin, H.J. &  Nosofsky, R.M. (1992). Similarity-scaling studies of
   dot-pattern classification and recognition. \emph{Journal
-    of Experimental Psychology: General, 121}, 278--304.
+    of Experimental Psychology: General, 121}, 278-304.
 
 }
 
 \seealso{
 
-\code{\link{shin92}}, \code{\link{slpALCOVE}}    
+\code{\link{shin92}}, \code{\link{shin92oat}}, \code{\link{slpALCOVE}}
 
 }

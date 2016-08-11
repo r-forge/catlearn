@@ -1,4 +1,6 @@
-n88train <- function(condition = 'B',blocks = 3, absval = -1) {
+nosof88train <- function(condition = 'B',blocks = 3, absval = -1,
+                     subjs = 1, seed = 4182) {
+  set.seed(seed)
   n88b <- rbind(
     c(1,-2.543,2.641,1,-1,0,0),
     c(2,.943,4.341,-1,1,0,0),
@@ -22,22 +24,28 @@ n88train <- function(condition = 'B',blocks = 3, absval = -1) {
   n88e7 <- rbind(n88b,n88b[7,],n88b[7,],n88b[7,],n88b[7,])
  
   n88 <- switch(condition, B = n88b, E2 = n88e2, E7 = n88e7, n88b)
-  
-  makelist <- NULL
-  for(blk in 1:blocks) {
-    block <- rbind(n88,n88,n88,n88)
-    block <- cbind(cond,blk,block)
-    block <- block[sample(nrow(block)),]
-    makelist <- rbind(makelist,block)
+
+  # Run 'subjs' times
+  finalist <- NULL
+  for(subj in 1:subjs) {
+    # Build list
+      makelist <- NULL
+      for(blk in 1:blocks) {
+          block <- rbind(n88,n88,n88,n88)
+          block <- cbind(cond,blk,block)
+          block <- block[sample(nrow(block)),]
+          makelist <- rbind(makelist,block)
+      }
+      ctrl <- c(1,rep(0,nrow(makelist)-1))
+      makelist <- cbind(ctrl,makelist)
+      finalist <- rbind(finalist,makelist)
   }
-  ctrl <- c(1,rep(0,nrow(makelist)-1))
-  makelist <- cbind(ctrl,makelist)
   
   # If the value for category absence is not -1
   # change the list to reflect this
   if(absval != -1) {
-    makelist[makelist[,'t1'] == -1,'t1'] <- absval
-    makelist[makelist[,'t2'] == -1,'t2'] <- absval
+    finalist[finalist[,'t1'] == -1,'t1'] <- absval
+    finalist[finalist[,'t2'] == -1,'t2'] <- absval
   }
-  return(makelist)
+  return(finalist)
 }

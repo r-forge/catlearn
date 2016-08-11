@@ -1,21 +1,23 @@
-\name{n88train}
-\alias{n88train}
+\name{nosof88train}
+\alias{nosof88train}
 \title{
-  
-  Nosofsky (1988) training blocks
+
+  Input representation of nosof88 for models input-compatible with slpALCOVE.
   
 }
 \description{
   
-Create randomized training blocks for Experiment 1 of Nosofsky (1988),
-in a format suitable for category-learning models
-(e.g. \code{alcovelp}).
+  Create randomized training blocks for CIRP \code{\link{nosof88}}, in a
+  format suitable for the \code{\link{slpALCOVE}} model, and any other
+  model that uses the same input representation format. The stimulus
+  co-ordinates come from a MDS solution reported by Nosofsky (1987) for
+  the same stimuli. 
 
 }
 \usage{
 
-n88train(condition = 'B', blocks = 3, 
-          absval = -1)
+nosof88train(condition = 'B', blocks = 3, absval = -1, subjs = 1, seed =
+4182)
 
 }
 \arguments{
@@ -27,7 +29,11 @@ n88train(condition = 'B', blocks = 3,
     number of blocks as the published study (3).}
   
   \item{absval}{Teaching value to be used where category is absent.}
-  
+
+  \item{subjs}{Number of simulated subjects to be run.}
+
+  \item{seed}{Sets the random seed}
+
 }  
   
 \value{
@@ -60,11 +66,15 @@ absent)
 \code{m1, m2} - Missing dimension flags (always set to zero in this
 experiment, indicating all input dimensions are present on all trials)
 
-Nosofsky (1988) report that conditions E2 and E7 had 63 trials per
-block. It is not possible to implement the relative frequency structure
-of these conditions with a block length of 63 trials, so this is
-presumably an error. This implementation assumes a block length of 64
-trials for conditions E2 and E7.
+Although the trial ordering is random, a random seed is used, so
+multiple calls of this function with the same parameters should produce
+the same output. This is usually desirable for reproducibility and
+stability of non-linear optimization. To get a different order, use the
+seed argument to set a different seed.
+
+This implementation assumes a block length of 64 trials for conditions
+E2 and E7, rather than the 63 trials reported by Nosofsky (1988).
+
 }
 
 \author{
@@ -77,10 +87,16 @@ trials for conditions E2 and E7.
   Nosofsky, R.M. (1987). Attention and learning processes in the
   identification and categorization of integral stimuli, \emph{Journal
   of Experimental Psychology: Learning, Memory and Cognition, 13},
-  87--108.
+  87-108.
 
   Nosofsky, R.M. (1988). Similarity, frequency, and category
   representations, \emph{Journal of Experimental Psychology: Learning,
-    Memory and Cognition, 14}, 54--65.
+    Memory and Cognition, 14}, 54-65.
 
 } 
+
+\seealso{
+
+\code{\link{nosof88}}, \code{\link{nosof88oat}}, \code{\link{slpALCOVE}}
+  
+}
