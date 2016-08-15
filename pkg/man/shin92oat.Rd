@@ -73,6 +73,6 @@ returns the summary model predictions reported by Wills et al. (2016).
 
 \seealso{
 
-\code{\link{shin92}}, \code{\link{slpALCOVE}}    
+\code{\link{shin92}}
 
 }

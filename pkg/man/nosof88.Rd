@@ -21,7 +21,8 @@ CIRP.
   A data frame with the following columns:
   \describe{
     
-    \item{cond}{Experimental condition, see 'details'}
+    \item{cond}{Experimental condition, see 'details'. 1 = 'B', 2 =
+    'E2', 3 = 'E7'}
     
     \item{stim}{Stimulus number, see Nosofsky (1988), Figure 1. Takes
     values: 1-12}
