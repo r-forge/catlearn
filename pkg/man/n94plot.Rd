@@ -36,6 +36,6 @@ n94plot(results,title = 'Nosofsky et al. (1994)')
   
 }
 \examples{
-  data(shj61)
-  n94plot(shj61)
+  data(nosof94)
+  n94plot(nosof94)
 }
