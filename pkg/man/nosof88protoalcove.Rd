@@ -1,22 +1,22 @@
-\name{nosof88exalcove}
-\alias{nosof88exalcove}
+\name{nosof88protoalcove}
+\alias{nosof88protoalcove}
 \title{
   
-   Simulation of CIRP nosof88 with ex-ALCOVE model
+   Simulation of CIRP nosof88 with proto-ALCOVE model
 
  }
  
 \description{
 
   Runs a simulation of the \code{\link{nosof88}} CIRP using the
-  \code{\link{slpALCOVE}} model implementation as an exemplar model and
+  \code{\link{slpALCOVE}} model implementation as a prototype model and
   \code{\link{nosof88train}} as the input representation.
   
 }
 
 \usage{
 
-  nosof88exalcove(params = c(0.787,2.359,0.990,0.057))
+  nosof88protoalcove(params = c(.230,1.375,.049,.990))
 
 }
 
@@ -37,10 +37,15 @@
 
 \details{
 
- An exemplar-based simulation using \code{\link{slpALCOVE}} and
- \code{\link{nosof88train}}. The co-ordinates for the radial-basis units
- are taken from the multdimensional scaling solution for these stimuli
- reported by Nosofsky (1987).
+ An prototype-based simulation using \code{\link{slpALCOVE}} and
+ \code{\link{nosof88train}}. There is one radial-basis unit for each
+ category, representing the prototype. These prototypes are calculated
+ by taking the mean of the co-ordinates of the stimuli in a category,
+ with the stimulus co-ordinates coming from the multdimensional
+ scaling solution reported by Nosofsky (1987). The calculations of the
+ means are weighted by the instantiation frequency of the
+ stimuli. Hence, the prototypes for each condition of the experiment
+ are different. 
  
  The defaults for \code{params} are the best fit of the model to the
  \code{\link{nosof88}} CIRP. They were derived through minimization of
@@ -48,11 +53,11 @@
  states (using code not included in this archive). 
 
  The other parameters of slpALCOVE are set as follows: \code{r} = 2,
- \code{q} = 1, initial \code{alpha} = 1 / (number of input dimensions),
- initial \code{w} = 0. These values are conventions of modeling with
- ALCOVE, and should not be considered as free parameters. They are set
- within the \code{nosof88exalcove} function, and hence can't be changed
- without re-writing the function.
+ \code{q} = 1, initial \code{alpha} = 1 / (number of input
+ dimensions), initial \code{w} = 0. These values are conventions of
+ modeling with ALCOVE, and should not be considered as free
+ parameters. They are set within the \code{nosof88protoalcove} function,
+ and hence can not be changed without re-writing the function.
 
  This simulation is reported in Wills & O'Connell (2016). 
 
