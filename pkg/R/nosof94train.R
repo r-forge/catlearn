@@ -1,4 +1,5 @@
-shj61train <- function(problem,blocks = 16, absval = -1) {
+nosof94train <- function(problem = 1,blocks = 16, absval = -1, subjs = 1,
+                         seed = 7624) {
   
   shj61 <- array(0,dim=c(8,9,6))
   colnames(shj61) <- c('stim','x1','x2','x3','t1','t2','m1','m2','m3') 
@@ -68,34 +69,34 @@ shj61train <- function(problem,blocks = 16, absval = -1) {
     c(7,1,1,0,1,-1,0,0,0),
     c(8,1,1,1,-1,1,0,0,0)
   )
-  
-  makelist <- NULL
-  for(blk in 1:blocks) { 
-    # Load trials for one block
-    if(blk == 1) {
-      # Block 1 is randomized differently
-      blocka <- shj61[,,problem]
-      blocka <- blocka[sample(nrow(blocka)),]
-      blockb <- shj61[,,problem]
-      blockb <- blockb[sample(nrow(blockb)),]
-      block <- rbind(blocka,blockb)
-    } else {
-      block <- rbind(shj61[,,problem],shj61[,,problem]) 
-      block <- block[sample(nrow(block)),]
+  biglist <- NULL
+  for(subj in 1:subjs) {
+    makelist <- NULL
+    for(blk in 1:blocks) { # Load trials for one block
+        if(blk == 1) { # Block 1 is randomized differently
+            blocka <- shj61[,,problem]
+            blocka <- blocka[sample(nrow(blocka)),]
+            blockb <- shj61[,,problem]
+            blockb <- blockb[sample(nrow(blockb)),]
+            block <- rbind(blocka,blockb)
+        } else {
+            block <- rbind(shj61[,,problem],shj61[,,problem]) 
+            block <- block[sample(nrow(block)),]
+        }
+        block <- cbind(blk,block)
+        makelist <- rbind(makelist,block)
     }
-    block <- cbind(blk,block)
-    makelist <- rbind(makelist,block)
+    ctrl <- c(1,rep(0,nrow(makelist)-1))
+    makelist <- cbind(ctrl,makelist)
+    biglist <- rbind(biglist,makelist)
   }
-  ctrl <- c(1,rep(0,nrow(makelist)-1))
-  makelist <- cbind(ctrl,makelist)
-  
   # If the value for category absence is not -1
   # change the list to reflect this
   if(absval != -1) {
-    makelist[makelist[,'t1'] == -1,'t1'] <- absval
-    makelist[makelist[,'t2'] == -1,'t2'] <- absval
+    biglist[biglist[,'t1'] == -1,'t1'] <- absval
+    biglist[biglist[,'t2'] == -1,'t2'] <- absval
   }
-  return(makelist)
+  return(biglist)
 }
 
 

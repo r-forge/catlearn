@@ -84,7 +84,11 @@
   S.N. (2013). Human learning of elemental category structures: Revising
   the classic result of Shepard, Hovland, and Jenkins
   (1961). \emph{Journal of Experimental Psychology: Learning, Memory &
-  Cognition, 39}, 552-572.
+    Cognition, 39}, 552-572.
+
+  Shepard, R.N., Hocland, C.I., & Jenkins, H.M. (1961). learning and
+  memorization of classifications. \emph{Psychological Monographs, 75},
+  Whole No. 517.
 
   Smith, J.D., Minda, J.P. & Washburn, D.A. (2004). Category learning in
   rhesus monkeys: A study of the Shepard, Hovland, and Jenkins (1961)
