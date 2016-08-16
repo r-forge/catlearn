@@ -6,33 +6,37 @@
 #include <vector>
 using namespace Rcpp;
 
-
-
-
-
-
-
 // There are three parts to implementing COVIS
 // A model of the explicit system, a model of the implicit system 
 // and an algorithm to monitor the output of the systems and select
 // a response on each trial
 
 
+// Utility functions
 
-
-
-// First is the functions fot the implementation of the explicit (rule-based) system
-
-// This first function is merely a factorial calculator, written as Rcpp does
-// not have one built in.
 int factorial(int n)
 {
+  // Checking: AW 2016-08-16
+  // This first function is merely a factorial calculator, written as
+  // Rcpp does not have one built in.
   return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
-//This function is to choose a rule based on the probabilities of those rules
+
+// First is the functions for the implementation of the explicit (rule-based) system
+
 // [[Rcpp::export]]
 int rchoose(NumericVector rules, int stimdim){
+  // Explicit system
+
+  //This function is to choose a rule based on the probabilities of
+  //those rules (probabilities come from EW2016, Eq.8)
+
+  // Note: You shouldn't need to define the number of stimulus dimenesion.
+  // Just read in the length of NV rules and go from there
+  // (with a loop or something similar). 
+
+
 double val = (double)rand() / RAND_MAX;
 int random;
 double sum_of_elems = sum(rules);
@@ -62,11 +66,11 @@ if (stimdim == 3)
 }
 if (stimdim == 4)
   {
-    if (val < rules[1])
+    if (val < rules[0])
     {random = 0;}
-    else if (val < rules[1] + rules[2])
+    else if (val < rules[0] + rules[1])
     {random = 1;}
-    else if (val < rules[1] + rules[2] + rules[3])
+    else if (val < rules[0] + rules[1] + rules[2])
     {random = 2;}
     else
     {random = 3;}
@@ -146,18 +150,27 @@ NumericVector stimco(int stimdim, NumericMatrix ma ,int i){
   return initco;
 }
 
-// [[Rcpp::export]]  
-// Response rule for explicit system
-// This response rule exists in the explicit system to decide whether to 
-// respond with A or B, referencing two categories as is the norm.
-// Epsilon is a normally distributed variable
-std::string expres(double disval, double nvar){
-  double epsilon = R::dnorm(0.0,0.0,nvar,FALSE);
-  std::string Response;
+
+int expres(double disval, double nvar){
+  // Checking: AW 2016-08-16
+
+  // Response rule for explicit system 
+
+  // This response rule exists in the explicit system to decide
+  // whether to respond with A or B, referencing two categories as is
+  // the norm.  Epsilon is a normally distributed variable
+
+  // Edmunds & Wills (2016, Equ. 2)
+  // disval - discriminant value (h_v)
+  // nvar - noise (sigma_v)
+  // double epsilon = R::rnorm(0.0,nvar);
+
+  double epsilon = R::rnorm(0,nvar);
+  int Response;
   if (disval < epsilon)
-  {Response = 'A';}
+  {Response = 1;}
   else
-  {Response = 'B';}
+  {Response = 2;}
   return Response;
 }
   
@@ -196,18 +209,24 @@ NumericVector weightcalc(double crule,double rrule,double perscon,
   return updweight;
 }
 
-// [[Rcpp::export]]
-// Function to check accuracy of predicted response against actual response
-int acccheck(std::string resp, NumericMatrix tr, int i){
+int acccheck(int resp, NumericVector tr){
+  // Checking: AW 2016-08-16
+
+  // Explicit system
+
+  // Function to check accuracy of predicted response against actual
+  // response
+
+  // Required to decide whether Equ. 3 or 4 is in force
+  // Edmunds & Wills (2016)
+  
   int acc;
-  if (resp == tr(i-1,4))
-  {acc = 1;}
-  else
-  {acc = 0;}  
+  acc = 0;
+  if (resp == 1 & tr[0] == 1) acc = 1;
+  if (resp == 2 & tr[1] == 1) acc = 1;
+
   return acc;
 }
-
-
 
 // Next is the functions for implementation of the procedural (implicit) system
 
@@ -226,12 +245,10 @@ double noise(double mean,double var){
   return noise;
 }
 
-// [[Rcpp::export]]
 // Function to generate a matrix containing initial synapse strength and cortical unit input
-NumericMatrix stmat(int stims){
-  NumericMatrix
-}
-
+// NumericMatrix stmat(int stims){
+//   NumericMatrix
+// }
 
 // [[Rcpp::export]]
 // Function to calculate striatal unit activation, needs a 2x2 matrix as input with

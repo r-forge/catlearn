@@ -12,7 +12,9 @@ rm(list=ls())
 
 require(Rcpp)
 
-sourceCpp("covislp.cpp")
+sourceCpp("src/test.cpp")
+
+sourceCpp("src/slpcovis.cpp")
 
 r <- rules(5,0.25,incl = FALSE)
 rchoose(r, 5)
