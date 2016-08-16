@@ -1,4 +1,4 @@
-nosof94train <- function(problem = 1,blocks = 16, absval = -1, subjs = 1,
+nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
                          seed = 7624) {
   
   shj61 <- array(0,dim=c(8,9,6))
@@ -74,16 +74,16 @@ nosof94train <- function(problem = 1,blocks = 16, absval = -1, subjs = 1,
     makelist <- NULL
     for(blk in 1:blocks) { # Load trials for one block
         if(blk == 1) { # Block 1 is randomized differently
-            blocka <- shj61[,,problem]
+            blocka <- shj61[,,cond]
             blocka <- blocka[sample(nrow(blocka)),]
-            blockb <- shj61[,,problem]
+            blockb <- shj61[,,cond]
             blockb <- blockb[sample(nrow(blockb)),]
             block <- rbind(blocka,blockb)
         } else {
-            block <- rbind(shj61[,,problem],shj61[,,problem]) 
+            block <- rbind(shj61[,,cond],shj61[,,cond]) 
             block <- block[sample(nrow(block)),]
         }
-        block <- cbind(blk,block)
+        block <- cbind(cond,blk,block)
         makelist <- rbind(makelist,block)
     }
     ctrl <- c(1,rep(0,nrow(makelist)-1))

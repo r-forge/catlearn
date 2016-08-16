@@ -16,12 +16,12 @@
 }
 \usage{
 
-nosof94train(problem = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624)
+nosof94train(cond = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624)
 
 }
 \arguments{
   
-  \item{problem}{Category structure type (1-6), as defined by Shepard et
+  \item{cond}{Category structure type (1-6), as defined by Shepard et
   al. (1961).}
   
   \item{blocks}{Number of blocks to generate. Omit this argument to get
