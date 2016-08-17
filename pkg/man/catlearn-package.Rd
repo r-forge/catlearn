@@ -42,7 +42,7 @@ Maintainer: Andy Wills \email{andy@willslab.co.uk}
 
 }
 
-\reference{
+\references{
 
   Catlearn Research Group (2016). Contributing to catlearn.
   \url{http://catlearn.r-forge.r-project.org/intro-catlearn.pdf}
