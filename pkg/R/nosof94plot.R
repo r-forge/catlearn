@@ -1,4 +1,4 @@
-n94plot <- function(results,title = 'Nosofsky et al. (1994)') {
+nosof94plot <- function(results,title = 'Nosofsky et al. (1994)') {
   plot(
     results$error[results$type == 1]
     , axes = FALSE

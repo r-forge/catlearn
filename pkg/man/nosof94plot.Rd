@@ -1,8 +1,8 @@
-\name{n94plot}
-\alias{n94plot}
+\name{nosof94plot}
+\alias{nosof94plot}
 \title{
   
-Plot Nosofsky et al. (1994) data
+Plot Nosofsky et al. (1994) data / simulations
 
 }
 \description{
@@ -13,13 +13,13 @@ Plot Nosofsky et al. (1994) data
 }
 \usage{
 
-n94plot(results,title = 'Nosofsky et al. (1994)')
+nosof94plot(results,title = 'Nosofsky et al. (1994)')
 
 }
 \arguments{
   
   \item{results}{Mean error probability by block and problem, in the same format 
-    as data set \code{shj61}}
+    as data set \code{nosof94}}
   
   \item{title}{Title to appear at top of plot}
   
@@ -37,5 +37,5 @@ n94plot(results,title = 'Nosofsky et al. (1994)')
 }
 \examples{
   data(nosof94)
-  n94plot(nosof94)
+  nosof94plot(nosof94)
 }
