@@ -73,6 +73,9 @@ the same output. This is usually desirable for reproducibility and
 stability of non-linear optimization. To get a different order, use the
 seed argument to set a different seed.
 
+This routine was originally developed to support simulations reported in
+Wills & O'Connell (n.d.).
+
 }
 
 \author{
@@ -90,6 +93,10 @@ seed argument to set a different seed.
   Shepard, R.N., Hocland, C.I., & Jenkins, H.M. (1961). learning and
   memorization of classifications. \emph{Psychological Monographs, 75},
   Whole No. 517.
+
+   Wills, A.J. & O'Connell (n.d.). Averaging
+ abstractions. \emph{Manuscript in preparation}.
+
 
   
 }

@@ -91,6 +91,9 @@ the same output. This is usually desirable for reproducibility and
 stability of non-linear optimization. To get a different order, use the
 seed argument to set a different seed.
 
+This function was originally developed to support simulations reported
+in Wills et al. (2016).
+
 }
 
 \author{
@@ -103,6 +106,11 @@ seed argument to set a different seed.
   Shin, H.J. &  Nosofsky, R.M. (1992). Similarity-scaling studies of
   dot-pattern classification and recognition. \emph{Journal
     of Experimental Psychology: General, 121}, 278-304.
+
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
+  Progress in modeling through distributed collaboration: Concepts,
+  tools, and category-learning examples. \emph{The Psychology of
+  Learning and Motivation}.
 
 }
 

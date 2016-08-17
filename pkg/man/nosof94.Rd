@@ -40,7 +40,7 @@
 }
 \details{
 
-  Wills & O'Connell (2016) discuss the derivation of this CIRP. In
+  Wills & O'Connell (n.d.) discuss the derivation of this CIRP. In
   brief, the effect has been demonstrated independently on three
   occasions (Nosofsky et al., 1994; Shepard et al., 1961; Smith et al.,
   2004). Kurtz et al. (2013) discuss and report a number of experiments
@@ -94,7 +94,7 @@
   rhesus monkeys: A study of the Shepard, Hovland, and Jenkins (1961)
   tasks. \emph{Journal of Experimental Psychology: General, 133}, 398-414.
   
-  Wills, A.J. & O'Connell (2016). Averaging
+  Wills, A.J. & O'Connell (n.d.). Averaging
   abstractions. \emph{Manuscript in preparation}.
    
   }

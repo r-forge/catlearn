@@ -59,7 +59,7 @@
  parameters. They are set within the \code{nosof88protoalcove} function,
  and hence can not be changed without re-writing the function.
 
- This simulation is reported in Wills & O'Connell (2016). 
+ This simulation is reported in Wills & O'Connell (n.d.). 
 
 }
 
@@ -75,7 +75,7 @@
   of Experimental Psychology: Learning, Memory and Cognition, 13},
   87-108.
 
-  Wills, A.J. & O'Connell (2016). Averaging
+  Wills, A.J. & O'Connell (n.d.). Averaging
   abstractions. \emph{Manuscript in preparation}.
  
   

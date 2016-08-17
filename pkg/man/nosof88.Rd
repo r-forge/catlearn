@@ -34,7 +34,7 @@ CIRP.
 
 \details{
 
- Wills & O'Connell (2016) discuss the derivation of this CIRP. In
+ Wills & O'Connell (n.d.) discuss the derivation of this CIRP. In
  brief, both the direct and indirect effects have been independently
  replicated. Direct effect: Harris et al. (2008), Nosofsky
  (1988). Indirect effect: Barsalou (1985), Erickson & Kruschke (1998),
@@ -95,7 +95,7 @@ CIRP.
  perceptual classification and recognition memory. \emph{Journal of
  Experimental Psychology: Human Perception and Performance, 17}, 3-27.
  
- Wills, A.J. & O'Connell (2016). Averaging
+ Wills, A.J. & O'Connell (n.d.). Averaging
  abstractions. \emph{Manuscript in preparation}.
  
 }

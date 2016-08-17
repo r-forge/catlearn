@@ -44,7 +44,7 @@ or 'E7', depending on the column).
 
 \details{
 
-This function implements the Wills & O'Connell (2016) ordinal adequacy
+This function implements the Wills & O'Connell (n.d.) ordinal adequacy
 tests for the \code{\link{nosof88}} CIRP. Specifically, a model passes
 this test if it passes all four component tests: 1. E2(2) > B(2), 2.
 E7(7) > B(7), 3. E2(4) > B(4), 4. E7(9) > B(9). These tests refer to
@@ -65,7 +65,7 @@ returns the summary model predictions reported by Wills & O'Connell
 }
 \references{
 
-   Wills, A.J. & O'Connell (2016). Averaging
+   Wills, A.J. & O'Connell (n.d.). Averaging
  abstractions. \emph{Manuscript in preparation}.
   
 }

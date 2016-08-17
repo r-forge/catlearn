@@ -44,8 +44,8 @@ types.
 \details{
 
   This function implements a standard ordinal adequacy test for the
-  \code{\link{nosof94}} CIRP. Specifically, a model passes this 
-  test if the mean errors (across blocks), obey the following:
+  \code{\link{nosof94}} CIRP. Specifically, a model passes this test if
+  the mean errors (averaged across blocks), obey the following:
 
   I < II < [III, IV, V] < VI
 

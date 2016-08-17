@@ -75,6 +75,9 @@ seed argument to set a different seed.
 This implementation assumes a block length of 64 trials for conditions
 E2 and E7, rather than the 63 trials reported by Nosofsky (1988).
 
+This routine was originally developed to support simulations reported in
+Wills & O'Connell (n.d.).
+
 }
 
 \author{
@@ -92,6 +95,10 @@ E2 and E7, rather than the 63 trials reported by Nosofsky (1988).
   Nosofsky, R.M. (1988). Similarity, frequency, and category
   representations, \emph{Journal of Experimental Psychology: Learning,
     Memory and Cognition, 14}, 54-65.
+
+  Wills, A.J. & O'Connell (n.d.). Averaging
+ abstractions. \emph{Manuscript in preparation}.
+
 
 } 
 

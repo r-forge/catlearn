@@ -64,7 +64,7 @@
  version of catlearn, this simulation may be replaced by a more standard
  verison.
  
- This simulation is reported in Wills & O'Connell (2016). 
+ This simulation is reported in Wills & O'Connell (n.d.). 
 
 }
 
@@ -80,7 +80,7 @@
   learning: A replication and extension of Shepaard, Hovland, and
   Jenkins (1961). \emph{Memory and Cognition, 22}, 352--369
   
-  Wills, A.J. & O'Connell (2016). Averaging
+  Wills, A.J. & O'Connell (n.d.). Averaging
   abstractions. \emph{Manuscript in preparation}.
    
 }

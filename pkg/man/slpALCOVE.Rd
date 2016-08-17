@@ -45,8 +45,10 @@ slpALCOVE(st, tr, dec = 'ER', humble = TRUE, attcon = FALSE, absval = -1,
 
 \details{
 
-The coverage in this help file is relatively brief; a more extensive
-tutorial on the can be found in Wills et al. (2016).
+  The coverage in this help file is relatively brief; Catlearn Research
+  Group (2016) provides an introduction to the mathematics of the ALCOVE
+  model, whilst a more extensive tutorial on using slpALCOVE can be
+  found in Wills et al. (2016).
 
 The functions works as a stateful list processor. Specifically, it takes
 a matrix as an argument, where each row is one trial for the network,
@@ -174,7 +176,10 @@ Andy Wills
 
 \references{
 
-Kruschke, J. (1991). \emph{ALCOVE.c}. Retrieved 2015-07-20,
+  Catlearn Research Group (2016). Description of ALCOVE.
+  \url{http://catlearn.r-forge.r-project.org/alcove-desc.pdf}
+
+  Kruschke, J. (1991). \emph{ALCOVE.c}. Retrieved 2015-07-20,
 \url{http://www.indiana.edu/~kruschke/articles/ALCOVE.c}
 
 Kruschke, J. (1992). ALCOVE: an exemplar-based connectionist model of
@@ -185,8 +190,10 @@ Nosofsky, R.M., Gluck, M.A., Plameri, T.J., McKinley, S.C. and
   learning: A replication and extension of Shepaard, Hovland, and
   Jenkins (1961). \emph{Memory and Cognition, 22}, 352-369.
 
-  Wills, A.J., O'Connell, G., Inkster, A.B. & Edmunds, C.E.R. (2016). 
-  Relative adequacy of formal models: Concepts, tools, and examples in
-  category learning. \emph{The Psychology of Learning and Motivation}.
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster, A.B.(2016).
+  Progress in modeling through distributed collaboration: Concepts,
+  tools, and category-learning examples.  \emph{The Psychology of
+  Learning and Motivation}.
 
 }
+
