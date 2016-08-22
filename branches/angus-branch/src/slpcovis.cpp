@@ -22,91 +22,61 @@ int factorial(int n)
   return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
+double poisvar(double mean){
+  // This function is to generate the random variable for Equ 6. in
+  // E&W2016. It is generated from a poisson distribution.
+  poisvar = R::rpois(1,mean);
+  return poisvar;
+}
+
 
 // First is the functions for the implementation of the explicit (rule-based) system
 
 // [[Rcpp::export]]
-int rchoose(NumericVector rules, int stimdim){
+double rchoose(NumericVector exprules, double stocon){
   // Explicit system
-
+  
   //This function is to choose a rule based on the probabilities of
   //those rules (probabilities come from EW2016, Eq.8)
-
-  // Note: You shouldn't need to define the number of stimulus dimenesion.
-  // Just read in the length of NV rules and go from there
-  // (with a loop or something similar). 
-
-
-double val = (double)rand() / RAND_MAX;
-int random;
-double sum_of_elems = sum(rules);
-rules = rules/sum_of_elems;
-if (stimdim == 1)
-{
-  random = 0;
-  return random;
-}
-if (stimdim == 2)
-{
-  if (val < rules[1])
-  {random = 0;}
-  else
-  {random = 1;}
-  return random;
-}
-if (stimdim == 3)
-{
-  if (val < rules[1])
-  {random = 0;}
-  else if (val < rules[1] + rules[2])
-  {random = 1;}
-  else
-  {random = 2;}
-  return random;
-}
-if (stimdim == 4)
-  {
-    if (val < rules[0])
-    {random = 0;}
-    else if (val < rules[0] + rules[1])
-    {random = 1;}
-    else if (val < rules[0] + rules[1] + rules[2])
-    {random = 2;}
-    else
-    {random = 3;}
-    return random;
+  newrules = (exprules^stocon)/sum(exprules)^stocon;
+  newrules = R::cumsum(newrules);
+  double val = (double)rand() / RAND_MAX;
+  for(i=0;i < R::length(newrules)){
+    if (newrules[i] > val) rsec = i
   }
-if (stimdim == 5)
-{
-  if (val < rules[1])
-  {random = 0;}
-  else if (val < rules[1] + rules[2])
-  {random = 1;}
-  else if (val < rules[1] + rules[2] + rules[3])
-  {random = 2;}
-  else if (val < rules[1] + rules[2] + rules[3] + rules[4])
-  {random = 3;}
-  else
-  {random = 4;}
-  return random;
+  return rsec
 }
-if (stimdim == 6)
-{
-  if (val < rules[1])
-  {random = 0;}
-  else if (val < rules[1] + rules[2])
-  {random = 1;}
-  else if (val < rules[1] + rules[2] + rules[3])
-  {random = 2;}
-  else if (val < rules[1] + rules[2] + rules[3] + rules[4])
-  {random = 3;}
-  else if (val < rules[1] + rules[2] + rules[3] + rules[4] + rules[5])
-  {random = 4;}
-  else
-  {random = 5;}
-  return random;
+
+
+
+// [[Rcpp::export]] 
+double prerule(double rulsal,double perscon){
+  // Explicit system
+  
+  // This is the first of the functions to transform the saliencies of the rules
+  // to weights, Equ 5. in E&W2016. Used for the rule used on the previous trial.
+  double rulweight = rulsal + perscon;
+  return rulweight;
 }
-return random;
+
+// [[Rcpp::export]]  
+double ranrule(double rulsal,double poisvar){
+  // Explicit system
+  
+  // This is the second of the functions to transform the saliences of the rules
+  // to weights, Equ 6. in E&W2016. Used  for another rule from the set chosen at random.
+  double rulweight = rulsal + poisvar
+  return rulweight;
+}
+
+// [[Rcpp::export]]  
+NumericVector resrule(NumericVector rulsal){
+  // Explicit system
+  
+  // This is the third of the functions to transform the saliencies of the rules
+  // to weights, Equ 7. in E&W2016. Used for the rest of the rules after the other two equations.
+  rulweight = rulsal;
+  return rulweight;
 }
 
 // [[Rcpp::export]]
@@ -122,7 +92,7 @@ NumericVector rules(int stimdim, double initsal, bool incl){
   { prules = stimdim + (4*(factorial(stimdim)/
                              (factorial(2)*(factorial(stimdim-2)))));  }
   else 
-  { prules = stimdim;  }
+  { prules = 2*stimdim;  }
   NumericVector exprules(prules,initsal);
   return exprules;
 }
@@ -153,18 +123,18 @@ NumericVector stimco(int stimdim, NumericMatrix ma ,int i){
 
 int expres(double disval, double nvar){
   // Checking: AW 2016-08-16
-
+  
   // Response rule for explicit system 
-
+  
   // This response rule exists in the explicit system to decide
   // whether to respond with A or B, referencing two categories as is
   // the norm.  Epsilon is a normally distributed variable
-
+  
   // Edmunds & Wills (2016, Equ. 2)
   // disval - discriminant value (h_v)
   // nvar - noise (sigma_v)
   // double epsilon = R::rnorm(0.0,nvar);
-
+  
   double epsilon = R::rnorm(0,nvar);
   int Response;
   if (disval < epsilon)
@@ -173,7 +143,7 @@ int expres(double disval, double nvar){
   {Response = 2;}
   return Response;
 }
-  
+
 // [[Rcpp::export]]
 // Function to calculate the discrimant value used in the Response rule.
 double disfunc(double stimval,double deccrit){
@@ -195,28 +165,16 @@ double updsal(double corcon, double errcon, double psal, int acc){
   }
   return tsal;
 } 
-  
-// [[Rcpp::export]]
-// Function to calculate the weights of the rule used on the current trial,
-// another rule from the list of possible rules at random, and all other
-// rules based on the current saliences of those rules.
-NumericVector weightcalc(double crule,double rrule,double perscon,
-                         double selecpar){
-  double crulew = crule + perscon;
-  double X = R::dpois(selecpar,0.0,0.0);
-  double rrulew = rrule + X;
-  NumericVector updweight = NumericVector::create(crulew,rrulew);
-  return updweight;
-}
+
 
 int acccheck(int resp, NumericVector tr){
   // Checking: AW 2016-08-16
-
+  
   // Explicit system
-
+  
   // Function to check accuracy of predicted response against actual
   // response
-
+  
   // Required to decide whether Equ. 3 or 4 is in force
   // Edmunds & Wills (2016)
   
@@ -224,14 +182,14 @@ int acccheck(int resp, NumericVector tr){
   acc = 0;
   if (resp == 1 & tr[0] == 1) acc = 1;
   if (resp == 2 & tr[1] == 1) acc = 1;
-
+  
   return acc;
 }
 
 // Next is the functions for implementation of the procedural (implicit) system
 
 // [[Rcpp::export]]
-// Function to calculate sensory unit activation on a trial
+// Function to calculate sensory unit activation on a trial Equ. 9 in E&W2016
 double scuact(double sconst,double prefco,double presco){
   double act;
   act = pow(M_E,-(pow(abs(prefco-presco),2)/sconst));
@@ -240,25 +198,34 @@ double scuact(double sconst,double prefco,double presco){
 
 // [[Rcpp::export]]
 // Function to calculate noise
-double noise(double mean,double var){
-  double noise = R::dnorm(0.0,mean,var,FALSE);
+double noise(double var){
+  double noise = R::rnorm(1,var);
   return noise;
 }
 
 // Function to generate a matrix containing initial synapse strength and cortical unit input
-// NumericMatrix stmat(int stims){
-//   NumericMatrix
-// }
+/NumericVector stmat(int stims){
+  NumericVector stmat (stims)
+  for(i=0;i < R::length(stmat)){
+    double U = R::rnorm(1)
+    stmat[i] = 0.001 + (0.0025 * U)
+  }
+ }
 
 // [[Rcpp::export]]
+// Implicit system
+
 // Function to calculate striatal unit activation, needs a 2x2 matrix as input with
 // a column for strength of the synapse between the cortical unit and the striatal
-// cell and a column for the input from the cortical unit
+// cell and a column for the input from the cortical unit. Equ. 10 in E&W2016
 
-double stract(NumericMatrix cells){
-  double e = noise(0,0);
+double stract(NumericMatrix cells, double ){
+  double e = noise(1,0);
+  
   
 }
+
+
 
 
 // Finally this is the complete function for the COVIS model 
