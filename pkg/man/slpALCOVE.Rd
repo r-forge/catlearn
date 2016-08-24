@@ -177,7 +177,7 @@ Andy Wills
 \references{
 
   Catlearn Research Group (2016). Description of ALCOVE.
-  \url{http://catlearn.r-forge.r-project.org/alcove-desc.pdf}
+  \url{http://catlearn.r-forge.r-project.org/desc-alcove.pdf}
 
   Kruschke, J. (1991). \emph{ALCOVE.c}. Retrieved 2015-07-20,
 \url{http://www.indiana.edu/~kruschke/articles/ALCOVE.c}

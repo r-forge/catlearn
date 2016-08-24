@@ -23,6 +23,8 @@ int factorial(int n)
 }
 
 double poisvar(double mean){
+  // Concpet checked: AW 2016-08-24
+  // Operation checked: AI 2016-08-24
   // This function is to generate the random variable for Equ 6. in
   // E&W2016. It is generated from a poisson distribution.
   poisvar = R::rpois(1,mean);
@@ -38,6 +40,9 @@ double rchoose(NumericVector exprules, double stocon){
   
   //This function is to choose a rule based on the probabilities of
   //those rules (probabilities come from EW2016, Eq.8)
+
+  // exprules - The rule weights
+  // stocon - parameter a
   newrules = (exprules^stocon)/sum(exprules)^stocon;
   newrules = R::cumsum(newrules);
   double val = (double)rand() / RAND_MAX;
@@ -79,17 +84,27 @@ NumericVector resrule(NumericVector rulsal){
   return rulweight;
 }
 
+
+// Explicit
+// Creates rule-set at initial salience
+
+// Notes: (1) Edmunds & Wills also have CJ of DJ
+// Notes: (2) Are CJ and DJ always in practice equivalent?
+// (they are for SHJ61).
+
+// AI checked: 2016-08-24, up to 6 dimensions.
+// AW checked: 2016-08-24, seems OK for single dimension rules
+// Not sure I understand how the number of others is determined.
+
+// stimdim - Number of stimulus dimensions
+// initsal - Initial salience
+// incl - FALSE: single dimension only, TRUE: SD, CJ, DJ.
+
 // [[Rcpp::export]]
-// Denote the number of all possible explicit rules
-// This function calculates the number of possible rules given the number
-// of stimulus dimensions. In reality this is unlikely to go as high as 6,
-// but it has been tested to work up til then. One of the parameters sets 
-// whether or not to include all of single dimension, conjunctive and 
-// disjunctive rules.
 NumericVector rules(int stimdim, double initsal, bool incl){
   int prules;
   if (incl == TRUE)
-  { prules = stimdim + (4*(factorial(stimdim)/
+  { prules = 2*stimdim + (4*(factorial(stimdim)/
                              (factorial(2)*(factorial(stimdim-2)))));  }
   else 
   { prules = 2*stimdim;  }
@@ -99,6 +114,11 @@ NumericVector rules(int stimdim, double initsal, bool incl){
 
 // Setup a vector for the coordinates of the stimuli based on the number of
 // stimulus dimensions
+
+// AW: Not sure you really need to do this, or at least not like this.
+// Just read input off correct row of input training matrix, using a loop,
+// stimdim gives you the length for that loop. 2016-08-24.
+
 // [[Rcpp::export]]
 NumericVector stimco(int stimdim, NumericMatrix ma ,int i){
   NumericVector initco;
