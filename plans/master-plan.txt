@@ -1,0 +1,25 @@
+* General expressions of interest 
+
+2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested in contributing.
+
+* Model implementations
+
+** Actor-critic
+
+2016-09-02, Ahmed Moustafa suggested an Actor-Critic model implementation.
+
+** COVIS
+
+2016-09-02,Angus Inkster currently working on a COVIS implementation.
+
+** Decision-bound / General Recognition Theory
+
+2016-09-02,Paul Minda interested in contributing GRT implementation.
+
+** Rescorla-Wagner
+
+2016-09-02,Ahmed Moustafa suggested a Rescorla-Wagner model implementation.
+
+** Temporal difference model
+
+2016-09-02,Ahmed Moustafa suggested a Temporal Difference model implementation.
