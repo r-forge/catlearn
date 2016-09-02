@@ -16,9 +16,17 @@
 
 2016-09-02,Paul Minda interested in contributing GRT implementation.
 
+** Rational model
+
+2016-09-02,Emmanuel Pothos suggested a Rational Model implementation.
+
 ** Rescorla-Wagner
 
 2016-09-02,Ahmed Moustafa suggested a Rescorla-Wagner model implementation.
+
+** SUSTAIN
+
+2016-09-02,Emmanuel Pothos suggested a SUSTAIN model implementation.
 
 ** Temporal difference model
 
