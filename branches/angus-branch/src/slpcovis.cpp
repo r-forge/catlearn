@@ -3,7 +3,7 @@
 // It is written in C++, using templates from the Rcpp package in R 
 #include <Rcpp.h>
 #include <iostream>
-#include <vector>
+//#include <vector>
 using namespace Rcpp;
 
 // There are three parts to implementing COVIS
@@ -22,6 +22,8 @@ double poisvar(double lambda){
   return poisvar;
 }
 
+// Epsilon from Equation 2 (random normal variate)
+// TICK - AW - 2016-09-09
 double epsilon(double nvar){
   double epsilon = R::rnorm(0,nvar);
   return epsilon;
@@ -31,6 +33,7 @@ double epsilon(double nvar){
 
 // Explicit
 // Creates rule-set at initial salience
+// TICKED! - AW 2016-09-09
 
 // Notes: (1) Edmunds & Wills also have CJ of DJ
 // Notes: (2) Are CJ and DJ always in practice equivalent?
@@ -86,15 +89,15 @@ NumericVector rules(int stimdim, double udsal, double cjsal, double djofcjsal, i
 
 // Function to calculate the discrimant value used in the Response rule.
 // Operation checked : AI 07/09/2016
+// TICK - AW - 2016-09-09
 double disfunc(double stimval,double deccrit){
   double disval = stimval - deccrit;
   return disval;
 }
 
 
-
 int expres(double disval, double epsilon){
-  // Checking: AW 2016-08-16
+  // TICK: AW 2016-08-16
   
   // Response rule for explicit system 
   
@@ -116,7 +119,7 @@ int expres(double disval, double epsilon){
 
 
 int acccheck(int resp, NumericVector tr){
-  // Checking: AW 2016-08-16
+  // TICK: AW 2016-08-16
   
   // Explicit system
   
@@ -139,7 +142,15 @@ int acccheck(int resp, NumericVector tr){
 // increments salience positively based on a constant if correct, and
 // negatively based on a different constant if incorrect.
 
+// TICK - AW - 2016-09-09
 // Operation checked: AI 07/09/2016
+
+// Equ. 3,4
+// corcon - delta C
+// errcon - delta E
+// psal - Z
+// acc = 1 if correct, 0 if incorrect
+
 double updsal(double corcon, double errcon, double psal, int acc){
   double tsal;
   if (acc == 1){
@@ -154,7 +165,7 @@ double updsal(double corcon, double errcon, double psal, int acc){
 
 double prerule(double rulsal,double perscon){
   // Explicit system
-  
+  // TICK - AW - 2016-09-09
   // This is the first of the functions to transform the saliencies of the rules
   // to weights, Equ 5. in E&W2016. Used for the rule used on the previous trial.
   
@@ -171,23 +182,11 @@ double ranrule(double rulsal,double lambda){
   // to weights, Equ 6. in E&W2016. Used  for another rule from the set chosen at random.
   
   // Operation Checked: AI 07/09/2016
+  // TICK - AW - 2016-09-09
   double pois = poisvar(lambda);
   double rulweight = rulsal + pois;
   return rulweight;
 }
-
- 
-double resrule(double rulsal){
-  // Explicit system
-  
-  // This is the third of the functions to transform the saliencies of the rules
-  // to weights, Equ 7. in E&W2016. Used for the rest of the rules after the other two equations.
-  
-  // Operation Checked: AI 07/09/2016
-    double rulweight = rulsal;
-  return rulweight;
-}
-
 
 int rchoose(NumericVector exprules, double stocon){
   // Explicit system
@@ -199,20 +198,24 @@ int rchoose(NumericVector exprules, double stocon){
   // stocon - parameter a
   
   // Operation Checked: AI 07/09/2016
+  // AW - OK, except this changes exprules back in R, 
+  // which might cause problems later. 
   int i,rsec;
+
+  // Calculate probabilities
   NumericVector storules = exprules;
   for(i=0;i < exprules.size(); i++) {
     storules[i] = pow(exprules[i],stocon);}
   for(i=0;i < exprules.size(); i++) {
-    exprules[i] = pow(exprules[i],stocon)/sum(storules);}
-  NumericVector newrules = exprules;
+    exprules[i] = storules[i]/sum(storules);}
+
+  // Select a rule
   NumericVector res(exprules.size());
   std::partial_sum(exprules.begin(), exprules.end(), res.begin());
   double val = (double)rand() / RAND_MAX;
   for(i=0;i < res.size();i++){
-    double test = res[i];
-    if (test > val) {rsec = i+1;break;}
-    else {rsec = 0;}
+    if (res[i] > val) {rsec = i;break;}
+    else {rsec = -1;}
   }
   
   return rsec;
@@ -227,19 +230,19 @@ int rchoose(NumericVector exprules, double stocon){
 // Function for running one trial through the COVIS system
 // [[Rcpp::export]]
 List covistrial(NumericVector x, NumericVector rules, List pars){
-int i, crule,rrule, resp;
-double cdim,hvx; 
+  int i, crule,rrule, resp;
+  double cdim,hvx; 
   double epsilon = as<double>(pars["eps"]);
   double corcon = as<double>(pars["cor"]);
   double perscon = as<double>(pars["pers"]);
   double errcon = as<double>(pars["err"]);
-  double poisvar = as<double>(pars["pois"]);
   double decsto = as<double>(pars["dec"]);
   double decbound = as<double>(pars["dbou"]);
   double lambda = as<double>(pars["lamb"]);
+
 // Generate a response from the Explicit system
 crule = rchoose(rules,decsto);
-cdim = x[crule];
+ cdim = x[crule]; // AW: Not quite..
 hvx = disfunc(cdim,decbound);
 resp = expres(hvx, epsilon);
 
@@ -251,7 +254,7 @@ resp = expres(hvx, epsilon);
 // Make a decision which system response to use based on the Decision Mechanism
 
 
-// Update Explicit system rules based on accuracy
+// Update Explicit system rules based on accuracy (of ES's response)
 rules[crule] = prerule(rules[crule],perscon);
 rrule = rchoose(rules,decsto);
 for(i=0;i < 100000; i++){
