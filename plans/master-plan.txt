@@ -4,6 +4,8 @@
 
 * Model implementations
 
+2016-09-09,Nolan Conaway is interested in contributing a model implementatoin.
+
 ** Actor-critic
 
 2016-09-02, Ahmed Moustafa suggested an Actor-Critic model implementation.
@@ -15,6 +17,10 @@
 ** Decision-bound / General Recognition Theory
 
 2016-09-02,Paul Minda interested in contributing GRT implementation.
+
+** DIVA
+
+2016-09-09,A friend of Nolan Conaway is currently working on a DIVA implementation.
 
 ** Rational model
 
@@ -31,3 +37,10 @@
 ** Temporal difference model
 
 2016-09-02,Ahmed Moustafa suggested a Temporal Difference model implementation.
+
+* CIRP
+
+** Inverse base-rate effect / highlighting
+
+2016-09-08,John Kruschke suggested an IBRE/highlighting CIRP.
+
