@@ -2,6 +2,13 @@
 
 2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested in contributing.
 
+* Developers joining
+
+2015-08-18,Andy Wills
+2016-01-15,Angus Inkster
+2016-08-17,catlearn appears on CRAN. 
+2016-09-10,John Paul Minda
+
 * Model implementations
 
 2016-09-09,Nolan Conaway is interested in contributing a model implementatoin.
