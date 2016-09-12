@@ -28,6 +28,7 @@
 ** DIVA
 
 2016-09-09,A friend of Nolan Conaway is currently working on a DIVA implementation.
+2016-09-12,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
 
 ** Rational model
 
