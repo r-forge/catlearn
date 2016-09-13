@@ -11,7 +11,6 @@
 
 * Model implementations
 
-2016-09-09,Nolan Conaway is interested in contributing a model implementatoin.
 
 ** Actor-critic
 
@@ -29,6 +28,11 @@
 
 2016-09-09,A friend of Nolan Conaway is currently working on a DIVA implementation.
 2016-09-12,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
+
+** GCM
+
+2016-09-09,Nolan Conaway is interested in contributing a model implementation.
+2016-09-12,Nolan Conaway would like to work on GCM if he has time.
 
 ** Rational model
 

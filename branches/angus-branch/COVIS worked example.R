@@ -15,7 +15,7 @@ require(Rcpp)
 source("R/shj61train.R")
 
 
-sourceCpp("src/test.cpp")
+#sourceCpp("src/test.cpp")
 
 
 
@@ -24,21 +24,19 @@ sourceCpp("src/test.cpp")
 sourceCpp("src/slpcovis.cpp")
 
 train <- shj61train(1,blocks = 16, absval = -1)
-rules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
-nextrules <- rules
-start.time <- Sys.time()  
+nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
+#start.time <- Sys.time()  
 
 #for(i in 1:length(train)){
-for(i in 1:5){
+for(i in 1:1){
 tr <- train[i,]
 z <- train[i,4:6]
-if(i==1)set <- 1
-else set <- 0
+if(i==1) {set <- 1} else {set <- 0}
 
 print("-----------------------")
 print(i)
 covout <- covistrial(z,tr,nextrules,colskip = 3,corcon = 0.0025,
-                     errcon = 0.02,perscon = 1, decsto = 10,
+                     errcon = 0.02,perscon = 1, decsto = 1,
                      decbound = 0.5,lambda = 5,nvar = 0,trl1=set)
 nextrules <- covout$newrules
 }
