@@ -210,24 +210,25 @@ int rchoose(NumericVector exprules, double stocon){
   // AW - OK, except this changes exprules back in R, 
   // which might cause problems later. 
   int i,rsec;
-
+  double sumsto;
+  NumericVector selrules,storules,res;
   // Calculate probabilities
-  NumericVector selrules = exprules;
-  NumericVector storules = exprules;
+  selrules = exprules;
+  storules = exprules;
   for(i=0;i < storules.size(); i++) {
     storules[i] = pow(storules[i],stocon);}
+  sumsto = sum(storules);
   for(i=0;i < storules.size(); i++) {
-    selrules[i] = storules[i]/sum(storules);}
-
+    selrules[i] = storules[i]/sumsto;}
+  
   // Select a rule
-  NumericVector res(selrules.size());
+  res = selrules;
   std::partial_sum(selrules.begin(), selrules.end(), res.begin());
   double val = (double)rand() / RAND_MAX;
   for(i=0;i < res.size();i++){
     if (res[i] > val) {rsec = i;break;}
     else {rsec = -1;}
   }
-  
   return rsec;
 }
 
@@ -239,69 +240,49 @@ int rchoose(NumericVector exprules, double stocon){
 
 // Function for running one trial through the COVIS system
 // [[Rcpp::export]]
-List covistrial(NumericVector x,NumericVector tr, NumericVector rules, int colskip,
+List covistrial(NumericVector tr, NumericVector nextrules, int colskip,int stimdim,
                 double corcon, double errcon, double perscon, double decsto, 
-                double decbound, double lambda, double nvar, int trl1){
-int i, j, crule,rrule, resp,cb,acc,nextrule;
-double cdim,hvx; 
-int stimdim = x.size();
-Rcout << "rules = " << rules;
-Rcout<<"\n";
+                double decbound, double lambda, double nvar, int crule){
+int i, j, cdim, rrule, resp,cb,acc,nextrule;
+double hvx; 
+NumericVector updrules;
 // Generate a response from the Explicit system
-if (trl1 == 1){crule = 0;}
-else {crule = rchoose(rules,decsto);}
-Rcout << "crule = " << crule;
-Rcout<<"\n";
+Rcout<< "crule = " << crule <<"\n";
 cdim = 0;
 cb = 2;
-for(i=0;i<x.size();i++){
+for(i=0;i<stimdim;i++){
   for(j=(cb*i);j<(cb*(j+1));j++){
-    if(j == crule){cdim = x[j];}
+    if(j == crule){cdim = tr[colskip+j];}
   }
 }
 hvx = disfunc(cdim,decbound);
-Rcout << "hvx = " << hvx;
-Rcout<<"\n";
+Rcout<< "hvx = " << hvx <<"\n";
 resp = expres(hvx,nvar,crule);
-Rcout<< "resp = " << resp;
-Rcout<<"\n";
+Rcout<< "resp = " << resp <<"\n";
 // Generate a repsonse from the Implicit system
 // Make a decision which system response to use based on the Decision Mechanism
 // Update Explicit system rules based on accuracy (of ES's response)
 acc = acccheck(resp,tr,colskip,stimdim);
-Rcout<< "acc = " << acc;
-Rcout<<"\n";
-NumericVector updrules = rules;
+Rcout<< "acc = " << acc <<"\n";
+updrules = nextrules;
+Rcout<< "updrules = " << updrules <<"\n";
 updrules[crule]  = updsal(corcon, errcon, updrules[crule], acc);
-Rcout<< "updrules = " << updrules;
-Rcout<<"\n";
+Rcout<< "updrules = " << updrules <<"\n";
 
 rrule = rand() % updrules.size();
-Rcout<< "rrule = " << rrule;
-Rcout<<"\n";
-Rcout<< "updrules = " << updrules;
-Rcout<<"\n";
+Rcout<< "rrule = " << rrule <<"\n";
 updrules[crule] = prerule(updrules[crule],perscon);
-Rcout<< "updrules = " << updrules;
-Rcout<<"\n";
-
+Rcout<< "updrules = " << updrules <<"\n";
 updrules[rrule] = ranrule(updrules[rrule],lambda);
-Rcout<< "updrules = " << updrules;
-Rcout<<"\n";
+Rcout<< "updrules = " << updrules <<"\n";
 
-NumericVector newrules = updrules;
-Rcout<< "newrules = " << newrules;
-Rcout<<"\n";
+nextrule = rchoose(Rcpp::clone(updrules),decsto);
+Rcout<< "updrules = " << updrules <<"\n";
 
-nextrule = rchoose(updrules,decsto);
-Rcout<< "updrules = " << updrules;
-Rcout<<"\n";
-Rcout<< "newrules = " << newrules;
-Rcout<<"\n";
 // Update Implicit system based on accuracy
 
-return Rcpp::List::create(Rcpp::Named("nextr") = nextrule+1,
-                          Rcpp::Named("newrules") = newrules);
+return Rcpp::List::create(Rcpp::Named("nextr") = nextrule,
+                          Rcpp::Named("newrules") = updrules);
 }
 
 
