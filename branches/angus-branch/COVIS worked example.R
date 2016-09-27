@@ -12,12 +12,12 @@ rm(list=ls())
 
 require(Rcpp)
 
-source("R/shj61train.R")
-
+#source("R/shj61train.R")
+smat <- train[1:8,4:6]
+dmat <- c(0,0,0)
 
 sourceCpp("src/test.cpp")
-nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
-rchoose(nextrules,1)
+
 
 
 
