@@ -236,20 +236,31 @@ int rchoose(NumericVector exprules, double stocon){
 
 // First are the activation equations
 
-// [[Rcpp::export]]
-// Function to calculate sensory unit activation on a trial Equ. 9 in E&W2016
+// Utility Function to calculate sensory unit activation on a trial 
+// Part of Equ. 9 in E&W2016
+// sconst: alpha
+// diff: distance
 // Checked: AI 19/09/2016
+// Checked: AW 28/09/2016
+
+// [[Rcpp::export]]
 double scuact(double sconst,double diff){
   double act,super,e;
   super = -(pow(diff,2)/sconst);
-  e = exp(1);
+  e = 2.718282;
   act = pow(e,super);
   return act;
 }
 
-// [[Rcpp::export]]
+
 // Function to generate a matrix containing initial synapse strength 
+// stims - Number of sensory cortex units
+// cats - Number of striatal units
+// NOTE: This is not part of the slpCOVIS thing. 
 // Checked: AI 27/09/2016
+// Checked: AW 28/09/2016
+
+// [[Rcpp::export]]
 NumericMatrix symat(int stims,int cats){
   int i,j;
   double U;
@@ -263,12 +274,21 @@ NumericMatrix symat(int stims,int cats){
   return symat;
 }
 
-// [[Rcpp::export]]
 // Function to get striatal cortical unit values from 
 // training matrix or from randomly sampled triplets
 // Contains options for either giving the units exact
 // stimulus values or sampling randomly
+
+// stims: Number of sensory cortex units 
+// dims: Dimensionality of stimulus space
+
+// ... NOTE: This is basically specific experiment generation
+// Move outside slpCOVIS.
+
 // Checked: AI 27/09/2016
+// Not really checked that much : AW 28/09/2016
+
+// [[Rcpp::export]]
 NumericMatrix scumat(int stims, int dims, int colskip, int complex, NumericMatrix tr){
   int i,j;
   NumericVector vals(dims);
@@ -289,11 +309,18 @@ NumericMatrix scumat(int stims, int dims, int colskip, int complex, NumericMatri
   return valmat;
 }
 
-// [[Rcpp::export]]
-// Function to calculate the difference between the presented
-// stimulus and each of the scu values, as well as calculating
-// the activation for each cortical unit using the scuact function.
+
+// Function to calculate the activation of sensory cortex units.
+// Equ.9
+
+// scumat: Co-ordinates of the sensory cortex units in psychological space.
+// cstim: Co-ordinates of the presented stimulus.
+// sconst: alpha (Equ.9)
+
 // Checked: AI 27/09/2016
+// Checked: AW 28/09/2016
+
+// [[Rcpp::export]]
 NumericVector distcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
   int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
   NumericVector dists(nrow);
@@ -311,11 +338,24 @@ NumericVector distcalc(NumericMatrix scumat, NumericVector cstim, double sconst)
   return dists;
 }
 
-// [[Rcpp::export]]
+
 // Function to calculate the activation of striatal units,
 // Equ 10 in E&W2016. Also generates a response based on the
 // summed activation.
+// wkj: sensory-striatal link strengths
+// ik: Activation of sensory cortical units
+// noisecon: Normally distributed noise (variance constant)
+
+// NOTE: Does activation calcs but does not return them, returns 
+// decision. This may not be the right thing to do, as activations
+// probably needed for learning rule.
+// Split into activation and decision components. 
+
+// Also, don't need intermediate matrix cortact, just sum.
+
 // Checked: AI 27/09/2016
+
+// [[Rcpp::export]]
 int stract(NumericMatrix wkj,NumericVector ik,double noisecon){
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
   double act,noise,largeact;
@@ -345,9 +385,17 @@ int stract(NumericMatrix wkj,NumericVector ik,double noisecon){
 // First are the equations necessary to specify the dopamine
 // released on each trial
 
-// [[Rcpp::export]]
+
 // Function to calculate obtained reward.
+// Part of Eq. 13
+// How is no feedback represented in the input training array?
+// Normally, it'd be something like [0,0] where normal
+// feedback trials are [1,-1] and [-1,1]
+
 // Checked: AI 27/09/2016
+// Not checked AW, too simple. 
+
+// [[Rcpp::export]]
 double obtrew(int acc){
   double rew;
   if (acc == 1){rew = 1;}
@@ -356,9 +404,13 @@ double obtrew(int acc){
   return rew;
 }
 
-// [[Rcpp::export]]
+
 // Function to calculate predicted reward.
+// Eq. 14
+
 // Checked: AI 27/09/2016
+
+// [[Rcpp::export]]
 double prerew(double prep,double prer){
   double rew,add;
   add = 0.025*(prer-prep);
