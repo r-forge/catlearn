@@ -23,6 +23,20 @@ sourceCpp("src/test.cpp")
 
 
 sourceCpp("src/slpcovis.cpp")
+sourceCpp("src/wa2001train.cpp")
+
+tr <- train[1,]
+nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
+smat <- symat(8,2)
+sval <- scumat(8,3,3,0,train)
+
+covout <- covistrial(tr,nextrules=nextrules,colskip = 3,stimdim = 3,1,corcon = 0.0025,
+                     errcon = 0.02,perscon = 1, decsto = 1,decbound = 0.5,lambda = 5,
+                     nvar = 0,crule = crule,smat,sval,0.5,0.5,0.65,0.19,0.02,0.0022,1,0.01,
+                     0.2,0.99,0.01,0.01,0.04)
+
+
+
 
 source("R/shj61train.R")
 

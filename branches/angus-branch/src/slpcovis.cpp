@@ -424,16 +424,17 @@ double nsystr(double systr,double act,double alpha,double beta,
 // Function for running one trial through the COVIS system
 // [[Rcpp::export]]
 List covistrial(NumericVector tr,NumericVector nextrules,int colskip,int stimdim,
-                double corcon,double errcon,double perscon,double decsto, 
-                double decbound,double lambda,double nvar,int crule,int feedback){
-                //NumericMatrix initsy,NumericMatrix scuval,double prep,double prer,
-                //double alpha,double beta,double gamma,double nmda,double wmax,
-                //double ampa, double dbase)
-int i,j,cdim=0,rrule,expresp,impresp,cb,expacc,impacc,nextrule;
-// int nrow = initsy.nrow(), ncol = initsy.ncol();
-double hvx;//orew,prew,dn; 
-NumericVector updrules;//,dists;
-// NumericMatrix updsy;
+                int feedback, double corcon,double errcon,double perscon,double decsto, 
+                double decbound,double lambda,double nvar,int crule,
+                NumericMatrix initsy,NumericMatrix scuval,double prep,double prer,
+                double alpha,double beta,double gamma,double nmda,double wmax,
+                double ampa, double dbase,double etrust, double itrust,double ocp,double oep){
+int i,j,cdim=0,rrule,expresp,impresp,cb,expacc,impacc,nextrule,sresp;
+int nrow = initsy.nrow(), ncol = initsy.ncol();
+double hvx,orew,prew,dn,econf,iconf; 
+std::string sused;
+NumericVector updrules,dists,sumact;
+NumericMatrix updsy;
 // Generate a response from the Explicit system
 cb = 2;
 for(i=0;i<stimdim;i++){
@@ -442,17 +443,21 @@ for(i=0;i<stimdim;i++){
   }
 }
 hvx = disfunc(cdim,decbound);
-Rcout<< "hvx = " << hvx <<"\n";
 expresp = expres(hvx,nvar,crule);
-Rcout<< "expresp = " << expresp <<"\n";
 // Generate a repsonse from the Implicit system
-// dists = distcalc(scuval,cdim,nvar);
-// impresp =stract(initsy,dists,nvar);
+dists = distcalc(scuval,cdim,nvar);
+sumact = stract(initsy,dists,nvar);
+impresp = decact(sumact);
 // Make a decision which system response to use based on the Decision Mechanism
+econf = abs(hvx); 
+iconf = abs(sumact(0)-sumact(1));
+if((econf*etrust) > (iconf*itrust))
+  {sresp = expresp;
+   sused = expresp;}
+else {sresp = impresp;
+      sused = impresp;}
 // Update Explicit system rules based on accuracy (of ES's response)
 expacc = acccheck(expresp,tr,colskip,stimdim,feedback);
-Rcout<< "tr[colskip+stimdim] = " << tr[colskip+stimdim] <<"\n";
-Rcout<< "expacc = " << expacc <<"\n";
 updrules = nextrules;
 updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
 if (expacc == 1){nextrule = crule;}
@@ -460,25 +465,28 @@ else{rrule = rand() % updrules.size();
      updrules[crule] = prerule(updrules[crule],perscon);
      updrules[rrule] = ranrule(updrules[rrule],lambda);
      nextrule = rchoose(Rcpp::clone(updrules),decsto);}
-Rcout<< "nextrule = " << nextrule <<"\n";
-
+if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
+else {etrust = etrust - (oep*etrust);}
 // Update Implicit system based on accuracy
-// impacc = acccheck(impresp,tr,colskip,stimdim);
-// orew = obtrew(impacc);
-// prew = prerew(prep,prer);
-// dn = doprel(orew,prew);
-// updsy = initsy;
-// for(i=0;i<nrow;i++){
-//   for(j=0;j<ncol;j++){
-//     updsy(i,j) = nsystr(updsy(i,j),dists(i),alpha,beta,gamma,
-//            sum(updsy(_,j)),nmda,dn,dbase,wmax,ampa);
-//   }
-// }
-//
-return Rcpp::List::create(Rcpp::Named("nextr") = nextrule,
-                          Rcpp::Named("newrules") = updrules
-                          //Rcpp::Named("updsy") = updrules//
-                          );
+impacc = acccheck(impresp,tr,colskip,stimdim,feedback);
+orew = obtrew(impacc);
+prew = prerew(prep,prer);
+dn = doprel(orew,prew);
+updsy = initsy;
+for(i=0;i<nrow;i++){
+  for(j=0;j<ncol;j++){
+    updsy(i,j) = nsystr(updsy(i,j),dists(i),alpha,beta,gamma,
+           sum(updsy(_,j)),nmda,dn,dbase,wmax,ampa);
+  }
+}
+itrust = 1 - etrust;
+return Rcpp::List::create(Rcpp::Named("sresp") = sresp,
+                          Rcpp::Named("sused") = sused,
+                          Rcpp::Named("etrust") = etrust,
+                          Rcpp::Named("itrust") = itrust,
+                          Rcpp::Named("nextr") = nextrule,
+                          Rcpp::Named("newrules") = updrules,
+                          Rcpp::Named("updsy") = updrules);
 }
 
 
