@@ -351,9 +351,13 @@ double obtrew(int acc){
 
 
 // Function to calculate predicted reward.
-// Eq. 14
+// Eq. 14 Edmunds-Wills(2016)
+
+// prep: previous P
+// prer: previous R
 
 // Checked: AI 27/09/2016
+// Check AW 03-10-2016
 
 // [[Rcpp::export]]
 double prerew(double prep,double prer){
@@ -363,9 +367,17 @@ double prerew(double prep,double prer){
   return rew;
 }
 
-// [[Rcpp::export]]
+
 // Function to calculate dopamine release.
+// Ashby et al. (2011), equ. 13
+
+// obtrew - obtained reward (1 = correct, 0 = absence of feedabck, -1
+// = incorrect)
+
 // Checked: AI 27/09/2016
+// Checked: AW 03-10-2016
+
+// [[Rcpp::export]]
 double doprel(double obtrew, double prerew){
   double rpe,dn;
   rpe = obtrew - prerew;
@@ -375,51 +387,62 @@ double doprel(double obtrew, double prerew){
   return dn;
 }
 
-// [[Rcpp::export]]
+
 // Next is the large equation for adjusting synapse strength
-// Function to calculate equation 12 of E&W2016
+// Function to calculate equation 10 of Ashby et al. (2011)
+
 // Checked: AI 27/09/2016
-double nsystr(double systr,double act,double alpha,double beta,
-              double gamma,double sum,double nmda,double dn,
-              double dbase,double wmax,double ampa){
+// Lightly checked: AW 03-10-2016
+
+// nsystr - New SYnapse STRength
+
+// Calculated values:
+// systr - SYnapse STRength
+// act - sensory cortex activation
+// sum - striatal unit activation
+// dn - Dopamine released
+
+// Free parameters:
+// alpha - alpha-w learning rate parameter of COVIS
+// beta - beta-w learning rate parameter of COVIS
+// gamma - gamma-w learning rate parameter of COVIS
+// nmda - theta nmda par.
+// dbase - baseline dopamine
+// wmax - Maximum link strength
+// ampa - theta ampa par.
+
+// [[Rcpp::export]]
+double nsystr(double systr,double act,double sum,double dn,double alpha,double beta,
+              double gamma,double nmda,double dbase,double wmax,double ampa){
   double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out,out1,out2,out3;
+  // section 1 : increases in strength
   a1 = act * alpha;
   b1 = sum - nmda;
   if (b1 < 0){b1 = 0;}
-  else {b1 = b1;}
   c1 = dn -dbase;
   if (c1 < 0){c1 = 0;}
-  else {c1 = c1;}
   d1 = wmax - systr;
   if (d1 < 0){d1 = 0;}
-  else {d1 = d1;}
   out1 = a1*b1*c1*d1;
+  // section 2 : decreases in strength
   a2 = beta * act;
   b2 = sum - nmda;
   if (b2 < 0){b2 = 0;}
-  else {b2 = b2;}
   c2 = dbase - dn;
   if (c2 < 0){c2 = 0;}
-  else {c2 = c2;}
   d2 = systr;
   out2 = a2*b2*c2*d2;
+  // section 3: more decreases in strength
   a3 = gamma * act;
   b3 = nmda - sum;
   if (b3 < 0){b3 = 0;}
-  else {b3 = b3;}
   c3 = b3 - ampa;
   if (c3 < 0){c3 = 0;}
-  else {c3 = c3;}
   d3 = systr;
   out3 = a3*c3*d3;
   out = systr + out1 - out2 - out3;
   return out;
 }
-
-
-
-
-
 
 // Function for running one trial through the COVIS system
 // [[Rcpp::export]]
