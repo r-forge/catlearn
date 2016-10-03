@@ -12,7 +12,6 @@ rm(list=ls())
 
 require(Rcpp)
 
-#source("R/shj61train.R")
 smat <- train[1:8,4:6]
 dmat <- c(0,0,0)
 
@@ -25,9 +24,11 @@ sourceCpp("src/test.cpp")
 
 sourceCpp("src/slpcovis.cpp")
 
+source("R/shj61train.R")
+
 train <- shj61train(1,blocks = 16, absval = -1)
 nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
-crule <- 0
+crule <- 5
 start.time <- Sys.time()  
 
 for(i in 1:nrow(train)){
@@ -37,7 +38,8 @@ print("-----------------------")
 print(i)
 covout <- covistrial(tr,nextrules=nextrules,colskip = 3,stimdim =3,corcon = 0.0025,
                      errcon = 0.02,perscon = 1, decsto = 1,
-                     decbound = 0.5,lambda = 5,nvar = 0,crule = crule)
+                     decbound = 0.5,lambda = 5,nvar = 0,crule = crule, feedback = 1)
+print(covout)
 nextrules <- covout$newrules
 crule <- covout$nextr
 }
@@ -47,4 +49,3 @@ nextrules
 
 end.time <- Sys.time() 
 end.time - start.time
-

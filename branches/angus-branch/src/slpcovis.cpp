@@ -127,7 +127,7 @@ int expres(double disval, double nvar,int crule){
 }
 
 
-int acccheck(int resp, NumericVector tr,int colskip, int stimdim){
+int acccheck(int resp, NumericVector tr,int colskip, int stimdim, int feedback){
   // TICK: AW 2016-08-16
   
   // Explicit system
@@ -140,9 +140,10 @@ int acccheck(int resp, NumericVector tr,int colskip, int stimdim){
   
   int acc;
   acc = 0;
-  if ((resp == 1) & (tr[colskip+stimdim] == 1)) acc = 1;
-  if ((resp == 2) & (tr[colskip+stimdim] == -1)) acc = 1;
-  
+  if (feedback == 1){
+    if ((resp == 1) & (tr[colskip+stimdim] == 1)) acc = 1;
+    if ((resp == 2) & (tr[colskip+stimdim] == -1)) acc = 1;}
+  else {acc = -1;}
   return acc;
 }
 
@@ -253,63 +254,6 @@ double scuact(double sconst,double diff){
 }
 
 
-// Function to generate a matrix containing initial synapse strength 
-// stims - Number of sensory cortex units
-// cats - Number of striatal units
-// NOTE: This is not part of the slpCOVIS thing. 
-// Checked: AI 27/09/2016
-// Checked: AW 28/09/2016
-
-// [[Rcpp::export]]
-NumericMatrix symat(int stims,int cats){
-  int i,j;
-  double U;
-  NumericMatrix symat(stims,cats);
-  for(i=0;i < cats;i++){
-    for(j=0;j < stims;j++){
-      U = (double)rand() / RAND_MAX;
-      symat(j,i) = 0.001 + (0.0025 * U);
-    }
-  }
-  return symat;
-}
-
-// Function to get striatal cortical unit values from 
-// training matrix or from randomly sampled triplets
-// Contains options for either giving the units exact
-// stimulus values or sampling randomly
-
-// stims: Number of sensory cortex units 
-// dims: Dimensionality of stimulus space
-
-// ... NOTE: This is basically specific experiment generation
-// Move outside slpCOVIS.
-
-// Checked: AI 27/09/2016
-// Not really checked that much : AW 28/09/2016
-
-// [[Rcpp::export]]
-NumericMatrix scumat(int stims, int dims, int colskip, int complex, NumericMatrix tr){
-  int i,j;
-  NumericVector vals(dims);
-  NumericMatrix valmat(stims,dims);
-  if (complex == 0)
-  {
-    valmat = tr(Range(0,(stims-1)),Range(colskip,(colskip+dims)));
-  }
-  else
-  {
-    for(i=0;i < dims;i++){
-      for(j=0;j < stims;j++){
-        double X = (double)rand() / RAND_MAX;
-        valmat(j,i) = X;
-      }
-    }
-  }
-  return valmat;
-}
-
-
 // Function to calculate the activation of sensory cortex units.
 // Equ.9
 
@@ -356,29 +300,30 @@ NumericVector distcalc(NumericMatrix scumat, NumericVector cstim, double sconst)
 // Checked: AI 27/09/2016
 
 // [[Rcpp::export]]
-int stract(NumericMatrix wkj,NumericVector ik,double noisecon){
+NumericVector stract(NumericMatrix wkj,NumericVector ik,double noisecon){
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
   double act,noise,largeact;
   NumericVector sumact(ncol);
-  NumericMatrix cortact(nrow,ncol);  
-  for(i=0;i < ncol;i++){
-    for(j=0;j < nrow;j++){
-      cortact(j,i) =(wkj(j,i) * ik(j));
-    }
-  }
   for(i=0;i < ncol;i++){
     noise = epsilon(noisecon);
-    sumact(i) = sum(cortact(_,i)) + noise;
-  }
-  largeact = max(sumact);
-  for(i=0;i < ncol;i++){
-    if (sumact(i) == largeact){
-      act = i + 1;
+    for(j=0;j < nrow;j++){
+      sumact(i) = sumact(i) + (wkj(j,i) * ik(j));
     }
+    sumact(i) = sumact(i) + noise;
   }
-  return act;
+  return sumact;
 }
 
+// Function for decision based on summed activations
+int decact(NumericVector sumact){
+int i,act,ncol = sumact.size();
+double largeact;
+largeact = max(sumact);
+for(i=0;i < ncol;i++){
+  if (sumact(i) == largeact){act = i + 1;}
+  }
+return act;
+}
 
 // Next are the learning equations
 
@@ -480,56 +425,60 @@ double nsystr(double systr,double act,double alpha,double beta,
 // [[Rcpp::export]]
 List covistrial(NumericVector tr,NumericVector nextrules,int colskip,int stimdim,
                 double corcon,double errcon,double perscon,double decsto, 
-                double decbound,double lambda,double nvar,int crule,
-                NumericMatrix initsy,NumericMatrix scuval,double prep,double prer,
-                double alpha,double beta,double gamma,double nmda,double wmax,
-                double ampa, double dbase){
-int i,j,cdim,rrule,expresp,impresp,cb,expacc,impacc,nextrule;
-int nrow = initsy.nrow(), ncol = initsy.ncol();
-double hvx,orew,prew,dn; 
-NumericVector updrules,dists;
-NumericMatrix updsy;
+                double decbound,double lambda,double nvar,int crule,int feedback){
+                //NumericMatrix initsy,NumericMatrix scuval,double prep,double prer,
+                //double alpha,double beta,double gamma,double nmda,double wmax,
+                //double ampa, double dbase)
+int i,j,cdim=0,rrule,expresp,impresp,cb,expacc,impacc,nextrule;
+// int nrow = initsy.nrow(), ncol = initsy.ncol();
+double hvx;//orew,prew,dn; 
+NumericVector updrules;//,dists;
+// NumericMatrix updsy;
 // Generate a response from the Explicit system
-cdim = 0;
 cb = 2;
 for(i=0;i<stimdim;i++){
   for(j=(cb*i);j<(cb*(j+1));j++){
-    if(j == crule){cdim = tr[colskip+j];}
+    if(j == crule){cdim = tr[colskip+i];}
   }
 }
 hvx = disfunc(cdim,decbound);
+Rcout<< "hvx = " << hvx <<"\n";
 expresp = expres(hvx,nvar,crule);
+Rcout<< "expresp = " << expresp <<"\n";
 // Generate a repsonse from the Implicit system
-dists <- distcalc(scuval,cdim,nvar);
-impresp <- stract(initsy,dists,nvar);
+// dists = distcalc(scuval,cdim,nvar);
+// impresp =stract(initsy,dists,nvar);
 // Make a decision which system response to use based on the Decision Mechanism
 // Update Explicit system rules based on accuracy (of ES's response)
-expacc = acccheck(expresp,tr,colskip,stimdim);
+expacc = acccheck(expresp,tr,colskip,stimdim,feedback);
+Rcout<< "tr[colskip+stimdim] = " << tr[colskip+stimdim] <<"\n";
+Rcout<< "expacc = " << expacc <<"\n";
 updrules = nextrules;
 updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
-
-rrule = rand() % updrules.size();
-updrules[crule] = prerule(updrules[crule],perscon);
-updrules[rrule] = ranrule(updrules[rrule],lambda);
-
-nextrule = rchoose(Rcpp::clone(updrules),decsto);
+if (expacc == 1){nextrule = crule;}
+else{rrule = rand() % updrules.size();
+     updrules[crule] = prerule(updrules[crule],perscon);
+     updrules[rrule] = ranrule(updrules[rrule],lambda);
+     nextrule = rchoose(Rcpp::clone(updrules),decsto);}
+Rcout<< "nextrule = " << nextrule <<"\n";
 
 // Update Implicit system based on accuracy
-impacc <- acccheck(impresp,tr,colskip,stimdim);
-orew <- obtrew(impacc);
-prew <- prerew(prep,prer);
-dn <- doprel(orew,prew);
-updsy = initsy;
-for(i=0;i<nrow;i++){
-  for(j=0;j<ncol;j++){
-    updsy(i,j) = nsystr(updsy(i,j),dists(i),alpha,beta,gamma,
-           sum(updsy(_,j)),nmda,dn,dbase,wmax,ampa);
-  }
-}
+// impacc = acccheck(impresp,tr,colskip,stimdim);
+// orew = obtrew(impacc);
+// prew = prerew(prep,prer);
+// dn = doprel(orew,prew);
+// updsy = initsy;
+// for(i=0;i<nrow;i++){
+//   for(j=0;j<ncol;j++){
+//     updsy(i,j) = nsystr(updsy(i,j),dists(i),alpha,beta,gamma,
+//            sum(updsy(_,j)),nmda,dn,dbase,wmax,ampa);
+//   }
+// }
 //
 return Rcpp::List::create(Rcpp::Named("nextr") = nextrule,
-                          Rcpp::Named("newrules") = updrules,
-                          Rcpp::Named("updsy") = updrules);
+                          Rcpp::Named("newrules") = updrules
+                          //Rcpp::Named("updsy") = updrules//
+                          );
 }
 
 
