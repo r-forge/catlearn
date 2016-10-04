@@ -6,14 +6,33 @@
 //#include <vector>
 using namespace Rcpp;
 
-expacc = acccheck(expresp,tr,colskip,stimdim);
-updrules = nextrules;
-updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
+// [[Rcpp::export]]
+double scuact(double sconst,double diff){
+  double act,super,e;
+  super = -(pow(diff,2)/sconst);
+  e = 2.718282;
+  act = pow(e,super);
+  return act;
+}
 
-rrule = rand() % updrules.size();
-updrules[crule] = prerule(updrules[crule],perscon);
-updrules[rrule] = ranrule(updrules[rrule],lambda);
-
-nextrule = rchoose(Rcpp::clone(updrules),decsto);
+// [[Rcpp::export]]
+NumericVector distcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
+  int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
+  NumericVector dists(nrow);
+  Rcout << "--------0------- " << "\n";
+  for(i=0;i < nrow;i++){
+    NumericVector diffs(ncol);
+    for(j=0;j < ncol;j++){
+      diffs(j) = (scumat(i,j) - cstim(j));
+      diffs(j) = pow(diffs(j),2);
+    }
+    dists(i) = sqrt(sum(diffs));
+  }
+  Rcout << "---------1------ " << "\n";
+  for(i=0;i < nrow;i++){
+    dists(i) = scuact(sconst,dists(i));
+  }
+  return dists;
+}
 
 

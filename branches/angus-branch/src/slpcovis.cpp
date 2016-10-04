@@ -302,7 +302,7 @@ NumericVector distcalc(NumericMatrix scumat, NumericVector cstim, double sconst)
 // [[Rcpp::export]]
 NumericVector stract(NumericMatrix wkj,NumericVector ik,double noisecon){
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
-  double act,noise,largeact;
+  double noise;
   NumericVector sumact(ncol);
   for(i=0;i < ncol;i++){
     noise = epsilon(noisecon);
@@ -316,7 +316,7 @@ NumericVector stract(NumericMatrix wkj,NumericVector ik,double noisecon){
 
 // Function for decision based on summed activations
 int decact(NumericVector sumact){
-int i,act,ncol = sumact.size();
+int i,act=0,ncol = sumact.size();
 double largeact;
 largeact = max(sumact);
 for(i=0;i < ncol;i++){
@@ -360,9 +360,9 @@ double obtrew(int acc){
 // Check AW 03-10-2016
 
 // [[Rcpp::export]]
-double prerew(double prep,double prer){
+double prerew(double prep,double prer,double precon){
   double rew,add;
-  add = 0.025*(prer-prep);
+  add = precon*(prer-prep);
   rew = prep + add;
   return rew;
 }
@@ -413,7 +413,7 @@ double doprel(double obtrew, double prerew){
 
 // [[Rcpp::export]]
 double nsystr(double systr,double act,double sum,double dn,double alpha,double beta,
-              double gamma,double nmda,double dbase,double wmax,double ampa){
+              double gamma,double nmda,double ampa,double dbase,double wmax){
   double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out,out1,out2,out3;
   // section 1 : increases in strength
   a1 = act * alpha;
@@ -446,70 +446,109 @@ double nsystr(double systr,double act,double sum,double dn,double alpha,double b
 
 // Function for running one trial through the COVIS system
 // [[Rcpp::export]]
-List covistrial(NumericVector tr,NumericVector nextrules,int colskip,int stimdim,
-                int feedback, double corcon,double errcon,double perscon,double decsto, 
-                double decbound,double lambda,double nvar,int crule,
-                NumericMatrix initsy,NumericMatrix scuval,double prep,double prer,
-                double alpha,double beta,double gamma,double nmda,double wmax,
-                double ampa, double dbase,double etrust, double itrust,double ocp,double oep){
-int i,j,cdim=0,rrule,expresp,impresp,cb,expacc,impacc,nextrule,sresp;
-int nrow = initsy.nrow(), ncol = initsy.ncol();
-double hvx,orew,prew,dn,econf,iconf; 
-std::string sused;
-NumericVector updrules,dists,sumact;
-NumericMatrix updsy;
-// Generate a response from the Explicit system
-cb = 2;
-for(i=0;i<stimdim;i++){
-  for(j=(cb*i);j<(cb*(j+1));j++){
-    if(j == crule){cdim = tr[colskip+i];}
+NumericMatrix slpCOVIS(NumericMatrix train,NumericVector nextrules,NumericMatrix initsy,
+                NumericMatrix scuval,List exppar,List imppar,List comppar,List extpar){
+// This clumsy section copies stuff out of an R List
+// There seems to be no way in RCpp to get direct access to a 
+// List at input?
+double corcon = as<double>(exppar[0]);
+double errcon = as<double>(exppar[1]);
+double perscon = as<double>(exppar[2]);
+double decsto = as<double>(exppar[3]);
+double decbound = as<double>(exppar[4]);
+double lambda = as<double>(exppar[5]);
+double envar = as<double>(exppar[6]);
+
+double dbase = as<double>(imppar[0]);
+double alphaw = as<double>(imppar[1]);
+double betaw = as<double>(imppar[2]);
+double gammaw = as<double>(imppar[3]);
+double nmda = as<double>(imppar[4]);
+double ampa = as<double>(imppar[5]);
+double wmax = as<double>(imppar[6]);
+double invar = as<double>(imppar[7]);
+double sconst = as<double>(imppar[8]);
+double prep = as<double>(imppar[9]);
+double prer = as<double>(imppar[10]);
+
+double etrust = as<double>(comppar[0]);
+double itrust = as<double>(comppar[1]);
+double ocp = as<double>(comppar[2]);
+double oep = as<double>(comppar[3]);
+
+int cb = as<int>(extpar[0]);
+int colskip = as<int>(extpar[1]);
+int stimdim = as<int>(extpar[2]);
+int feedback = as<int>(extpar[3]);
+int crule = as<int>(extpar[4]);
+// End of particularly clumsy section
+int i,j,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
+int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
+double hvx,orew,prew,econf,iconf; 
+NumericVector updrules = nextrules,dists,sumact,cstim;
+NumericMatrix updsy = initsy;
+// Setup output matrix
+NumericMatrix outmat(length,4);
+
+for(i=0;i<length;i++){
+  // Initial setup for current trial
+  NumericVector tr = train(i,_);
+  cstim = tr[Range(colskip,(colskip+stimdim))];
+  double dn = doprel(prer,prep);
+  // Generate a response from the Explicit system
+  for(i=0;i<stimdim;i++){
+    for(j=(cb*i);j<(cb*(j+1));j++){
+      if(j == crule){cdim = tr[colskip+i];}
+    }
   }
-}
-hvx = disfunc(cdim,decbound);
-expresp = expres(hvx,nvar,crule);
-// Generate a repsonse from the Implicit system
-dists = distcalc(scuval,cdim,nvar);
-sumact = stract(initsy,dists,nvar);
-impresp = decact(sumact);
-// Make a decision which system response to use based on the Decision Mechanism
-econf = abs(hvx); 
-iconf = abs(sumact(0)-sumact(1));
-if((econf*etrust) > (iconf*itrust))
-  {sresp = expresp;
-   sused = expresp;}
-else {sresp = impresp;
-      sused = impresp;}
-// Update Explicit system rules based on accuracy (of ES's response)
-expacc = acccheck(expresp,tr,colskip,stimdim,feedback);
-updrules = nextrules;
-updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
-if (expacc == 1){nextrule = crule;}
-else{rrule = rand() % updrules.size();
-     updrules[crule] = prerule(updrules[crule],perscon);
-     updrules[rrule] = ranrule(updrules[rrule],lambda);
-     nextrule = rchoose(Rcpp::clone(updrules),decsto);}
-if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
-else {etrust = etrust - (oep*etrust);}
-// Update Implicit system based on accuracy
-impacc = acccheck(impresp,tr,colskip,stimdim,feedback);
-orew = obtrew(impacc);
-prew = prerew(prep,prer);
-dn = doprel(orew,prew);
-updsy = initsy;
-for(i=0;i<nrow;i++){
-  for(j=0;j<ncol;j++){
-    updsy(i,j) = nsystr(updsy(i,j),dists(i),alpha,beta,gamma,
-           sum(updsy(_,j)),nmda,dn,dbase,wmax,ampa);
+  hvx = disfunc(cdim,decbound);
+  expresp = expres(hvx,envar,crule);
+  // Generate a response from the Implicit system
+  dists = distcalc(scuval,cstim,sconst);
+  sumact = stract(updsy,dists,invar);
+  impresp = decact(sumact);
+  // Make a decision which system response to use based on the Decision Mechanism
+  econf = abs(hvx); 
+  iconf = abs(sumact(0)-sumact(1));
+  if((econf*etrust) > (iconf*itrust))
+    {sresp = expresp;
+     sused = 1;}
+  else {sresp = impresp;
+       sused = 2;}
+  // Update Explicit system rules based on accuracy (of ES's response)
+  expacc = acccheck(expresp,tr,colskip,stimdim,feedback);
+  updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
+  if (expacc == 1){crule = crule;}
+  else{rrule = rand() % updrules.size();
+       updrules[crule] = prerule(updrules[crule],perscon);
+       updrules[rrule] = ranrule(updrules[rrule],lambda);
+       crule = rchoose(Rcpp::clone(updrules),decsto);}
+  if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
+  else {etrust = etrust - (oep*etrust);}
+  // Update Implicit system based on accuracy
+  impacc = acccheck(impresp,tr,colskip,stimdim,feedback);
+  orew = obtrew(impacc);
+  prew = prerew(prep,prer,0.025);
+  dn = doprel(orew,prew);
+  for(i=0;i<nrow;i++){
+    for(j=0;j<ncol;j++){
+      updsy(i,j) = nsystr(updsy(i,j),dists(i),sum(updsy(_,j)),dn,
+            alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
+   }
   }
-}
-itrust = 1 - etrust;
-return Rcpp::List::create(Rcpp::Named("sresp") = sresp,
-                          Rcpp::Named("sused") = sused,
-                          Rcpp::Named("etrust") = etrust,
-                          Rcpp::Named("itrust") = itrust,
-                          Rcpp::Named("nextr") = nextrule,
-                          Rcpp::Named("newrules") = updrules,
-                          Rcpp::Named("updsy") = updrules);
+  itrust = 1 - etrust;
+  // Update the RPE for next trial
+  prep = prerew(prep,prer,0.025);
+  if(sused == 1){prer = obtrew(expacc);}
+    else {prer = obtrew(impacc);}
+  // Update output matrix
+  outmat(i,0) = i;
+  outmat(i,1) = sresp;
+  outmat(i,2) = sused;
+  if (sused == 1){outmat(i,3) = expacc;}
+  else {outmat(i,3) = impacc;}
+  }
+return outmat;
 }
 
 
