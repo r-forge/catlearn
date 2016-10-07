@@ -14,7 +14,7 @@ require(Rcpp)
 source("R/wa2001train.R")
 
 train <- wa2001train(1,5,-1)
-nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
+nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25)
 smat <- symat(16,2)
 scvmat <- scumat(16,4,3,0,train)
 

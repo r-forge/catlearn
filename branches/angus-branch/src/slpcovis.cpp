@@ -485,22 +485,23 @@ int crule = as<int>(extpar[4]);
 // End of particularly clumsy section
 int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
-double hvx,orew,prew,econf,iconf; 
+ double hvx,orew,prew,econf,iconf,dn; 
 NumericVector updrules = nextrules,dists,sumact,cstim;
 Rcout<< "updrules = " << updrules <<"\n";
 NumericMatrix updsy = initsy;
 Rcout<< "updsy = " << updsy <<"\n";
 // Setup output matrix
 NumericMatrix outmat(length,4);
+NumericVector tr = train(0,_);
 Rcout<< "outmat = " << outmat <<"\n";
 Rcout<< "length = " << length <<"\n";
 for(i=0;i<length;i++){
   // Initial setup for current trial
-  NumericVector tr = train(i,_);
+  tr = train(i,_);
   Rcout<< "tr = " << tr <<"\n";
   cstim = tr[Range(colskip,((colskip-1)+stimdim))];
   Rcout<< "cstim = " << cstim <<"\n";
-  double dn = doprel(prer,prep);
+  dn = doprel(prer,prep);
   Rcout<< "dn = " << dn <<"\n";
   Rcout<< "crule = " << crule <<"\n";
   // Generate a response from the Explicit system
@@ -524,9 +525,9 @@ for(i=0;i<length;i++){
   impresp = decact(sumact);
   Rcout<< "impresp = " << impresp <<"\n";
   // Make a decision which system response to use based on the Decision Mechanism
-  econf = abs(hvx); 
+  econf = fabs(hvx); 
   Rcout<< "econf = " << econf <<"\n";   // problem here
-  iconf = abs(sumact(0)-sumact(1));
+  iconf = fabs(sumact(0)-sumact(1));
   Rcout<< "iconf = " << iconf <<"\n";   // problem here
   if((econf*etrust) > (iconf*itrust))
     {sresp = expresp;
