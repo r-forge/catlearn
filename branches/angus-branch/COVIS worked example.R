@@ -8,18 +8,33 @@
 rm(list=ls())
 # Use ctrl+L to clear the console
 
-#First thing is to load the example dataset, downloadable from http://www.willslab.co.uk/, the dataset is from 
-
+# First lets generate the required training data and initial synapse and scu values
 require(Rcpp)
 
-smat <- train[1:8,4:6]
-dmat <- c(0,0,0)
+source("R/wa2001train.R")
 
-sourceCpp("src/test.cpp")
+train <- wa2001train(1,5,-1)
+nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
+smat <- symat(16,2)
+scvmat <- scumat(16,4,3,0,train)
 
+# Next lets generate the parameter lists required bty slpcovis
+# These values are from the simulation of COVIS run in Wills and Pothos 2012 book,
+# with the training set generated form Waldron and Ashby(2001)
+# The parameter list exppar is a choice as it is one value for no concurrent load
+# and one value for concurrent load
 
+# No concurrent load
+exppar <- c(0.0025,0.02,1,1,0.5,5,0)
 
-sourceCpp("src/slpcovis.cpp")
+# Concurrent load
+# exppar <- c(0.0025,0.02,20,1,0.5,0.5,0)
+
+imppar <- c(0.2,0.65,0.19,0.02,0.0022,0.01,1,0.00015625,1,0,0)
+
+comppar <- c(0.99,0.01,0.01,0.04)
+
+extpar <- c(2,3,4,1,5)
 
 # This comment is to explain the lists taken by slpcovis:
 # exppar = [corcon,errcon,perscon,decsto,decbound,lambda,envar]
@@ -27,48 +42,10 @@ sourceCpp("src/slpcovis.cpp")
 # comppar = [etrust,itrust,ocp,oep]
 # extpar = [cb,colskip,stimdim,feedback,crule]
 
+sourceCpp("src/slpcovis.cpp")
+
+covout <- slpCOVIS(train[1:2,],nextrules,smat,scvmat,exppar,imppar,comppar,extpar)
 
 
 
 
-
-
-tr <- train[1,]
-nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
-smat <- symat(8,2)
-sval <- scumat(8,3,2,0,train)
-sval <- sval[,2:4]
-
-covout <- covistrial(tr,nextrules=nextrules,colskip = 3,stimdim = 3,1,corcon = 0.0025,
-                     errcon = 0.02,perscon = 1, decsto = 1,decbound = 0.5,lambda = 5,
-                     nvar = 0,crule = crule,smat,sval,0.5,0.5,0.65,0.19,0.02,0.0022,1,0.01,
-                     0.2,0.99,0.01,0.01,0.04)
-
-
-
-
-source("R/shj61train.R")
-
-train <- shj61train(1,blocks = 16, absval = -1)
-nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25)
-crule <- 5
-start.time <- Sys.time()  
-
-for(i in 1:nrow(train)){
-tr <- train[i,]
-
-print("-----------------------")
-print(i)
-covout <- covistrial(tr,nextrules=nextrules,colskip = 3,stimdim =3,corcon = 0.0025,
-                     errcon = 0.02,perscon = 1, decsto = 1,
-                     decbound = 0.5,lambda = 5,nvar = 0,crule = crule, feedback = 1)
-print(covout)
-nextrules <- covout$newrules
-crule <- covout$nextr
-}
-covout
-nextrules
-
-
-end.time <- Sys.time() 
-end.time - start.time

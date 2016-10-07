@@ -3,6 +3,7 @@
 // It is written in C++, using templates from the Rcpp package in R 
 #include <Rcpp.h>
 #include <iostream>
+#include <cmath>
 //#include <vector>
 using namespace Rcpp;
 
@@ -482,41 +483,61 @@ int stimdim = as<int>(extpar[2]);
 int feedback = as<int>(extpar[3]);
 int crule = as<int>(extpar[4]);
 // End of particularly clumsy section
-int i,j,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
+int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
 double hvx,orew,prew,econf,iconf; 
 NumericVector updrules = nextrules,dists,sumact,cstim;
+Rcout<< "updrules = " << updrules <<"\n";
 NumericMatrix updsy = initsy;
+Rcout<< "updsy = " << updsy <<"\n";
 // Setup output matrix
 NumericMatrix outmat(length,4);
-
+Rcout<< "outmat = " << outmat <<"\n";
+Rcout<< "length = " << length <<"\n";
 for(i=0;i<length;i++){
   // Initial setup for current trial
   NumericVector tr = train(i,_);
-  cstim = tr[Range(colskip,(colskip+stimdim))];
+  Rcout<< "tr = " << tr <<"\n";
+  cstim = tr[Range(colskip,((colskip-1)+stimdim))];
+  Rcout<< "cstim = " << cstim <<"\n";
   double dn = doprel(prer,prep);
+  Rcout<< "dn = " << dn <<"\n";
+  Rcout<< "crule = " << crule <<"\n";
   // Generate a response from the Explicit system
-  for(i=0;i<stimdim;i++){
-    for(j=(cb*i);j<(cb*(j+1));j++){
-      if(j == crule){cdim = tr[colskip+i];}
+  for(j=0;j<stimdim;j++){
+    for(k=(cb*j);k<(cb*(k+1));k++){
+      if(k == crule){cdim = tr[colskip+j];}
     }
   }
+  Rcout<< "cdim = " << cdim <<"\n";
   hvx = disfunc(cdim,decbound);
+  Rcout<< "hvx = " << hvx <<"\n";
   expresp = expres(hvx,envar,crule);
+  Rcout<< "expresp = " << expresp <<"\n";
   // Generate a response from the Implicit system
+  Rcout<< "scuval = " << scuval <<"\n";
+  Rcout<< "cstim = " << cstim <<"\n";
   dists = distcalc(scuval,cstim,sconst);
+  Rcout<< "dists = " << dists <<"\n";
   sumact = stract(updsy,dists,invar);
+  Rcout<< "sumact = " << sumact <<"\n";
   impresp = decact(sumact);
+  Rcout<< "impresp = " << impresp <<"\n";
   // Make a decision which system response to use based on the Decision Mechanism
   econf = abs(hvx); 
+  Rcout<< "econf = " << econf <<"\n";   // problem here
   iconf = abs(sumact(0)-sumact(1));
+  Rcout<< "iconf = " << iconf <<"\n";   // problem here
   if((econf*etrust) > (iconf*itrust))
     {sresp = expresp;
      sused = 1;}
   else {sresp = impresp;
        sused = 2;}
+  Rcout<< "sresp = " << sresp <<"\n";
+  Rcout<< "sused = " << sused <<"\n";
   // Update Explicit system rules based on accuracy (of ES's response)
   expacc = acccheck(expresp,tr,colskip,stimdim,feedback);
+  Rcout<< "expacc = " << expacc <<"\n";
   updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
   if (expacc == 1){crule = crule;}
   else{rrule = rand() % updrules.size();
@@ -527,117 +548,35 @@ for(i=0;i<length;i++){
   else {etrust = etrust - (oep*etrust);}
   // Update Implicit system based on accuracy
   impacc = acccheck(impresp,tr,colskip,stimdim,feedback);
+  Rcout<< "impacc = " << impacc <<"\n";
   orew = obtrew(impacc);
+  Rcout<< "orew = " << orew <<"\n";
   prew = prerew(prep,prer,0.025);
-  dn = doprel(orew,prew);
-  for(i=0;i<nrow;i++){
-    for(j=0;j<ncol;j++){
-      updsy(i,j) = nsystr(updsy(i,j),dists(i),sum(updsy(_,j)),dn,
+  Rcout<< "prew = " << prew <<"\n";
+  for(j=0;j<nrow;j++){
+    for(k=0;k<ncol;k++){
+      updsy(j,k) = nsystr(updsy(j,k),dists(j),sum(updsy(_,k)),dn,
             alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
    }
   }
+  Rcout<< "updsy = " << updsy <<"\n";
   itrust = 1 - etrust;
   // Update the RPE for next trial
   prep = prerew(prep,prer,0.025);
+  Rcout<< "prep = " << prep <<"\n";
   if(sused == 1){prer = obtrew(expacc);}
     else {prer = obtrew(impacc);}
+  Rcout<< "prer = " << prer <<"\n";
   // Update output matrix
-  outmat(i,0) = i;
+  outmat(i,0) = i+1;
   outmat(i,1) = sresp;
   outmat(i,2) = sused;
   if (sused == 1){outmat(i,3) = expacc;}
   else {outmat(i,3) = impacc;}
+  Rcout<< "outmat = " << outmat <<"\n";
   }
 return outmat;
 }
-
-
-
-
-
-
-
-
-
-
-// Finally this is the complete function for the COVIS model 
-// incorporating all of the explicit, implicit and decision mechanisms.
-
-//// [[Rcpp::export]]
-//List covislp(List st,
-//             NumericMatrix tr,
-//             std::string explic,
-//             int stimdim){
-   
-
-// Denote the set of possible explicit rules
-//  double corcon = as<double>(st["c"]);
-//  double perscon = as<double>(st["p"]);
-//  double errcon = as<double>(st["e"]);
-//  double s = as<double>(st["s"]);
-//  double udsal = as<double>(st["ud"]);
-//  double cjsal = as<double>(st["cj"]);
-//  double djofcjsal = as<double>(st["dc"]);
-//  int colskip = as<int>(st["colskip"]);
-//  double decsto = as<double>(st["dec"]);
-//  double decbound = as<double>(st["dbou"]);
-//  double lambda = as<double>(st["lamb"]);
-//  double nvar = as<double>(st["nvar"]);
-//NumericVector rset = rules(stimdim, udsal, cjsal, djofcjsal, 0);
-
-
-// Run through the training list
-//int i, trial,items = tr.nrow(), nin;
-//NumericVector x(stimdim);
-//List covout;
-
-//for(trial = 0; trial < items; trial++) {
-//if( tr(trial,0) == 1 ) { 
-// Reset network to initial state
-//     }
-
-//  Load stimulus dimensions
-
-//for(i = colskip; i < stimdim+colskip; i++) {
-//x[i-colskip] = tr(trial,i);
-//}
-
-//  Run one trial of COVIS
-
-
-
-// int acc = 0;
-// int random = 0;
-// for (int i = 0; i < tr.nrow(); i++){
-//  if (acc == 1)
-//  {
-//  double disval = disfunc(sdim[nrule],)
-//  std::string resp = expres(disval,nvar)
-//  int acc = acccheck(resp,tr,i)
-//  rset[nrule] = updsal(corcon,errcon,rset[nrule],acc)
-//  }
-//  else
-//  {
-//  int nrule = rchoose(rset,stimdim);
-//  double disval = disfunc(sdim[nrule],)
-//  std::string resp = expres(disval,nvar)
-//  int acc = acccheck(resp,tr,i)
-//  rset[nrule] = updsal(corcon,errcon,rset[nrule],acc)
-//  }
-// }                    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
