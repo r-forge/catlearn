@@ -12,8 +12,9 @@ rm(list=ls())
 require(Rcpp)
 
 source("R/wa2001train.R")
+sourceCpp("src/slpcovis.cpp")
 
-train <- wa2001train(1,5,-1)
+train <- wa2001train(2,20,-1)
 nextrules <- c(0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25)
 smat <- symat(16,2)
 scvmat <- scumat(16,4,3,0,train)
@@ -34,18 +35,23 @@ imppar <- c(0.2,0.65,0.19,0.02,0.0022,0.01,1,0.00015625,1,0,0)
 
 comppar <- c(0.99,0.01,0.01,0.04)
 
-extpar <- c(2,3,4,1,5)
+extpar <- c(3,4)
 
 # This comment is to explain the lists taken by slpcovis:
 # exppar = [corcon,errcon,perscon,decsto,decbound,lambda,envar]
 # imppar = [dbase,alphaw,betaw,gammaw,nmda,ampa,wmax,invar,sconst,prep,prer]
 # comppar = [etrust,itrust,ocp,oep]
-# extpar = [cb,colskip,stimdim,feedback,crule]
+# extpar = [colskip,stimdim,feedback,crule]
 
-sourceCpp("src/slpcovis.cpp")
+covout <- slpCOVIS(train[1:160,],nextrules,smat,scvmat,exppar,imppar,comppar,extpar)
+colnames(covout) = c('Trial','Resp','System','Acc','Etrust','Itrust')
 
-covout <- slpCOVIS(train[1:2,],nextrules,smat,scvmat,exppar,imppar,comppar,extpar)
+## Current problems
+# Can solve the rule based problems but with more trials than reported
+# It is very hard to switch systems as whilst itrust goes up over the course of the
+# information-integration problem, iconf goes down making it harder to switch.
 
+# ALso in empirical applications there mentions that there is no criterial learning
 
 
 

@@ -114,21 +114,21 @@ int expres(double disval, double nvar,int crule){
   double eps = epsilon(nvar);
   if(crule%2 == 0){
     if(disval < eps)
-    {Response = 1;}
-    else
     {Response = 2;}
+    else
+    {Response = 1;}
   }
   else{
     if(disval < eps)
-    {Response = 2;}
-    else
     {Response = 1;}
+    else
+    {Response = 2;}
   }
   return Response;
 }
 
 
-int acccheck(int resp, NumericVector tr,int colskip, int stimdim, int feedback){
+int acccheck(int resp, NumericVector tr,int colskip, int stimdim){
   // TICK: AW 2016-08-16
   
   // Explicit system
@@ -141,10 +141,8 @@ int acccheck(int resp, NumericVector tr,int colskip, int stimdim, int feedback){
   
   int acc;
   acc = 0;
-  if (feedback == 1){
-    if ((resp == 1) & (tr[colskip+stimdim] == 1)) acc = 1;
-    if ((resp == 2) & (tr[colskip+stimdim] == -1)) acc = 1;}
-  else {acc = -1;}
+  if ((resp == 1) & (tr[colskip+stimdim] == 1)) acc = 1;
+  if ((resp == 2) & (tr[colskip+stimdim] == -1)) acc = 1;
   return acc;
 }
 
@@ -199,6 +197,7 @@ double ranrule(double rulsal,double lambda){
   return rulweight;
 }
 
+// [[Rcpp::export]]
 int rchoose(NumericVector exprules, double stocon){
   // Explicit system
   
@@ -266,7 +265,7 @@ double scuact(double sconst,double diff){
 // Checked: AW 28/09/2016
 
 // [[Rcpp::export]]
-NumericVector distcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
+NumericVector actcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
   int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
   NumericVector dists(nrow);
   for(i=0;i < nrow;i++){
@@ -477,68 +476,43 @@ double itrust = as<double>(comppar[1]);
 double ocp = as<double>(comppar[2]);
 double oep = as<double>(comppar[3]);
 
-int cb = as<int>(extpar[0]);
-int colskip = as<int>(extpar[1]);
-int stimdim = as<int>(extpar[2]);
-int feedback = as<int>(extpar[3]);
-int crule = as<int>(extpar[4]);
+int colskip = as<int>(extpar[0]);
+int stimdim = as<int>(extpar[1]);
+
 // End of particularly clumsy section
 int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
- double hvx,orew,prew,econf,iconf,dn; 
-NumericVector updrules = nextrules,dists,sumact,cstim;
-Rcout<< "updrules = " << updrules <<"\n";
+double hvx,econf,iconf,dn,crule,imaxval=0,emaxval=1; 
+NumericVector updrules(clone(nextrules)),acts,sumact,cstim;
+crule = rchoose(Rcpp::clone(updrules),decsto);
 NumericMatrix updsy = initsy;
-Rcout<< "updsy = " << updsy <<"\n";
 // Setup output matrix
-NumericMatrix outmat(length,4);
+NumericMatrix outmat(length,6);
 NumericVector tr = train(0,_);
-Rcout<< "outmat = " << outmat <<"\n";
-Rcout<< "length = " << length <<"\n";
 for(i=0;i<length;i++){
   // Initial setup for current trial
   tr = train(i,_);
-  Rcout<< "tr = " << tr <<"\n";
   cstim = tr[Range(colskip,((colskip-1)+stimdim))];
-  Rcout<< "cstim = " << cstim <<"\n";
   dn = doprel(prer,prep);
-  Rcout<< "dn = " << dn <<"\n";
-  Rcout<< "crule = " << crule <<"\n";
   // Generate a response from the Explicit system
-  for(j=0;j<stimdim;j++){
-    for(k=(cb*j);k<(cb*(k+1));k++){
-      if(k == crule){cdim = tr[colskip+j];}
-    }
-  }
-  Rcout<< "cdim = " << cdim <<"\n";
+  cdim = cstim[(ceil(crule/2)-1)];
   hvx = disfunc(cdim,decbound);
-  Rcout<< "hvx = " << hvx <<"\n";
   expresp = expres(hvx,envar,crule);
-  Rcout<< "expresp = " << expresp <<"\n";
   // Generate a response from the Implicit system
-  Rcout<< "scuval = " << scuval <<"\n";
-  Rcout<< "cstim = " << cstim <<"\n";
-  dists = distcalc(scuval,cstim,sconst);
-  Rcout<< "dists = " << dists <<"\n";
-  sumact = stract(updsy,dists,invar);
-  Rcout<< "sumact = " << sumact <<"\n";
+  acts = actcalc(scuval,cstim,sconst);
+  sumact = stract(updsy,acts,invar);
   impresp = decact(sumact);
-  Rcout<< "impresp = " << impresp <<"\n";
   // Make a decision which system response to use based on the Decision Mechanism
-  econf = fabs(hvx); 
-  Rcout<< "econf = " << econf <<"\n";   // problem here
-  iconf = fabs(sumact(0)-sumact(1));
-  Rcout<< "iconf = " << iconf <<"\n";   // problem here
+  econf = fabs(hvx)/emaxval; 
+  if(fabs(sumact(0)-sumact(1)) > imaxval){imaxval = fabs(sumact(0)-sumact(1));}
+  iconf = (fabs(sumact(0)-sumact(1)))/imaxval;
   if((econf*etrust) > (iconf*itrust))
     {sresp = expresp;
      sused = 1;}
   else {sresp = impresp;
        sused = 2;}
-  Rcout<< "sresp = " << sresp <<"\n";
-  Rcout<< "sused = " << sused <<"\n";
   // Update Explicit system rules based on accuracy (of ES's response)
-  expacc = acccheck(expresp,tr,colskip,stimdim,feedback);
-  Rcout<< "expacc = " << expacc <<"\n";
+  expacc = acccheck(expresp,tr,colskip,stimdim);
   updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
   if (expacc == 1){crule = crule;}
   else{rrule = rand() % updrules.size();
@@ -548,33 +522,26 @@ for(i=0;i<length;i++){
   if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
   else {etrust = etrust - (oep*etrust);}
   // Update Implicit system based on accuracy
-  impacc = acccheck(impresp,tr,colskip,stimdim,feedback);
-  Rcout<< "impacc = " << impacc <<"\n";
-  orew = obtrew(impacc);
-  Rcout<< "orew = " << orew <<"\n";
-  prew = prerew(prep,prer,0.025);
-  Rcout<< "prew = " << prew <<"\n";
+  impacc = acccheck(impresp,tr,colskip,stimdim);
   for(j=0;j<nrow;j++){
     for(k=0;k<ncol;k++){
-      updsy(j,k) = nsystr(updsy(j,k),dists(j),sum(updsy(_,k)),dn,
+      updsy(j,k) = nsystr(updsy(j,k),acts(j),sum(updsy(_,k)),dn,
             alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
    }
   }
-  Rcout<< "updsy = " << updsy <<"\n";
   itrust = 1 - etrust;
   // Update the RPE for next trial
   prep = prerew(prep,prer,0.025);
-  Rcout<< "prep = " << prep <<"\n";
   if(sused == 1){prer = obtrew(expacc);}
     else {prer = obtrew(impacc);}
-  Rcout<< "prer = " << prer <<"\n";
   // Update output matrix
   outmat(i,0) = i+1;
   outmat(i,1) = sresp;
   outmat(i,2) = sused;
   if (sused == 1){outmat(i,3) = expacc;}
   else {outmat(i,3) = impacc;}
-  Rcout<< "outmat = " << outmat <<"\n";
+  outmat(i,4) = etrust;
+  outmat(i,5) = itrust;
   }
 return outmat;
 }
