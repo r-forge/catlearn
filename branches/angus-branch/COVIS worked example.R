@@ -18,13 +18,13 @@ sourceCpp("src/slpcovis.cpp")
 
 
 
-critlist2 <- 0 
+#critlist2 <- 0 
 
 
 
 critlist <- 0
 
-for (j in 1:50){
+for (j in 1:1000){
 
 
 train <- wa2001train(2,10,-1)
@@ -73,7 +73,7 @@ critlist <- c(critlist,crit)
 critlist <- critlist[critlist != 1]
 critlist <- critlist[critlist != 0]
 
-critlist2 <- c(critlist2,(mean(critlist)))
+# critlist2 <- c(critlist2,(mean(critlist)))
 
 
 
@@ -82,10 +82,10 @@ critlist2 <- c(critlist2,(mean(critlist)))
 
 
 
-critlist2 <- critlist2[critlist2 != 0]
-critlist2 <- critlist2[!is.na(critlist2)]
+# critlist2 <- critlist2[critlist2 != 0]
+# critlist2 <- critlist2[!is.na(critlist2)]
 
-mean(critlist2)
+# mean(critlist2)
 
 ## Current problems
 
