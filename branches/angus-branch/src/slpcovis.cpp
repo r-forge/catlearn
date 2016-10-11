@@ -81,7 +81,7 @@ NumericVector rules(int stimdim, double udsal, double cjsal, double djofcjsal, i
     return exprules;
   }
   else 
-  {prules = 2*stimdim;  
+  {prules = stimdim*2;
     NumericVector exprules(prules,udsal);
     return exprules;}
   return exprules;
@@ -112,18 +112,18 @@ int expres(double disval, double nvar,int crule){
   // double epsilon = R::rnorm(0.0,nvar);
   int Response;
   double eps = epsilon(nvar);
-  if(crule%2 == 0){
-    if(disval < eps)
-    {Response = 2;}
-    else
-    {Response = 1;}
-  }
-  else{
+  //if(crule%2 == 0){
     if(disval < eps)
     {Response = 1;}
     else
     {Response = 2;}
-  }
+  //}
+  //else{
+  //  if(disval < eps) // These need to be commented back in later
+  //  {Response = 2;}
+  //  else
+  //  {Response = 1;}
+  //}
   return Response;
 }
 
@@ -197,7 +197,6 @@ double ranrule(double rulsal,double lambda){
   return rulweight;
 }
 
-// [[Rcpp::export]]
 int rchoose(NumericVector exprules, double stocon){
   // Explicit system
   
@@ -244,7 +243,6 @@ int rchoose(NumericVector exprules, double stocon){
 // Checked: AI 19/09/2016
 // Checked: AW 28/09/2016
 
-// [[Rcpp::export]]
 double scuact(double sconst,double diff){
   double act,super,e;
   super = -(pow(diff,2)/sconst);
@@ -264,7 +262,6 @@ double scuact(double sconst,double diff){
 // Checked: AI 27/09/2016
 // Checked: AW 28/09/2016
 
-// [[Rcpp::export]]
 NumericVector actcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
   int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
   NumericVector dists(nrow);
@@ -299,7 +296,6 @@ NumericVector actcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
 
 // Checked: AI 27/09/2016
 
-// [[Rcpp::export]]
 NumericVector stract(NumericMatrix wkj,NumericVector ik,double noisecon){
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
   double noise;
@@ -340,7 +336,6 @@ return act;
 // Checked: AI 27/09/2016
 // Not checked AW, too simple. 
 
-// [[Rcpp::export]]
 double obtrew(int acc){
   double rew;
   if (acc == 1){rew = 1;}
@@ -359,7 +354,6 @@ double obtrew(int acc){
 // Checked: AI 27/09/2016
 // Check AW 03-10-2016
 
-// [[Rcpp::export]]
 double prerew(double prep,double prer,double precon){
   double rew,add;
   add = precon*(prer-prep);
@@ -377,7 +371,6 @@ double prerew(double prep,double prer,double precon){
 // Checked: AI 27/09/2016
 // Checked: AW 03-10-2016
 
-// [[Rcpp::export]]
 double doprel(double obtrew, double prerew){
   double rpe,dn;
   rpe = obtrew - prerew;
@@ -411,7 +404,6 @@ double doprel(double obtrew, double prerew){
 // wmax - Maximum link strength
 // ampa - theta ampa par.
 
-// [[Rcpp::export]]
 double nsystr(double systr,double act,double sum,double dn,double alpha,double beta,
               double gamma,double nmda,double ampa,double dbase,double wmax){
   double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out,out1,out2,out3;
@@ -458,6 +450,7 @@ double decsto = as<double>(exppar[3]);
 double decbound = as<double>(exppar[4]);
 double lambda = as<double>(exppar[5]);
 double envar = as<double>(exppar[6]);
+double emaxval = as<double>(exppar[7]);
 
 double dbase = as<double>(imppar[0]);
 double alphaw = as<double>(imppar[1]);
@@ -482,10 +475,12 @@ int stimdim = as<int>(extpar[1]);
 // End of particularly clumsy section
 int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
-double hvx,econf,iconf,dn,crule,imaxval=0,emaxval=1; 
+double hvx,econf,iconf,dn,crule,imaxval=0; 
+// Have to add a couple of clone functions here, to prevent 
+// any change to input variables from R.
 NumericVector updrules(clone(nextrules)),acts,sumact,cstim;
 crule = rchoose(Rcpp::clone(updrules),decsto);
-NumericMatrix updsy = initsy;
+NumericMatrix updsy = (clone(initsy));
 // Setup output matrix
 NumericMatrix outmat(length,6);
 NumericVector tr = train(0,_);
@@ -493,9 +488,8 @@ for(i=0;i<length;i++){
   // Initial setup for current trial
   tr = train(i,_);
   cstim = tr[Range(colskip,((colskip-1)+stimdim))];
-  dn = doprel(prer,prep);
   // Generate a response from the Explicit system
-  cdim = cstim[(ceil(crule/2)-1)];
+  cdim = cstim[crule]; //(ceil(crule/2)-1)
   hvx = disfunc(cdim,decbound);
   expresp = expres(hvx,envar,crule);
   // Generate a response from the Implicit system
@@ -523,17 +517,17 @@ for(i=0;i<length;i++){
   else {etrust = etrust - (oep*etrust);}
   // Update Implicit system based on accuracy
   impacc = acccheck(impresp,tr,colskip,stimdim);
-  for(j=0;j<nrow;j++){
-    for(k=0;k<ncol;k++){
-      updsy(j,k) = nsystr(updsy(j,k),acts(j),sum(updsy(_,k)),dn,
-            alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
-   }
-  }
-  itrust = 1 - etrust;
-  // Update the RPE for next trial
   prep = prerew(prep,prer,0.025);
   if(sused == 1){prer = obtrew(expacc);}
-    else {prer = obtrew(impacc);}
+  else {prer = obtrew(impacc);}
+  dn = doprel(prer,prep);
+  for(j=0;j<nrow;j++){
+    for(k=0;k<ncol;k++){
+      updsy(j,k) = nsystr(updsy(j,k),acts(j),sumact(k),dn,
+            alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
+    }
+  }
+  itrust = 1 - etrust;
   // Update output matrix
   outmat(i,0) = i+1;
   outmat(i,1) = sresp;
