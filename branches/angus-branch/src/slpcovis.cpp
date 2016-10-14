@@ -3,7 +3,7 @@
 // It is written in C++, using templates from the Rcpp package in R 
 #include <Rcpp.h>
 #include <iostream>
-#include <cmath>
+//#include <cmath>
 //#include <vector>
 using namespace Rcpp;
 

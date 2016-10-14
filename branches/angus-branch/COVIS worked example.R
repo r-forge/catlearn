@@ -12,13 +12,12 @@ rm(list=ls())
 require(Rcpp)
 
 source("R/wa2001train.R")
-
 sourceCpp("src/slpcovis.cpp")
 
 
 
 
-critlist2 <- 0 
+#critlist2 <- 0 
 
 
 
