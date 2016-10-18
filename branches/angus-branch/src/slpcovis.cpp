@@ -1,11 +1,13 @@
 // This script contain the functions for the COVIS list processor of the 
 // CATLEARN package
 // It is written in C++, using templates from the Rcpp package in R 
+// Plugin for enabling C++11
+// [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 #include <iostream>
-//#include <cmath>
-//#include <vector>
 using namespace Rcpp;
+
+
 
 // There are three parts to implementing COVIS
 // A model of the explicit system, a model of the implicit system 
@@ -473,7 +475,7 @@ int colskip = as<int>(extpar[0]);
 int stimdim = as<int>(extpar[1]);
 
 // End of particularly clumsy section
-int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
+int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,acc,sresp,sused;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
 double hvx,econf,iconf,dn,crule,imaxval=0; 
 // Have to add a couple of clone functions here, to prevent 
@@ -507,16 +509,22 @@ for(i=0;i<length;i++){
        sused = 2;}
   // Update Explicit system rules based on accuracy (of ES's response)
   expacc = acccheck(expresp,tr,colskip,stimdim);
-  updrules[crule]  = updsal(corcon, errcon, updrules[crule], expacc);
-  if (expacc == 1){crule = crule;}
+  impacc = acccheck(impresp,tr,colskip,stimdim);
+  if (sused == 1) {acc = expacc;}
+  else {acc = impacc;}
+  if (acc == 1){rrule = rand() % updrules.size();
+                updrules[crule] = updsal(corcon, errcon, updrules[crule], acc);
+                updrules[crule] = prerule(updrules[crule],perscon);
+                updrules[rrule] = ranrule(updrules[rrule],lambda);
+                crule = crule;}
   else{rrule = rand() % updrules.size();
+       updrules[crule] = updsal(corcon, errcon, updrules[crule], acc);
        updrules[crule] = prerule(updrules[crule],perscon);
        updrules[rrule] = ranrule(updrules[rrule],lambda);
        crule = rchoose(Rcpp::clone(updrules),decsto);}
-  if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
+  if (acc == 1){etrust = etrust + (ocp*(1-etrust));}
   else {etrust = etrust - (oep*etrust);}
   // Update Implicit system based on accuracy
-  impacc = acccheck(impresp,tr,colskip,stimdim);
   prep = prerew(prep,prer,0.025);
   if(sused == 1){prer = obtrew(expacc);}
   else {prer = obtrew(impacc);}

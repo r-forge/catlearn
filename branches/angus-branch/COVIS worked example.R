@@ -11,26 +11,25 @@ rm(list=ls())
 # First lets generate the required training data and initial synapse and scu values
 require(Rcpp)
 
+
+# setwd("C:/Users/ainks/Documents/slpcovis/angus-branch")
+
 source("R/wa2001train.R")
+
 sourceCpp("src/slpcovis.cpp")
 
+stims <- as.data.frame(train[1:16,])
+stims <- stims[order(stims$stim),]
 
-
-
-#critlist2 <- 0 
-
-
-
-critlist <- 0
-
-for (j in 1:1000){
-
-
-train <- wa2001train(2,20,-1)
+train <- wa2001train(1,20,-1)
 train <- train[1:200,]
 nextrules <- c(0.25,0.25,0.25,0.25)
 smat <- symat(16,2)
-scvmat <- scumat(16,4,3,0,train)
+scvmat <- scumat(16,4,3,0,stims)
+
+critlist2 <- NULL
+
+critlist <- NULL
 
 # Next lets generate the parameter lists required by slpcovis
 # These values are from the simulation of COVIS run in Wills and Pothos 2012 book,
@@ -56,39 +55,57 @@ extpar <- c(3,4)
 # comppar = [etrust,itrust,ocp,oep]
 # extpar = [colskip,stimdim]
 
+critlist <- NULL
+
+
+for (j in 1:50){
+    
 covout <- slpCOVIS(train,nextrules,smat,scvmat,exppar,imppar,comppar,extpar)
 colnames(covout) = c('Trial','Resp','System','Acc','Etrust','Itrust')
 
 covout <- as.data.frame(covout)
 
-for (i in 8:length(covout$Acc)){
-  if (sum(covout[(i-7):i,'Acc']) == 8){crit <- i
+for (k in 1:200){
+  if (covout[k,'Acc'] == 0){covout[k,'Acc'] = 0}
+  if (covout[k,'Acc'] == 1){
+    if (k == 1) {covout[k,'Acc'] = 1}
+    else {covout[k,'Acc'] = covout[k-1,'Acc'] + 1}
+  }
+  if (covout[k,'Acc'] == 8){crit <- k
   break}
-  else {crit <- 200}
+  else (crit <- 0)
 }
+
 critlist <- c(critlist,crit)
 
 }
 
-critlist <- critlist[critlist != 0]
 
-critlist2 <- c(critlist2,(mean(critlist)))
-
+critlist2 <- c(critlist2,mean(critlist))
 
 
 
 
-
-
-
-critlist2 <- critlist2[critlist2 != 0]
 
 critlist2 <- critlist2[-13]
 
 
-critlist2 <- critlist2[!is.na(critlist2)]
 
 mean(critlist2)
+
+
+
+
+
+
+#critlist2 <- critlist2[critlist2 != 0]
+
+#critlist2 <- critlist2[-13]
+
+
+#critlist2 <- critlist2[!is.na(critlist2)]
+
+#mean(critlist2)
 
 ## Current problems
 
