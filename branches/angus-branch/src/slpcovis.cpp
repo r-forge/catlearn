@@ -475,7 +475,7 @@ int colskip = as<int>(extpar[0]);
 int stimdim = as<int>(extpar[1]);
 
 // End of particularly clumsy section
-int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,acc,sresp,sused;
+int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused,acc;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
 double hvx,econf,iconf,dn,crule,imaxval=0; 
 // Have to add a couple of clone functions here, to prevent 
@@ -507,18 +507,18 @@ for(i=0;i<length;i++){
      sused = 1;}
   else {sresp = impresp;
        sused = 2;}
-  // Update Explicit system rules based on accuracy (of ES's response)
+  // Update Explicit system rules based on accuracy
   expacc = acccheck(expresp,tr,colskip,stimdim);
   impacc = acccheck(impresp,tr,colskip,stimdim);
   if (sused == 1) {acc = expacc;}
   else {acc = impacc;}
   if (acc == 1){rrule = rand() % updrules.size();
-                updrules[crule] = updsal(corcon, errcon, updrules[crule], acc);
+                updrules[crule] = updsal(corcon, errcon, updrules[crule],acc);
                 updrules[crule] = prerule(updrules[crule],perscon);
                 updrules[rrule] = ranrule(updrules[rrule],lambda);
                 crule = crule;}
   else{rrule = rand() % updrules.size();
-       updrules[crule] = updsal(corcon, errcon, updrules[crule], acc);
+       updrules[crule] = updsal(corcon, errcon, updrules[crule],acc);
        updrules[crule] = prerule(updrules[crule],perscon);
        updrules[rrule] = ranrule(updrules[rrule],lambda);
        crule = rchoose(Rcpp::clone(updrules),decsto);}

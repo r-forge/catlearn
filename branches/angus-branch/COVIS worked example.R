@@ -18,16 +18,15 @@ source("R/wa2001train.R")
 
 sourceCpp("src/slpcovis.cpp")
 
-stims <- as.data.frame(train[1:16,])
-stims <- stims[order(stims$stim),]
-
 train <- wa2001train(1,20,-1)
 train <- train[1:200,]
+stims <- as.data.frame(train[1:16,])
+stims <- stims[order(stims$stim),]
+stims <- as.matrix(stims)
 nextrules <- c(0.25,0.25,0.25,0.25)
 smat <- symat(16,2)
 scvmat <- scumat(16,4,3,0,stims)
 
-critlist2 <- NULL
 
 critlist <- NULL
 
@@ -60,6 +59,8 @@ critlist <- NULL
 
 for (j in 1:50){
     
+sourceCpp("src/slpcovis.cpp")
+
 covout <- slpCOVIS(train,nextrules,smat,scvmat,exppar,imppar,comppar,extpar)
 colnames(covout) = c('Trial','Resp','System','Acc','Etrust','Itrust')
 
