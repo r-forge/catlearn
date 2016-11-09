@@ -222,7 +222,6 @@ int rchoose(NumericVector exprules, double stocon){
   sumsto = sum(storules);
   for(i=0;i < storules.size(); i++) {
     selrules[i] = storules[i]/sumsto;}
-  
   // Select a rule
   res = selrules;
   std::partial_sum(selrules.begin(), selrules.end(), res.begin());
@@ -473,70 +472,116 @@ double oep = as<double>(comppar[3]);
 
 int colskip = as<int>(extpar[0]);
 int stimdim = as<int>(extpar[1]);
+int respt = as<int>(extpar[2]);
 
 // End of particularly clumsy section
-int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused,acc;
+int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
 double hvx,econf,iconf,dn,crule,imaxval=0; 
 // Have to add a couple of clone functions here, to prevent 
 // any change to input variables from R.
-NumericVector updrules(clone(nextrules)),acts,sumact,cstim;
+// This line defines a number of numeric vectors.
+NumericVector updrules(clone(nextrules)),acts,sumact,cstim,wrules(clone(nextrules));
+// This line executes once and chooses a rule for the explicit
+// system to use for the first trial
 crule = rchoose(Rcpp::clone(updrules),decsto);
+// This line defines a numeric matrix with the same value as
+// initsy, but is then updated on every trial
 NumericMatrix updsy = (clone(initsy));
 // Setup output matrix
 NumericMatrix outmat(length,6);
+// Ensure that tr starts with some value rather than being empty
 NumericVector tr = train(0,_);
 for(i=0;i<length;i++){
   // Initial setup for current trial
+  
+  // set tr to the current training trial row in the training matrix
   tr = train(i,_);
+  // set the stimulus dimension values for the current stimulus
   cstim = tr[Range(colskip,((colskip-1)+stimdim))];
+  
   // Generate a response from the Explicit system
+  
+  // This sets the current value for the stimulus dimension
+  // being used by the current selected rule
   cdim = cstim[crule]; //(ceil(crule/2)-1)
+  // This sets the discriminant value hvx using the discrimant function
   hvx = disfunc(cdim,decbound);
+  // This generates a response from the explicit system 
   expresp = expres(hvx,envar,crule);
+  
   // Generate a response from the Implicit system
+  
+  // THis line calculates the activations of each sensory 
+  // cortical unit and returns it as a matrix of all of them
   acts = actcalc(scuval,cstim,sconst);
+  // This line calculates the summed activation for each striatal unit
   sumact = stract(updsy,acts,invar);
+  // This line calculates the implicit system response
   impresp = decact(sumact);
+  
   // Make a decision which system response to use based on the Decision Mechanism
+  
+  // This line calculates the confidence in the response of the explicit system
   econf = fabs(hvx)/emaxval; 
+  // THis if statement checks to see if the new value generated is
+  // bigger than the previous max and makes it the nex max if bigger
   if(fabs(sumact(0)-sumact(1)) > imaxval){imaxval = fabs(sumact(0)-sumact(1));}
+  // This line calculates the confidence in the response of the implicit system
   iconf = (fabs(sumact(0)-sumact(1)))/imaxval;
+  // This part of code determines which response COVIS uses 
+  // and tracks which system was chosen
   if((econf*etrust) > (iconf*itrust))
     {sresp = expresp;
      sused = 1;}
   else {sresp = impresp;
        sused = 2;}
+  
   // Update Explicit system rules based on accuracy
-  expacc = acccheck(expresp,tr,colskip,stimdim);
-  impacc = acccheck(impresp,tr,colskip,stimdim);
-  if (sused == 1) {acc = expacc;}
-  else {acc = impacc;}
-  if (acc == 1){rrule = rand() % updrules.size();
-                updrules[crule] = updsal(corcon, errcon, updrules[crule],acc);
-                updrules[crule] = prerule(updrules[crule],perscon);
-                updrules[rrule] = ranrule(updrules[rrule],lambda);
-                crule = crule;}
+  
+  // This then sets the system accuracy based on the accruacy of the system used
+  if (respt == 1) {expacc = acccheck(sresp,tr,colskip,stimdim);
+                   impacc = acccheck(sresp,tr,colskip,stimdim);}
+  else {expacc = acccheck(expresp,tr,colskip,stimdim);
+        impacc = acccheck(impresp,tr,colskip,stimdim);}
+  
+  // This part of code updates the explicit system based on the accuracy
+  if (expacc == 1){updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
+                   crule = crule;}
   else{rrule = rand() % updrules.size();
-       updrules[crule] = updsal(corcon, errcon, updrules[crule],acc);
-       updrules[crule] = prerule(updrules[crule],perscon);
-       updrules[rrule] = ranrule(updrules[rrule],lambda);
-       crule = rchoose(Rcpp::clone(updrules),decsto);}
-  if (acc == 1){etrust = etrust + (ocp*(1-etrust));}
+       for (j=0;j<1000;j++){
+       if (crule == rrule){rrule = rand() % updrules.size();}
+       else{break;}
+      }
+       updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
+       wrules = Rcpp::clone(updrules);
+       wrules[crule] = prerule(wrules[crule],perscon);
+       wrules[rrule] = ranrule(wrules[rrule],lambda);
+       crule = rchoose(Rcpp::clone(wrules),decsto);}
+  // This line updates the trust in the explicit system based on accuracy
+  if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
   else {etrust = etrust - (oep*etrust);}
+  
   // Update Implicit system based on accuracy
+  
+  // THis line updates the predicted reward for the current trial
   prep = prerew(prep,prer,0.025);
-  if(sused == 1){prer = obtrew(expacc);}
-  else {prer = obtrew(impacc);}
+  // This line updates the obtained reward for the current trial
+  prer = obtrew(impacc);
+  // This calculates the dopamine released on the current trial
   dn = doprel(prer,prep);
+  // This part of the code updates the synapse strengths
   for(j=0;j<nrow;j++){
     for(k=0;k<ncol;k++){
       updsy(j,k) = nsystr(updsy(j,k),acts(j),sumact(k),dn,
             alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
     }
   }
+  // This part of the code updates the trust in the implicit system
   itrust = 1 - etrust;
+  
   // Update output matrix
+  
   outmat(i,0) = i+1;
   outmat(i,1) = sresp;
   outmat(i,2) = sused;
