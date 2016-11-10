@@ -8,26 +8,34 @@
 2016-01-15,Angus Inkster
 2016-08-17,catlearn appears on CRAN. 
 2016-09-10,John Paul Minda
+2016-11-10,Stuart Spicer
 
 * Model implementations
-
 
 ** Actor-critic
 
 2016-09-02, Ahmed Moustafa suggested an Actor-Critic model implementation.
 
+** ATRIUM
+
+2016-11-09,atrium-branch,Angus Inkster currently working on an ATRIUM implementation.
+
+** Bush-Mosteller model
+
+2016-11-09,rw-brnach,Stuart Spicer will develop a Bush-Mosteller model implementation.
+
 ** COVIS
 
-2016-09-02,Angus Inkster currently working on a COVIS implementation.
+2016-09-02,angus-branch,Angus Inkster currently working on a COVIS implementation.
 
 ** Decision-bound / General Recognition Theory
 
-2016-09-02,Paul Minda interested in contributing GRT implementation.
+2016-09-02,minda-branch,Paul Minda interested in contributing GRT implementation.
 
 ** DIVA
 
 2016-09-09,A friend of Nolan Conaway is currently working on a DIVA implementation.
-2016-09-12,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
+2016-09-12,honke-branch,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
 
 ** GCM
 
@@ -41,6 +49,7 @@
 ** Rescorla-Wagner
 
 2016-09-02,Ahmed Moustafa suggested a Rescorla-Wagner model implementation.
+2016-11-09,rw-branch,Stuart Spicer will develop a Rescorla-Wagner model implementation.
 
 ** SUSTAIN
 

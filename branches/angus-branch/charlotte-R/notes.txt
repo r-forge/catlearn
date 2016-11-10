@@ -1,0 +1,33 @@
+Hi guys,
+
+So I've done a version of COVIS in R (mainly couldn't be bothered to debug
+in MATLAB and also have no ideas whether I'd miss a slight difference in
+implementation between various COVIS versions). It's attached along with a
+lovely graph. Sorry it's not optimised.
+
+Several things I noticed when doing this that I didn't quiz Angus about
+(you may have already dealt with this but thought would type out as well,
+just in case):
+1. The implementation of the category structure in terms of 0s and 1s
+matters - especially for the II category structure. If you have 7/8th of
+the stimuli the same as an optimum rule (i.e. going to the correct category
+label) COVIS will learn the II structure. If, however, you do it the other
+way around it will take a few thousand trials - not really what they were
+hoping for I think.
+2. I've added a whole bunch of []+ functions where they are not included in
+the model (around the learning of the weights and saliences in the
+rule-based) - otherwise I got negative saliences. However, this may just be
+because I included a bug (now fixed), so will double check whether that's
+necessary or not.
+3. I've also included the learning criteria as used in WA2001: training
+finishes if there are 8 correct trials in a row OR they hit 200 trials,
+whichever comes first. I didn't ask Angus whether he had done the same.
+
+Hope this was helpful,
+I'm in University tomorrow if you both were free and would like to chat
+about it all?
+
+Charlotte
+
+p.s. if you find a bug I haven't, could you let me know? Practice makes
+perfect and all that
