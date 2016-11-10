@@ -18,21 +18,6 @@ source("R/wa2001train.R")
 
 sourceCpp("src/slpcovis.cpp")
 
-train <- wa2001train(1,20,-1)
-train <- train[1:200,]
-stims <- as.data.frame(train[1:16,])
-stims <- stims[order(stims$stim),]
-stims <- as.matrix(stims)
-nextrules <- c(0.25,0.25,0.25,0.25)
-smat <- symat(16,2)
-scvmat <- scumat(16,4,3,0,stims)
-
-
-
-
-
-critlist <- NULL
-
 # Next lets generate the parameter lists required by slpcovis
 # These values are from the simulation of COVIS run in Wills and Pothos 2012 book,
 # with the training set generated form Waldron and Ashby(2001)
@@ -49,20 +34,28 @@ imppar <- c(0.2,0.65,0.19,0.02,0.0022,0.01,1,0.00015625,0.00000000001,0,0)
 
 comppar <- c(0.99,0.01,0.01,0.04)
 
-extpar <- c(3,4,1)
+extpar <- c(3,4,1,1)
 
 # This comment is to explain the lists taken by slpcovis:
 # exppar = [corcon,errcon,perscon,decsto,decbound,lambda,envar,emaxval]
 # imppar = [dbase,alphaw,betaw,gammaw,nmda,ampa,wmax,invar,sconst,prep,prer]
 # comppar = [etrust,itrust,ocp,oep]
-# extpar = [colskip,stimdim,respt]
+# extpar = [colskip,stimdim,respt,crx]
 
 critlist <- NULL
 
 
-for (j in 1:50){
-    
-sourceCpp("src/slpcovis.cpp")
+for (j in 1:10000){
+  
+train <- wa2001train(2,20,-1)
+train <- train[1:200,]
+stims <- as.data.frame(train[1:16,])
+stims <- stims[order(stims$stim),]
+stims <- as.matrix(stims)
+nextrules <- c(0.25,0.25,0.25,0.25)
+smat <- symat(16,2)
+scvmat <- scumat(16,4,3,0,stims)
+  
 
 covout <- slpCOVIS(train,nextrules,smat,scvmat,exppar,imppar,comppar,extpar)
 colnames(covout) = c('Trial','Resp','System','Acc','Etrust','Itrust')
@@ -85,15 +78,7 @@ critlist <- c(critlist,crit)
 }
 
 
-critlist2 <- c(critlist2,mean(critlist))
-
-
-
-
-
-critlist2 <- critlist2[-13]
-
-
+critlist2 <- critlist[critlist!=0]
 
 mean(critlist2)
 

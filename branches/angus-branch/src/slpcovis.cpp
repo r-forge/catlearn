@@ -472,7 +472,15 @@ double oep = as<double>(comppar[3]);
 
 int colskip = as<int>(extpar[0]);
 int stimdim = as<int>(extpar[1]);
+// respt is whether the two systems get:
+// 1 = the overall model response feedback
+// 2 = the feedback for each systems response
 int respt = as<int>(extpar[2]);
+// crx is whether when selecting the random rule to add the poisson varaible to:
+// 1 = choose any of the rules
+// 2 = choose any of the rules that are not the current rule
+int crx = as<int>(extpar[3]);
+
 
 // End of particularly clumsy section
 int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
@@ -512,7 +520,7 @@ for(i=0;i<length;i++){
   
   // Generate a response from the Implicit system
   
-  // THis line calculates the activations of each sensory 
+  // This line calculates the activations of each sensory 
   // cortical unit and returns it as a matrix of all of them
   acts = actcalc(scuval,cstim,sconst);
   // This line calculates the summed activation for each striatal unit
@@ -548,12 +556,17 @@ for(i=0;i<length;i++){
   // This part of code updates the explicit system based on the accuracy
   if (expacc == 1){updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
                    crule = crule;}
-  else{rrule = rand() % updrules.size();
-       for (j=0;j<1000;j++){
-       if (crule == rrule){rrule = rand() % updrules.size();}
-       else{break;}
-      }
+  else{if (crx == 1){rrule = rand() % updrules.size();}
+       else{rrule = rand() % updrules.size();
+            for (j=0;j<1000;j++){
+              if (crule == rrule){rrule = rand() % updrules.size();}
+              else{break;}
+            }
+       }
        updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
+       for(j=0;j<updrules.size();j++){
+         if (updrules[j] < 0){updrules[j] = 0;}
+       }
        wrules = Rcpp::clone(updrules);
        wrules[crule] = prerule(wrules[crule],perscon);
        wrules[rrule] = ranrule(wrules[rrule],lambda);
