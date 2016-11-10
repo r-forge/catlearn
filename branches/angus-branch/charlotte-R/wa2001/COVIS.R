@@ -58,7 +58,9 @@ WA2001output <- data.frame("Participant"=rep(1:130, each=2),
                                                       label=c("RB","II")),
                            "Manipulation"=factor(rep(1:2, each=2),
                                                  label=c("control","task")),
-                           "Trials"=NA)
+                           "Trials"=NA,
+                           "System"=NA,
+                           "NegativeZ"=NA)
 
 
 for (j in 1:nrow(WA2001output)){
@@ -145,6 +147,9 @@ for (j in 1:nrow(WA2001output)){
             WA2001$NoCorrect[i] <- sum(WA2001$Correct[(i-7):i])
             if (WA2001$NoCorrect[i]>=8) {
                 WA2001output$Trials[j] <- i
+                WA2001output$System[j] <- ifelse(abs(WA2001$hE[i]*WA2001$thetaE[i])>
+                                                 abs(WA2001$hP[i])*(1-WA2001$thetaE[i]),
+                                                 "Explicit","Procedural")
                 break
             }
         }
@@ -155,6 +160,9 @@ for (j in 1:nrow(WA2001output)){
                                       Z[WA2001$RuleNo[i]] - deltaE)
 
         # Explicit system: Adjust saliences
+        if ((min(Z)<0)&is.na(WA2001output$NegativeZ[j])){
+            WA2001output$NegativeZ[j]<-1
+        }
         Y <- positive(Z)
         # For rule previously active:
         Y[WA2001$RuleNo[i]] <- Z[WA2001$RuleNo[i]] + gamma
@@ -201,7 +209,7 @@ for (j in 1:nrow(WA2001output)){
         } else {
             # If incorrect response change sampling weights Z
             WA2001$RuleNo[i+1] <- sample(1:totalRules, 1,
-                                         prob=positive(Y/sum(Y)),replace=T)
+                                         prob=(Y/sum(Y)),replace=T)
             WA2001$thetaE[i+1] <- WA2001$thetaE[i]-deltaOE*WA2001$thetaE[i]
         }
 
