@@ -4,8 +4,8 @@
 # Set-up ----------------------------------------------------------------------
 rm(list=ls()) # Clear all variables in the workspace
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(ggplot2)
+# if (!require("pacman")) install.packages("pacman")
+# pacman::p_load(ggplot2)
 
 # Functions
 source("COVISfunctions.R")
