@@ -4,8 +4,8 @@
 # Set-up ----------------------------------------------------------------------
 rm(list=ls()) # Clear all variables in the workspace
 
-# if (!require("pacman")) install.packages("pacman")
-# pacman::p_load(ggplot2)
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(ggplot2)
 
 # Functions
 source("COVISfunctions.R")
@@ -220,7 +220,7 @@ for (j in 1:nrow(WA2001output)){
         wKJvalues <- WA2001[i,wKJ]
         wKJvalues <- wKJvalues +
             alphaW*rep(I,2)*rep(positive(S-thetaNMDA),each=16)*(wMax-wKJvalues)*
-                positive(WA2001$dopamine[i]-Dbase)# -
+                positive(WA2001$dopamine[i]-Dbase) -
             betaW*rep(I,2)*rep(positive(S-thetaNMDA),each=16)*wKJvalues*
                 positive(Dbase-WA2001$dopamine[i]) -
             gammaW*rep(I,2)*rep(positive(positive(thetaNMDA-S)-thetaAMPA),each=16)*
