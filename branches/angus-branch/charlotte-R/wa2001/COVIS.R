@@ -47,13 +47,13 @@ deltaOE <- 0.04
 
 # Implementation
 totalRules <- 4
-pptNo <- 130
+pptNo <- 3000
     # Get names for striatal weights
 J <- paste("w",rep(1:2, each=16),sep="") # No. stimuli
 wKJ <- paste(J,1:16,sep="_")
 
 # Generate experiment output
-WA2001output <- data.frame("Participant"=rep(1:130, each=2),
+WA2001output <- data.frame("Participant"=rep(1:pptNo, each=2),
                            "CategoryStructure"=factor(rep(1:2),
                                                       label=c("RB","II")),
                            "Manipulation"=factor(rep(1:2, each=2),
@@ -160,7 +160,7 @@ for (j in 1:nrow(WA2001output)){
                                       Z[WA2001$RuleNo[i]] - deltaE)
 
         # Explicit system: Adjust saliences
-        if ((min(Z)<0)&is.na(WA2001output$NegativeZ[j])){
+        if ((min(Z)<0) & is.na(WA2001output$NegativeZ[j])){
             WA2001output$NegativeZ[j]<-1
         }
         Y <- positive(Z)
@@ -209,7 +209,7 @@ for (j in 1:nrow(WA2001output)){
         } else {
             # If incorrect response change sampling weights Z
             WA2001$RuleNo[i+1] <- sample(1:totalRules, 1,
-                                         prob=(Y/sum(Y)),replace=T)
+                                         prob=positive(Y/sum(Y)),replace=T)
             WA2001$thetaE[i+1] <- WA2001$thetaE[i]-deltaOE*WA2001$thetaE[i]
         }
 
@@ -230,18 +230,20 @@ for (j in 1:nrow(WA2001output)){
     } # End of participant loop
 } # End of experiment loop
 
+write.csv(WA2001output, "WA2001output.csv")
 
-# Summary ---------------------------------------------------------------------
-WA2001summary <- summarySE(WA2001output, measurevar="Trials",
-                         groupvars=c("CategoryStructure", "Manipulation"),
-                         na.rm=T)
 
-plot <- ggplot(data=WA2001summary,
-               aes(x=CategoryStructure,y=Trials,fill=Manipulation)) +
-    stat_summary(position=position_dodge(0.75),fun.y = "mean",geom="bar",
-                 width=0.75) +
-    geom_errorbar(aes(ymax=Trials + se,ymin=Trials - se),
-                  width=0.2,linetype="solid",position=position_dodge(0.75))
-plot
+# # Summary ---------------------------------------------------------------------
+# WA2001summary <- summarySE(WA2001output, measurevar="Trials",
+#                          groupvars=c("CategoryStructure", "Manipulation"),
+#                          na.rm=T)
+#
+# plot <- ggplot(data=WA2001summary,
+#                aes(x=CategoryStructure,y=Trials,fill=Manipulation)) +
+#     stat_summary(position=position_dodge(0.75),fun.y = "mean",geom="bar",
+#                  width=0.75) +
+#     geom_errorbar(aes(ymax=Trials + se,ymin=Trials - se),
+#                   width=0.2,linetype="solid",position=position_dodge(0.75))
+# plot
 
 
