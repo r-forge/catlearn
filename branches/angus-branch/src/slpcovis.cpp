@@ -476,10 +476,12 @@ int stimdim = as<int>(extpar[1]);
 // 1 = the overall model response feedback
 // 2 = the feedback for each systems response
 int respt = as<int>(extpar[2]);
-// crx is whether when selecting the random rule to add the poisson varaible to:
+// crx is whether when selecting the random rule to add the poisson variable to:
 // 1 = choose any of the rules
 // 2 = choose any of the rules that are not the current rule
 int crx = as<int>(extpar[3]);
+// If xtdo is TRUE then the function produces trial by trial state output
+bool xtdo = as<bool>(extpar[4]);
 
 
 // End of particularly clumsy section
@@ -532,7 +534,7 @@ for(i=0;i<length;i++){
   
   // This line calculates the confidence in the response of the explicit system
   econf = fabs(hvx)/emaxval; 
-  // THis if statement checks to see if the new value generated is
+  // This if statement checks to see if the new value generated is
   // bigger than the previous max and makes it the nex max if bigger
   if(fabs(sumact(0)-sumact(1)) > imaxval){imaxval = fabs(sumact(0)-sumact(1));}
   // This line calculates the confidence in the response of the implicit system
@@ -593,6 +595,12 @@ for(i=0;i<length;i++){
   // This part of the code updates the trust in the implicit system
   itrust = 1 - etrust;
   
+  // This line produces trial by trail state outputs
+  if (xtdo){
+    Rcpp::Rcout << "Trial: " << i <<  std::endl << 
+      "Rules:" << std::endl << updrules << std::endl <<
+        "Synapses:" << std::endl << updsy << std::endl;
+  }
   // Update output matrix
   
   outmat(i,0) = i+1;

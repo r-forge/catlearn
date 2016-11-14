@@ -34,13 +34,13 @@ imppar <- c(0.2,0.65,0.19,0.02,0.0022,0.01,1,0.00015625,0.00000000001,0,0)
 
 comppar <- c(0.99,0.01,0.01,0.04)
 
-extpar <- c(3,4,1,1)
+extpar <- c(3,4,1,1,xtdo = FALSE)
 
 # This comment is to explain the lists taken by slpcovis:
 # exppar = [corcon,errcon,perscon,decsto,decbound,lambda,envar,emaxval]
 # imppar = [dbase,alphaw,betaw,gammaw,nmda,ampa,wmax,invar,sconst,prep,prer]
 # comppar = [etrust,itrust,ocp,oep]
-# extpar = [colskip,stimdim,respt,crx]
+# extpar = [colskip,stimdim,respt,crx,xtdo]
 
 critlist <- NULL
 
