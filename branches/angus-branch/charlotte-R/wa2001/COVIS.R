@@ -47,7 +47,7 @@ deltaOE <- 0.04
 
 # Implementation
 totalRules <- 4
-pptNo <- 10
+pptNo <- 3000
     # Get names for striatal weights
 J <- paste("w",rep(1:2, each=16),sep="") # No. stimuli
 wKJ <- paste(J,1:16,sep="_")
@@ -61,7 +61,6 @@ WA2001output <- data.frame("Participant"=rep(1:pptNo, each=2),
                            "Trials"=NA,
                            "System"=NA,
                            "NegativeZ"=NA)
-
 
 for (j in 1:nrow(WA2001output)){
 
@@ -103,7 +102,7 @@ for (j in 1:nrow(WA2001output)){
         # Explicit system: For trial 1, randomly select rule
 
         Z <- WA2001[i, c("Z1","Z2","Z3","Z4")]
-        if (is.na(WA2001$RuleNo[i])) {
+        if (i==1) {
             WA2001$RuleNo[i] <- sample(1:totalRules, 1, prob=Z, replace=T)
             WA2001$thetaE[i] <- 0.99
         }
@@ -131,7 +130,8 @@ for (j in 1:nrow(WA2001output)){
         I <- rep(0,16); I[WA2001$StimulusNo[i]] <- 1
 
         # Procedural system: Activation in striatal unit J
-        S <- c(sum(WA2001[i,wKJ[1:16]]*I), sum(WA2001[i,wKJ[17:32]]*I))
+        S <- c(sum(WA2001[i,wKJ[1:16]])*I+rnorm(0,sigmaP),
+               sum(WA2001[i,wKJ[17:32]])*I+rnorm(0,sigmaP))
         WA2001$hP[i] <- S[1]-S[2]
         # Procedural system: Make response
         WA2001$respProcedural[i] <- ifelse(S[1]>S[2], "A", "B")
@@ -237,6 +237,7 @@ for (j in 1:nrow(WA2001output)){
         WA2001[i+1,wKJ] <- wKJvalues
 
     } # End of participant loop
+
 } # End of experiment loop
 
 write.csv(WA2001output, "WA2001output.csv")
