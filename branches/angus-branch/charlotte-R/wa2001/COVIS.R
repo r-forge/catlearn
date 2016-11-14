@@ -4,8 +4,8 @@
 # Set-up ----------------------------------------------------------------------
 rm(list=ls()) # Clear all variables in the workspace
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(ggplot2)
+# if (!require("pacman")) install.packages("pacman")
+# pacman::p_load(ggplot2)
 
 # Functions
 source("COVISfunctions.R")
@@ -47,7 +47,7 @@ deltaOE <- 0.04
 
 # Implementation
 totalRules <- 4
-pptNo <- 3000
+pptNo <- 10
     # Get names for striatal weights
 J <- paste("w",rep(1:2, each=16),sep="") # No. stimuli
 wKJ <- paste(J,1:16,sep="_")
@@ -131,7 +131,7 @@ for (j in 1:nrow(WA2001output)){
         I <- rep(0,16); I[WA2001$StimulusNo[i]] <- 1
 
         # Procedural system: Activation in striatal unit J
-        S <- c(sum(WA2001[i,wKJ[1:16]]), sum(WA2001[i,wKJ[17:32]]))
+        S <- c(sum(WA2001[i,wKJ[1:16]]*I), sum(WA2001[i,wKJ[17:32]]*I))
         WA2001$hP[i] <- S[1]-S[2]
         # Procedural system: Make response
         WA2001$respProcedural[i] <- ifelse(S[1]>S[2], "A", "B")
@@ -218,13 +218,22 @@ for (j in 1:nrow(WA2001output)){
 
         # Procedural system: Update links between cortical and striatal units
         wKJvalues <- WA2001[i,wKJ]
-        wKJvalues <- wKJvalues +
-            alphaW*rep(I,2)*rep(positive(S-thetaNMDA),each=16)*(wMax-wKJvalues)*
-                positive(WA2001$dopamine[i]-Dbase) -
-            betaW*rep(I,2)*rep(positive(S-thetaNMDA),each=16)*wKJvalues*
-                positive(Dbase-WA2001$dopamine[i]) -
-            gammaW*rep(I,2)*rep(positive(positive(thetaNMDA-S)-thetaAMPA),each=16)*
-                wKJvalues
+        wKJvalues[,paste("w1_", WA2001$StimulusNo[i],sep="")] <-
+            wKJvalues[,paste("w1_", WA2001$StimulusNo[i],sep="")] +
+            alphaW*positive(S[1]-thetaNMDA)*positive(WA2001$dopamine[i]-Dbase)*
+                (wMax-wKJvalues[,paste("w1_", WA2001$StimulusNo[i],sep="")]) -
+            (betaW*positive(S[1]-thetaNMDA)*positive(WA2001$dopamine[i]-Dbase)+
+                gammaW*positive(positive(thetaNMDA-S[1])-thetaAMPA))*
+                wKJvalues[,paste("w1_", WA2001$StimulusNo[i],sep="")]
+
+        wKJvalues[,paste("w2_", WA2001$StimulusNo[i],sep="")] <-
+            wKJvalues[,paste("w2_", WA2001$StimulusNo[i],sep="")] +
+            alphaW*positive(S[2]-thetaNMDA)*positive(WA2001$dopamine[i]-Dbase)*
+            (wMax-wKJvalues[,paste("w2_", WA2001$StimulusNo[i],sep="")]) -
+            (betaW*positive(S[2]-thetaNMDA)*positive(WA2001$dopamine[i]-Dbase)+
+                 gammaW*positive(positive(thetaNMDA-S[2])-thetaAMPA))*
+            wKJvalues[,paste("w2_", WA2001$StimulusNo[i],sep="")]
+
         WA2001[i+1,wKJ] <- wKJvalues
 
     } # End of participant loop
