@@ -130,8 +130,8 @@ for (j in 1:nrow(WA2001output)){
         I <- rep(0,16); I[WA2001$StimulusNo[i]] <- 1
 
         # Procedural system: Activation in striatal unit J
-        S <- c(sum(WA2001[i,wKJ[1:16]])*I+rnorm(0,sigmaP),
-               sum(WA2001[i,wKJ[17:32]])*I+rnorm(0,sigmaP))
+        S <- c(sum(WA2001[i,wKJ[1:16]]*I)+rnorm(1,0,sigmaP),
+               sum(WA2001[i,wKJ[17:32]]*I)+rnorm(1,0,sigmaP))
         WA2001$hP[i] <- S[1]-S[2]
         # Procedural system: Make response
         WA2001$respProcedural[i] <- ifelse(S[1]>S[2], "A", "B")
