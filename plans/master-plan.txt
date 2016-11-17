@@ -42,6 +42,7 @@
 
 2016-09-09,Nolan Conaway is interested in contributing a model implementation.
 2016-09-12,Nolan Conaway would like to work on GCM if he has time.
+2016-11-15,Nolan Conaway has not yet had time to work on GCM.
 
 ** Rational model
 
