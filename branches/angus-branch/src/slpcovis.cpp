@@ -480,14 +480,12 @@ int respt = as<int>(extpar[2]);
 // 1 = choose any of the rules
 // 2 = choose any of the rules that are not the current rule
 int crx = as<int>(extpar[3]);
-// If xtdo is TRUE then the function produces trial by trial state output
-bool xtdo = as<bool>(extpar[4]);
-
-
+// If xtdo is 1 then the function produces trial by trial state output
+int xtdo = as<int>(extpar[4]);
 // End of particularly clumsy section
-int i,j,k,cdim=0,rrule,expresp,impresp,expacc,impacc,sresp,sused;
+int i,j,k,cdim=0,rrule = -1,expresp,impresp,expacc,impacc,sresp=0,sused=0,acc=0;
 int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
-double hvx,econf,iconf,dn,crule,imaxval=0; 
+double hvx,hvp,econf,iconf,dn,crule,imaxval=0; 
 // Have to add a couple of clone functions here, to prevent 
 // any change to input variables from R.
 // This line defines a number of numeric vectors.
@@ -497,14 +495,16 @@ NumericVector updrules(clone(nextrules)),acts,sumact,cstim,wrules(clone(nextrule
 crule = rchoose(Rcpp::clone(updrules),decsto);
 // This line defines a numeric matrix with the same value as
 // initsy, but is then updated on every trial
-NumericMatrix updsy = (clone(initsy));
-// Setup output matrix
-NumericMatrix outmat(length,6);
+NumericMatrix updsy = (Rcpp::clone(initsy));
 // Ensure that tr starts with some value rather than being empty
 NumericVector tr = train(0,_);
+// Setup output matrix
+//if (xtdo == 1){
+NumericMatrix outmat(length,81);//}
+//else {NumericMatrix outmat(length,6);}
 for(i=0;i<length;i++){
   // Initial setup for current trial
-  
+  int l=0,m=0,n=0,o=0,p=0,q=0;
   // set tr to the current training trial row in the training matrix
   tr = train(i,_);
   // set the stimulus dimension values for the current stimulus
@@ -527,6 +527,7 @@ for(i=0;i<length;i++){
   acts = actcalc(scuval,cstim,sconst);
   // This line calculates the summed activation for each striatal unit
   sumact = stract(updsy,acts,invar);
+  hvp = fabs(sumact(0) - sumact(1));
   // This line calculates the implicit system response
   impresp = decact(sumact);
   
@@ -538,7 +539,7 @@ for(i=0;i<length;i++){
   // bigger than the previous max and makes it the nex max if bigger
   if(fabs(sumact(0)-sumact(1)) > imaxval){imaxval = fabs(sumact(0)-sumact(1));}
   // This line calculates the confidence in the response of the implicit system
-  iconf = (fabs(sumact(0)-sumact(1)))/imaxval;
+  iconf = hvp/imaxval;
   // This part of code determines which response COVIS uses 
   // and tracks which system was chosen
   if((econf*etrust) > (iconf*itrust))
@@ -554,6 +555,9 @@ for(i=0;i<length;i++){
                    impacc = acccheck(sresp,tr,colskip,stimdim);}
   else {expacc = acccheck(expresp,tr,colskip,stimdim);
         impacc = acccheck(impresp,tr,colskip,stimdim);}
+  
+  if (sused == 1){acc = acccheck(expresp,tr,colskip,stimdim);}
+  else{acc = acccheck(impresp,tr,colskip,stimdim);}
   
   // This part of code updates the explicit system based on the accuracy
   if (expacc == 1){updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
@@ -594,27 +598,66 @@ for(i=0;i<length;i++){
   }
   // This part of the code updates the trust in the implicit system
   itrust = 1 - etrust;
-  
-  // This line produces trial by trail state outputs
-  if (xtdo){
-    Rcpp::Rcout << "Trial: " << i <<  std::endl << 
-      "Rules:" << std::endl << updrules << std::endl <<
-        "Synapses:" << std::endl << updsy << std::endl;
-  }
   // Update output matrix
-  
-  outmat(i,0) = i+1;
-  outmat(i,1) = sresp;
-  outmat(i,2) = sused;
-  if (sused == 1){outmat(i,3) = expacc;}
-  else {outmat(i,3) = impacc;}
-  outmat(i,4) = etrust;
-  outmat(i,5) = itrust;
-  }
-return outmat;
+  //if (xtdo == 1){
+            outmat(i,0) = i+1;
+            outmat(i,1) = sresp;
+            outmat(i,2) = sused;
+            outmat(i,3) = acc;
+            outmat(i,4) = etrust;
+            outmat(i,5) = itrust;
+            outmat(i,6) = cdim;
+            outmat(i,7) = hvx;
+            outmat(i,8) = expresp;
+            outmat(i,9) = hvp;
+            outmat(i,10) = impresp;
+            outmat(i,11) = econf;
+            outmat(i,12) = iconf;
+            outmat(i,13) = imaxval;
+            outmat(i,14) = emaxval;
+            outmat(i,15) = expacc;
+            outmat(i,16) = impacc;
+            outmat(i,17) = respt;
+            outmat(i,18) = rrule;
+            outmat(i,19) = crule;
+            outmat(i,20) = prep;
+            outmat(i,21) = prer;
+            outmat(i,22) = dn;
+            for(j=23;j<27;j++){
+              outmat(i,j) = cstim(l);
+              l = l + 1;
+              }
+            for(j=27;j<43;j++){
+              outmat(i,j) = acts(m);
+              m = m + 1;
+              }
+            for(j=43;j<45;j++){
+              outmat(i,j) = sumact(n);
+              n = n + 1;
+              }
+            for(j=45;j<49;j++){
+              outmat(i,j) = updrules(o);
+              o = o + 1;
+              }
+            for(j=49;j<65;j++){
+              outmat(i,j) = updsy(p,0);
+              p = p + 1;
+              }
+            for(j=65;j<81;j++){
+              outmat(i,j) = updsy(q,1);
+              q = q + 1;
+              }
+    //}
+    //else{outmat(i,0) = i+1;
+        // outmat(i,1) = sresp;
+        // outmat(i,2) = sused;
+        // outmat(i,3) = acc;
+        // outmat(i,4) = etrust;
+        // outmat(i,5) = itrust;
+        // }
+    }
+  return outmat;
 }
-
-
 
 // Rcout<< "crule = " << crule <<"\n";
 
