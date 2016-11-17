@@ -36,6 +36,7 @@
 
 2016-09-09,A friend of Nolan Conaway is currently working on a DIVA implementation.
 2016-09-12,honke-branch,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
+2016-11-15,Garrett Honke has a working and implemented version of DIVA in R. It now needs tweaking to fit into the slp schema of catlearn.
 
 ** GCM
 
