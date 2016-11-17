@@ -1,3 +1,5 @@
+* Original email
+
 Hi guys,
 
 So I've done a version of COVIS in R (mainly couldn't be bothered to debug
@@ -31,3 +33,53 @@ Charlotte
 
 p.s. if you find a bug I haven't, could you let me know? Practice makes
 perfect and all that
+
+* Follow-up email
+
+I have coherence.
+
+Woot woot.
+
+This is with 1000 trials for each bar :) (oh wait - it might be 500...still)
+
+Still not angus and still not like Ashby.  That being said, it looks like
+Ashby for everything but the rule-based system concurrent load - I guess my
+positive hack for saliences was not what they used... :S
+
+Anyhoo - the data is up on catlearn (2000 rows = one experiment)
+
+Look forward to finding all my mistakes soon :)
+
+* Andy's reply
+
+Angus, Charlotte.
+
+Thanks, Charlotte. So, that looks pretty stable. I've uploaded the 3
+graphs and your email to the SVN.
+
+Focussing on the smaller, more tractable issues first, whatever the
+inclarities of the book chapter, the stick-out problem here is that
+you and Angus are getting different results to each other. From
+recollection, the main difference is that Angus has a major difference
+between the two II conditions in his simulation.
+
+I talked to Angus yesterday afternoon, and his plan is get his code to
+produce a full model state output for every trial, which he can then
+compare to your corresponding output.
+
+This is a good plan, but one has to get to the point where one would
+*expect* the two implementations to give the same answer at an
+individual trial level. This needs two things, one easy, one hard:
+
+Easy: The two implementations need to be given exactly the same
+training items in exactly the same order.
+
+Hard: They need to produce the same 'random' numbers when making a
+call to a random number generator. It's possible that if Angus is
+using R's RNGs that this will happen if you just specify a random
+seed. Check it out. If not, there is a solution but it's more of a
+pain - ask me. 
+
+All the best
+
+Andy
