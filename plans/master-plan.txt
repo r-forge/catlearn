@@ -1,3 +1,9 @@
+* RELEASE SCHEDULE
+
+2017-01-31,Code freeze for version 0.4
+2017-02-15,R-forge release for version 0.4
+2017-03-15,CRAN release for version 0.4
+
 * General expressions of interest 
 
 2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested in contributing.
@@ -9,6 +15,7 @@
 2016-08-17,catlearn appears on CRAN. 
 2016-09-10,John Paul Minda
 2016-11-10,Stuart Spicer
+2016-11-10,Charlotte Edmunds
 
 * Model implementations
 
@@ -31,6 +38,7 @@
 ** Decision-bound / General Recognition Theory
 
 2016-09-02,minda-branch,Paul Minda interested in contributing GRT implementation.
+2016-11-21,minda-branch,Paul Minda reviewing code for a basic GRT model.
 
 ** DIVA
 
@@ -43,6 +51,11 @@
 2016-09-09,Nolan Conaway is interested in contributing a model implementation.
 2016-09-12,Nolan Conaway would like to work on GCM if he has time.
 2016-11-15,Nolan Conaway has not yet had time to work on GCM.
+2016-11-210,minda-branch,Paul Minda is reviewing code for a GCM implementation. 
+
+** Prototype model
+
+2016-11-20,minda-branch,Paul Minda is reviewing code for a prototype model.
 
 ** Rational model
 
