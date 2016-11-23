@@ -130,39 +130,47 @@ for (j in 1:nrow(WA2001output)){
         I <- rep(0,16); I[WA2001$StimulusNo[i]] <- 1
 
         # Procedural system: Activation in striatal unit J
-        S <- c(sum(WA2001[i,wKJ[1:16]])*I+rnorm(0,sigmaP),
-               sum(WA2001[i,wKJ[17:32]])*I+rnorm(0,sigmaP))
+        S <- c(sum(WA2001[i,wKJ[1:16]]*I)+rnorm(1,0,sigmaP),
+               sum(WA2001[i,wKJ[17:32]]*I)+rnorm(1,0,sigmaP))
         WA2001$hP[i] <- S[1]-S[2]
         # Procedural system: Make response
-        WA2001$respProcedural[i] <- ifelse(S[1]>S[2], "A", "B")
+        WA2001$respProcedural[i] <- ifelse(WA2001$hP[i]>0, "A", "B")
 
         # Competition: Select response from explicit and procedural systems
-        WA2001$Response[i] <- ifelse(abs(WA2001$hE[i]*WA2001$thetaE[i])>
-                                         abs(WA2001$hP[i])*(1-WA2001$thetaE[i]),
+        WA2001$Response[i] <- ifelse((1-WA2001$thetaE[i])*abs(WA2001$hP[i])/
+                                         max(WA2001$hP, na.rm=T) <
+                                         WA2001$thetaE[i],
                                      WA2001$respExplicit[i],
                                      WA2001$respProcedural[i])
-        WA2001$Correct[i] <- ifelse(WA2001$Response[i]==WA2001$Category[i], 1, 0)
+        WA2001$Correct[i] <- ifelse(WA2001$Response[i]==WA2001$Category[i],1,0)
 
+        # Learning criterion and output
         if (i>7) {
             WA2001$NoCorrect[i] <- sum(WA2001$Correct[(i-7):i])
             if (WA2001$NoCorrect[i]>=8) {
                 WA2001output$Trials[j] <- i
-                WA2001output$System[j] <- ifelse(abs(WA2001$hE[i]*WA2001$thetaE[i])>
-                                                 abs(WA2001$hP[i])*(1-WA2001$thetaE[i]),
+                WA2001output$System[j] <- ifelse((1-WA2001$thetaE[i])*
+                                                     abs(WA2001$hP[i])/
+                                                     max(WA2001$hP, na.rm=T) <
+                                                     WA2001$thetaE[i],
                                                  "Explicit","Procedural")
                 break
             }
         }
 
-        # Explicit system: Edit weights
-        Z[WA2001$RuleNo[i]] <- ifelse(WA2001$respExplicit[i]==WA2001$Category[i],
+        # Explicit system: Edit saliences
+        Z[WA2001$RuleNo[i]] <- ifelse(WA2001$Response[i]==WA2001$Category[i],
                                       Z[WA2001$RuleNo[i]] + deltaC,
                                       Z[WA2001$RuleNo[i]] - deltaE)
-
-        # Explicit system: Adjust saliences
+        # Add warning if Z<0 on any trial
         if ((min(Z)<0) & is.na(WA2001output$NegativeZ[j])){
             WA2001output$NegativeZ[j]<-1
         }
+
+        # Explicit system: update weights for next trial
+        WA2001[i+1,c("Z1","Z2","Z3","Z4")] <- positive(Z)
+
+        # Explicit system: Adjust weights
         Y <- positive(Z)
         # For rule previously active:
         Y[WA2001$RuleNo[i]] <- Z[WA2001$RuleNo[i]] + gamma
@@ -172,7 +180,7 @@ for (j in 1:nrow(WA2001output)){
 
         # Procedural system: Reward prediction error
         # Obtained reward
-        if (WA2001$respProcedural[i]==WA2001$Category[i]) {
+        if (WA2001$Correct[i]) {
             # If correct
             WA2001$obtainedReward[i] <- 1
         } else {
@@ -187,6 +195,8 @@ for (j in 1:nrow(WA2001output)){
                 0.025*(WA2001$obtainedReward[(i-1)]-
                        WA2001$predictedReward[(i-1)])
         }
+
+        # Procedural system: Reward prediction error
         WA2001$RPE[i] <- WA2001$obtainedReward[i]-WA2001$predictedReward[i]
         if (WA2001$RPE[i]>1){
             WA2001$dopamine[i]<-1
@@ -196,25 +206,21 @@ for (j in 1:nrow(WA2001output)){
             WA2001$dopamine[i] <- 0.8*WA2001$RPE[i]+0.2
         }
 
+        # Break: if trials=200
         if (i==nrow(WA2001)) {
             WA2001output$Trials[j] <- NA
             break
         }
 
         # Explicit system: Pick rule
-        if (WA2001$respExplicit[i]==WA2001$Category[i]) {
-            # If correct response keep same rule
-            WA2001$RuleNo[i+1] <- WA2001$RuleNo[i]
-            WA2001$thetaE[i+1] <- WA2001$thetaE[i]+deltaOC*(1-WA2001$thetaE[i])
-        } else {
-            # If incorrect response change sampling weights Z
-            WA2001$RuleNo[i+1] <- sample(1:totalRules, 1,
-                                         prob=positive(Y/sum(Y)),replace=T)
-            WA2001$thetaE[i+1] <- WA2001$thetaE[i]-deltaOE*WA2001$thetaE[i]
-        }
+        WA2001$RuleNo[i+1] <- ifelse(WA2001$Correct[i], WA2001$RuleNo[i],
+                                     sample(1:totalRules, 1, replace=T,
+                                            prob=positive(Y)/sum(positive(Y))))
+        # If correct response keep same rule, else switch
 
-        # Explicit system: update weights for next trial
-        WA2001[i+1,c("Z1","Z2","Z3","Z4")] <- positive(Z)
+        WA2001$thetaE[i+1] <- ifelse(WA2001$respExplicit[i]==WA2001$Category[i],
+                                WA2001$thetaE[i]+deltaOC*(1-WA2001$thetaE[i]),
+                                WA2001$thetaE[i]-deltaOE*WA2001$thetaE[i])
 
         # Procedural system: Update links between cortical and striatal units
         wKJvalues <- WA2001[i,wKJ]
@@ -237,7 +243,6 @@ for (j in 1:nrow(WA2001output)){
         WA2001[i+1,wKJ] <- wKJvalues
 
     } # End of participant loop
-
 } # End of experiment loop
 
 write.csv(WA2001output, "WA2001output.csv")
