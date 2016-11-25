@@ -173,11 +173,12 @@ for (j in 1:nrow(WA2001output)){
         # Explicit system: Adjust weights
         Y <- positive(Z)
         # For rule previously active:
-        Y[WA2001$RuleNo[i]] <- Z[WA2001$RuleNo[i]] + gamma
+        Y[WA2001$RuleNo[i]] <- Y[WA2001$RuleNo[i]] + gamma
         # For randomly selected rule:
         randRule <- sample(1:totalRules, 1, replace=T)
-        Y[randRule] <- Z[randRule] + rpois(1, lambda)
+        Y[randRule] <- Y[randRule] + rpois(1, lambda)
 
+        Y <- positive(Y)
         # Procedural system: Reward prediction error
         # Obtained reward
         if (WA2001$Correct[i]) {
@@ -215,7 +216,7 @@ for (j in 1:nrow(WA2001output)){
         # Explicit system: Pick rule
         WA2001$RuleNo[i+1] <- ifelse(WA2001$Correct[i], WA2001$RuleNo[i],
                                      sample(1:totalRules, 1, replace=T,
-                                            prob=positive(Y)/sum(positive(Y))))
+                                            prob=Y/sum(Y)))
         # If correct response keep same rule, else switch
 
         WA2001$thetaE[i+1] <- ifelse(WA2001$respExplicit[i]==WA2001$Category[i],
@@ -248,17 +249,47 @@ for (j in 1:nrow(WA2001output)){
 write.csv(WA2001output, "WA2001output.csv")
 
 
-# # Summary ---------------------------------------------------------------------
-# WA2001summary <- summarySE(WA2001output, measurevar="Trials",
-#                          groupvars=c("CategoryStructure", "Manipulation"),
-#                          na.rm=T)
-#
-# plot <- ggplot(data=WA2001summary,
-#                aes(x=CategoryStructure,y=Trials,fill=Manipulation)) +
-#     stat_summary(position=position_dodge(0.75),fun.y = "mean",geom="bar",
-#                  width=0.75) +
-#     geom_errorbar(aes(ymax=Trials + se,ymin=Trials - se),
-#                   width=0.2,linetype="solid",position=position_dodge(0.75))
-# plot
+# Summary ---------------------------------------------------------------------
+WA2001output <- read.csv("WA2001output.csv")
+
+output1 <- WA2001output[1:2000,]
+output2 <- WA2001output[2001:4000,]
+output3 <- WA2001output[4001:6000,]
+
+WA2001summary1 <- summarySE(output1, measurevar="Trials",
+                         groupvars=c("CategoryStructure", "Manipulation"),
+                         na.rm=T)
+
+plot1 <- ggplot(data=WA2001summary1,
+               aes(x=CategoryStructure,y=Trials,fill=Manipulation)) +
+    stat_summary(position=position_dodge(0.75),fun.y = "mean",geom="bar",
+                 width=0.75) +
+    geom_errorbar(aes(ymax=Trials + se,ymin=Trials - se),
+                  width=0.2,linetype="solid",position=position_dodge(0.75))
+plot1
+
+WA2001summary2 <- summarySE(output2, measurevar="Trials",
+                            groupvars=c("CategoryStructure", "Manipulation"),
+                            na.rm=T)
+
+plot2 <- ggplot(data=WA2001summary2,
+                aes(x=CategoryStructure,y=Trials,fill=Manipulation)) +
+    stat_summary(position=position_dodge(0.75),fun.y = "mean",geom="bar",
+                 width=0.75) +
+    geom_errorbar(aes(ymax=Trials + se,ymin=Trials - se),
+                  width=0.2,linetype="solid",position=position_dodge(0.75))
+plot2
+
+WA2001summary3 <- summarySE(output3, measurevar="Trials",
+                            groupvars=c("CategoryStructure", "Manipulation"),
+                            na.rm=T)
+
+plot3 <- ggplot(data=WA2001summary3,
+                aes(x=CategoryStructure,y=Trials,fill=Manipulation)) +
+    stat_summary(position=position_dodge(0.75),fun.y = "mean",geom="bar",
+                 width=0.75) +
+    geom_errorbar(aes(ymax=Trials + se,ymin=Trials - se),
+                  width=0.2,linetype="solid",position=position_dodge(0.75))
+plot3
 
 
