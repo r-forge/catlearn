@@ -101,6 +101,7 @@ critlist <- critlist[critlist!=0]
 
 mrbc <- mean(critlist)
 sdrbc <- sd(critlist)
+errrbc<- sdrbc/100
 
 #-----------------------------------------------------------
 
@@ -166,6 +167,8 @@ critlist <- critlist[critlist!=0]
 
 mrbdt <- mean(critlist)
 sdrbdt <- sd(critlist)
+errrbdt <- sdrbdt/100
+
 
 #-----------------------------------------------------------
 
@@ -234,6 +237,8 @@ critlist <- critlist[critlist!=0]
 
 miic <- mean(critlist)
 sdiic <- sd(critlist)
+erriic <- sdiic/100
+
 
 #-----------------------------------------------------------
 
@@ -299,127 +304,35 @@ critlist <- critlist[critlist!=0]
 
 miidt <- mean(critlist)
 sdiidt <- sd(critlist)
-
+erriidt <- sdiidt/100
 
 
 simgraph <- barplot(c(mrbc,mrbdt,miic,miidt),
         xlab = "Condition",
         ylab = "Mean number of trials necessary to reach criterion",
+        ylim = c(0,75),
         main = "WA2001 simulation(10000 trials)",
         names.arg = c("RBC","RBDT","IIC","IIDT"))
 
-arrows(simgraph, c(mrbc-(sdrbc*2),mrbdt-(sdrbdt*2),miic-(sdiic*2),miidt-(sdiidt*2)), simgraph,
-       c(mrbc+(sdrbc*2),mrbdt+(sdrbdt*2),miic+(sdiic*2),miidt+(sdiidt*2)), lwd = 1.5, angle = 90,
+arrows(simgraph, c(mrbc-(errrbc*2),mrbdt-(errrbdt*2),miic-(erriic*2),miidt-(erriidt*2)), simgraph,
+       c(mrbc+(errrbc*2),mrbdt+(errrbdt*2),miic+(erriic*2),miidt+(erriidt*2)), lwd = 1.5, angle = 90,
        code = 3, length = 0.05)
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# At this point, we have acheived independent simulation convergence.
+# Points that we had to agree on/discuss during implementation, not specific enough.
+# Rule salience going below zero 
+# Parameter values being constrained between 0-1, is this also true for saliencies and do they have to add to 1. Does this also apply to Y.
+# Whether response is system based or model based
+# Whether the active rule on an incorrect trial can have both boosting vaiables
+# The role of delta - mentioned but never used
+# Equation 12 is particularly badly written, not acutally R+W
+# AMPA/NMDA values - These seem incorrect as it means that the third line of Equation 10 never activates.
+# Combining confidence and trust - is this as intended, as it causes the trust of the rule based system to be the same regardless of accuracy
+# How did Erick Paul acutally do the sampling for the simulated data? Never mentioned.
 
 
 
