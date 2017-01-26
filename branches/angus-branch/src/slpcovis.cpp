@@ -1,6 +1,7 @@
-// This script contain the functions for the COVIS list processor of the 
-// CATLEARN package
-// It is written in C++, using templates from the Rcpp package in R 
+// This script contain the functions for the COVIS list
+// processor of the CATLEARN package.
+// It is written in C++, using templates from the Rcpp
+// package in R.
 // Plugin for enabling C++11
 // [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
@@ -10,17 +11,18 @@ using namespace Rcpp;
 
 
 // There are three parts to implementing COVIS
-// A model of the explicit system, a model of the implicit system 
-// and an algorithm to monitor the output of the systems and select
-// a response on each trial
+// A model of the explicit system, a model of the implicit
+// system and an algorithm to monitor the output of the 
+// systems and select a response on each trial
 
 // Utility functions
 
 double poisvar(double lambda){
   // Concpet checked: AW 2016-08-24
   // Operation checked: AI 2016-09-07
-  // This function is to generate the random variable for Equ 6. in
-  // E&W2016. It is generated from a poisson distribution.
+  // This function is to generate the random variable for
+  // Equ 6. in E&W2016. It is generated from a poisson
+  // distribution.
   double poisvar = R::rpois(lambda);
   return poisvar;
 }
@@ -32,7 +34,8 @@ double epsilon(double nvar){
   return epsilon;
 }
   
-// First is the functions for the implementation of the explicit (rule-based) system
+// First is the functions for the implementation of the
+// explicit (rule-based) system
 
 // Explicit
 // Creates rule-set at initial salience
@@ -43,22 +46,26 @@ double epsilon(double nvar){
 // (they are for SHJ61).
 
 // AI checked: 2016-08-24, up to 6 dimensions.
-// AW checked: 2016-08-24, seems OK for single dimension rules
-// Not sure I understand how the number of others is determined.
+// AW checked: 2016-08-24, seems OK for single dimension
+// rules. Not sure I understand how the number of others 
+// is determined.
 
-// AI : 06/09/2016. rechecked and made it easier to understand,
-// handle up to 6 dimensions and handle differential initial
-// saliencies for different types of rules. 
+// AI : 06/09/2016. rechecked and made it easier to
+// understand, handle up to 6 dimensions and handle
+// differential initialsaliencies for different types of
+// rules. 
 // Operation checked: AI 2016-09-07
 
 // stimdim - Number of stimulus dimensions
 // udsal - Initial salience for unidimensional rules
 // cjsal - Initial salience for conjunctive rules
-// djofcjsal - Initial salience for disjunction of conjunction rules
+// djofcjsal - Initial salience for disjunction of
+// conjunction rules
 // incl - 0: single dimension only, 1: SD, CJ, DJ.
 
 
-NumericVector rules(int stimdim, double udsal, double cjsal, double djofcjsal, int incl){
+NumericVector rules(int stimdim, double udsal, double cjsal,
+                    double djofcjsal, int incl){
   int prules,i;
   NumericVector exprules;
   if (incl == 1)
@@ -90,7 +97,8 @@ NumericVector rules(int stimdim, double udsal, double cjsal, double djofcjsal, i
 }
 
 
-// Function to calculate the discrimant value used in the Response rule.
+// Function to calculate the discrimant value used in the 
+// Response rule.
 // Operation checked : AI 07/09/2016
 // TICK - AW - 2016-09-09
 double disfunc(double stimval,double deccrit){
@@ -104,9 +112,10 @@ int expres(double disval, double nvar,int crule){
   
   // Response rule for explicit system 
   
-  // This response rule exists in the explicit system to decide
-  // whether to respond with A or B, referencing two categories as is
-  // the norm.  Epsilon is a normally distributed variable
+  // This response rule exists in the explicit system to 
+  // decide whether to respond with A or B, referencing two
+  // categories as is the norm. Epsilon is a normally
+  // distributed variable
   
   // Edmunds & Wills (2016, Equ. 2)
   // disval - discriminant value (h_v)
@@ -121,7 +130,8 @@ int expres(double disval, double nvar,int crule){
     {Response = 2;}
   //}
   //else{
-  //  if(disval < eps) // These need to be commented back in later
+  //  if(disval < eps) // These need to be commented back 
+  //  in later
   //  {Response = 2;}
   //  else
   //  {Response = 1;}
@@ -130,13 +140,14 @@ int expres(double disval, double nvar,int crule){
 }
 
 
-int acccheck(int resp, NumericVector tr,int colskip, int stimdim){
+int acccheck(int resp, NumericVector tr,int colskip,
+             int stimdim){
   // TICK: AW 2016-08-16
   
   // Explicit system
   
-  // Function to check accuracy of predicted response against actual
-  // response
+  // Function to check accuracy of predicted response
+  // against actual response
   
   // Required to decide whether Equ. 3 or 4 is in force
   // Edmunds & Wills (2016)
@@ -149,9 +160,10 @@ int acccheck(int resp, NumericVector tr,int colskip, int stimdim){
 }
 
 
-// Function to update rule saliency based on accuracy of response. Either
-// increments salience positively based on a constant if correct, and
-// negatively based on a different constant if incorrect.
+// Function to update rule saliency based on accuracy of
+// response. Either increments salience positively based on
+// a constant if correct, and negatively based on a 
+// different constant if incorrect.
 
 // TICK - AW - 2016-09-09
 // Operation checked: AI 07/09/2016
@@ -162,7 +174,8 @@ int acccheck(int resp, NumericVector tr,int colskip, int stimdim){
 // psal - Z
 // acc = 1 if correct, 0 if incorrect
 
-double updsal(double corcon, double errcon, double psal, int acc){
+double updsal(double corcon, double errcon, double psal,
+              int acc){
   double tsal;
   if (acc == 1){
     tsal = psal + corcon;
@@ -177,8 +190,9 @@ double updsal(double corcon, double errcon, double psal, int acc){
 double prerule(double rulsal,double perscon){
   // Explicit system
   // TICK - AW - 2016-09-09
-  // This is the first of the functions to transform the saliencies of the rules
-  // to weights, Equ 5. in E&W2016. Used for the rule used on the previous trial.
+  // This is the first of the functions to transform the
+  // saliencies of the rulesto weights, Equ 5. in E&W2016.
+  // Used for the rule used on the previous trial.
   
   // Operation Checked: AI 07/09/2016 
   double rulweight = rulsal + perscon;
@@ -189,8 +203,9 @@ double prerule(double rulsal,double perscon){
 double ranrule(double rulsal,double lambda){
   // Explicit system
   
-  // This is the second of the functions to transform the saliences of the rules
-  // to weights, Equ 6. in E&W2016. Used  for another rule from the set chosen at random.
+  // This is the second of the functions to transform the 
+  // saliences of the rules to weights, Equ 6. in E&W2016.
+  // Used  for another rule from the set chosen at random.
   
   // Operation Checked: AI 07/09/2016
   // TICK - AW - 2016-09-09
@@ -202,8 +217,9 @@ double ranrule(double rulsal,double lambda){
 int rchoose(NumericVector exprules, double stocon){
   // Explicit system
   
-  //This function is to choose a rule based on the probabilities of
-  //those rules (probabilities come from EW2016, Eq.8)
+  // This function is to choose a rule based on the
+  // probabilities of those rules (probabilities come from 
+  // EW2016, Eq.8)
   
   // exprules - The rule weights
   // stocon - parameter a
@@ -224,7 +240,8 @@ int rchoose(NumericVector exprules, double stocon){
     selrules[i] = storules[i]/sumsto;}
   // Select a rule
   res = selrules;
-  std::partial_sum(selrules.begin(), selrules.end(), res.begin());
+  std::partial_sum(selrules.begin(), selrules.end(),
+                   res.begin());
   double val = (double)rand() / RAND_MAX;
   for(i=0;i < res.size();i++){
     if (res[i] > val) {rsec = i;break;}
@@ -233,11 +250,13 @@ int rchoose(NumericVector exprules, double stocon){
   return rsec;
 }
 
-// Next is the functions for implementation of the procedural (implicit) system
+// Next is the functions for implementation of the
+// procedural (implicit) system
 
 // First are the activation equations
 
-// Utility Function to calculate sensory unit activation on a trial 
+// Utility Function to calculate sensory unit activation on 
+// a trial. 
 // Part of Equ. 9 in E&W2016
 // sconst: alpha
 // diff: distance
@@ -253,17 +272,19 @@ double scuact(double sconst,double diff){
 }
 
 
-// Function to calculate the activation of sensory cortex units.
-// Equ.9
+// Function to calculate the activation of sensory cortex 
+// units. Equ.9
 
-// scumat: Co-ordinates of the sensory cortex units in psychological space.
+// scumat: Co-ordinates of the sensory cortex units in 
+// psychological space.
 // cstim: Co-ordinates of the presented stimulus.
 // sconst: alpha (Equ.9)
 
 // Checked: AI 27/09/2016
 // Checked: AW 28/09/2016
 
-NumericVector actcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
+NumericVector actcalc(NumericMatrix scumat,
+                      NumericVector cstim, double sconst){
   int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
   NumericVector dists(nrow);
   for(i=0;i < nrow;i++){
@@ -288,16 +309,17 @@ NumericVector actcalc(NumericMatrix scumat, NumericVector cstim, double sconst){
 // ik: Activation of sensory cortical units
 // noisecon: Normally distributed noise (variance constant)
 
-// NOTE: Does activation calcs but does not return them, returns 
-// decision. This may not be the right thing to do, as activations
-// probably needed for learning rule.
+// NOTE: Does activation calcs but does not return them, 
+// returns decision. This may not be the right thing to do,
+// as activationsprobably needed for learning rule.
 // Split into activation and decision components. 
 
 // Also, don't need intermediate matrix cortact, just sum.
 
 // Checked: AI 27/09/2016
 
-NumericVector stract(NumericMatrix wkj,NumericVector ik,double noisecon){
+NumericVector stract(NumericMatrix wkj,NumericVector ik,
+                     double noisecon){
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
   double noise;
   NumericVector sumact(ncol);
@@ -330,7 +352,8 @@ return act;
 
 // Function to calculate obtained reward.
 // Part of Eq. 13
-// How is no feedback represented in the input training array?
+// How is no feedback represented in the input training 
+// array?
 // Normally, it'd be something like [0,0] where normal
 // feedback trials are [1,-1] and [-1,1]
 
@@ -366,8 +389,8 @@ double prerew(double prep,double prer,double precon){
 // Function to calculate dopamine release.
 // Ashby et al. (2011), equ. 13
 
-// obtrew - obtained reward (1 = correct, 0 = absence of feedabck, -1
-// = incorrect)
+// obtrew - obtained reward (1 = correct, 
+// 0 = absence of feedback, -1 = incorrect)
 
 // Checked: AI 27/09/2016
 // Checked: AW 03-10-2016
@@ -405,9 +428,12 @@ double doprel(double obtrew, double prerew){
 // wmax - Maximum link strength
 // ampa - theta ampa par.
 
-double nsystr(double systr,double act,double sum,double dn,double alpha,double beta,
-              double gamma,double nmda,double ampa,double dbase,double wmax){
-  double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out,out1,out2,out3;
+double nsystr(double systr,double act,double sum,double dn,
+              double alpha,double beta,double gamma,
+              double nmda,double ampa,double dbase,
+              double wmax){
+  double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out;
+  double out1,out2,out3;
   // section 1 : increases in strength
   a1 = act * alpha;
   b1 = sum - nmda;
@@ -439,137 +465,111 @@ double nsystr(double systr,double act,double sum,double dn,double alpha,double b
 
 // Function for running one trial through the COVIS system
 // [[Rcpp::export]]
-NumericMatrix slpCOVIS(NumericMatrix train,NumericVector nextrules,NumericMatrix initsy,
-                NumericMatrix scuval,List exppar,List imppar,List comppar,List extpar){
+List slpCOVIS(List st,
+              NumericMatrix tr,
+              NumericVector initrules,
+              NumericMatrix initsy,
+              NumericMatrix scups,
+              bool crx = true,
+              bool respt = true,
+              bool xtdo = false){
 // This clumsy section copies stuff out of an R List
-// There seems to be no way in RCpp to get direct access to a 
-// List at input?
-double corcon = as<double>(exppar[0]);
-double errcon = as<double>(exppar[1]);
-double perscon = as<double>(exppar[2]);
-double decsto = as<double>(exppar[3]);
-double decbound = as<double>(exppar[4]);
-double lambda = as<double>(exppar[5]);
-double envar = as<double>(exppar[6]);
-double emaxval = as<double>(exppar[7]);
-
-double dbase = as<double>(imppar[0]);
-double alphaw = as<double>(imppar[1]);
-double betaw = as<double>(imppar[2]);
-double gammaw = as<double>(imppar[3]);
-double nmda = as<double>(imppar[4]);
-double ampa = as<double>(imppar[5]);
-double wmax = as<double>(imppar[6]);
-double invar = as<double>(imppar[7]);
-double sconst = as<double>(imppar[8]);
-double prep = as<double>(imppar[9]);
-double prer = as<double>(imppar[10]);
-
-double etrust = as<double>(comppar[0]);
-double itrust = as<double>(comppar[1]);
-double ocp = as<double>(comppar[2]);
-double oep = as<double>(comppar[3]);
-
-int colskip = as<int>(extpar[0]);
-int stimdim = as<int>(extpar[1]);
-// respt is whether the two systems get:
-// 1 = the overall model response feedback
-// 2 = the feedback for each systems response
-int respt = as<int>(extpar[2]);
-// crx is whether when selecting the random rule to add the poisson variable to:
-// 1 = choose any of the rules
-// 2 = choose any of the rules that are not the current rule
-int crx = as<int>(extpar[3]);
-// If xtdo is 1 then the function produces trial by trial state output
-int xtdo = as<int>(extpar[4]);
+// There seems to be no way in RCpp to get direct access to
+// a List at input?
+double corcon = as<double>(st[0]);
+double errcon = as<double>(st[1]);
+double perscon = as<double>(st[2]);
+double decsto = as<double>(st[3]);
+double decbound = as<double>(st[4]);
+double lambda = as<double>(st[5]);
+double envar = as<double>(st[6]);
+double emaxval = as<double>(st[7]);
+double dbase = as<double>(st[8]);
+double alphaw = as<double>(st[9]);
+double betaw = as<double>(st[10]);
+double gammaw = as<double>(st[11]);
+double nmda = as<double>(st[12]);
+double ampa = as<double>(st[13]);
+double wmax = as<double>(st[14]);
+double invar = as<double>(st[15]);
+double sconst = as<double>(st[16]);
+double prep = as<double>(st[17]);
+double prer = as<double>(st[18]);
+double etrust = as<double>(st[19]);
+double itrust = as<double>(st[20]);
+double ocp = as<double>(st[21]);
+double oep = as<double>(st[22]);
+int colskip = as<int>(st[23]);
+int stimdim = as<int>(st[24]);
 // End of particularly clumsy section
-int i,j,k,cdim=0,rrule = -1,expresp,impresp,expacc,impacc,sresp=0,sused=0,acc=0;
-int nrow = initsy.nrow(), ncol = initsy.ncol(),length = train.nrow();
+int i,j,k,x = 3,cdim=0,rrule = -1,expresp,impresp,expacc;
+int impacc,sresp=0,sused=0,acc=0, nrow = initsy.nrow();
+int ncol = initsy.ncol(),length = tr.nrow();
 double hvx,hvp,econf,iconf,dn,crule,imaxval=0; 
-// Have to add a couple of clone functions here, to prevent 
-// any change to input variables from R.
-// This line defines a number of numeric vectors.
-NumericVector updrules(clone(nextrules)),acts,sumact,cstim,wrules(clone(nextrules));
-// This line executes once and chooses a rule for the explicit
-// system to use for the first trial
+NumericVector updrules(clone(initrules)),
+                       acts,sumact,cstim,
+                       wrules(clone(initrules));
 crule = rchoose(Rcpp::clone(updrules),decsto);
-// This line defines a numeric matrix with the same value as
-// initsy, but is then updated on every trial
 NumericMatrix updsy = (Rcpp::clone(initsy));
-// Ensure that tr starts with some value rather than being empty
-NumericVector tr = train(0,_);
+NumericVector train = tr(0,_);
 // Setup output matrix
-//if (xtdo == 1){
-NumericMatrix outmat(length,81);//}
-//else {NumericMatrix outmat(length,6);}
+if (xtdo){x = 45;}
+NumericMatrix outmat(length,x);
 for(i=0;i<length;i++){
   // Initial setup for current trial
-  int l=0,m=0,n=0,o=0,p=0,q=0;
-  // set tr to the current training trial row in the training matrix
-  tr = train(i,_);
-  // set the stimulus dimension values for the current stimulus
-  cstim = tr[Range(colskip,((colskip-1)+stimdim))];
-  
+  int l=0,m=0,n=0;
+  train = tr(i,_);
+  cstim = train[Range(colskip,((colskip-1)+stimdim))];
   // Generate a response from the Explicit system
-  
-  // This sets the current value for the stimulus dimension
-  // being used by the current selected rule
-  cdim = cstim[crule]; //(ceil(crule/2)-1)
-  // This sets the discriminant value hvx using the discrimant function
+  cdim = cstim[crule];
   hvx = disfunc(cdim,decbound);
-  // This generates a response from the explicit system 
   expresp = expres(hvx,envar,crule);
-  
   // Generate a response from the Implicit system
-  
-  // This line calculates the activations of each sensory 
-  // cortical unit and returns it as a matrix of all of them
-  acts = actcalc(scuval,cstim,sconst);
-  // This line calculates the summed activation for each striatal unit
+  acts = actcalc(scups,cstim,sconst);
   sumact = stract(updsy,acts,invar);
   hvp = fabs(sumact(0) - sumact(1));
-  // This line calculates the implicit system response
   impresp = decact(sumact);
-  
-  // Make a decision which system response to use based on the Decision Mechanism
-  
-  // This line calculates the confidence in the response of the explicit system
+  // Make a decision which system response to use
   econf = fabs(hvx)/emaxval; 
-  // This if statement checks to see if the new value generated is
-  // bigger than the previous max and makes it the nex max if bigger
-  if(fabs(sumact(0)-sumact(1)) > imaxval){imaxval = fabs(sumact(0)-sumact(1));}
-  // This line calculates the confidence in the response of the implicit system
+  if(fabs(sumact(0)-sumact(1)) > imaxval)
+    {imaxval = fabs(sumact(0)-sumact(1));}
   iconf = hvp/imaxval;
-  // This part of code determines which response COVIS uses 
-  // and tracks which system was chosen
   if((econf*etrust) > (iconf*itrust))
     {sresp = expresp;
      sused = 1;}
-  else {sresp = impresp;
-       sused = 2;}
-  
+  else 
+    {sresp = impresp;
+     sused = 2;}
   // Update Explicit system rules based on accuracy
-  
-  // This then sets the system accuracy based on the accruacy of the system used
-  if (respt == 1) {expacc = acccheck(sresp,tr,colskip,stimdim);
-                   impacc = acccheck(sresp,tr,colskip,stimdim);}
-  else {expacc = acccheck(expresp,tr,colskip,stimdim);
-        impacc = acccheck(impresp,tr,colskip,stimdim);}
-  
-  if (sused == 1){acc = acccheck(expresp,tr,colskip,stimdim);}
-  else{acc = acccheck(impresp,tr,colskip,stimdim);}
-  
-  // This part of code updates the explicit system based on the accuracy
-  if (expacc == 1){updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
-                   crule = crule;}
-  else{if (crx == 1){rrule = rand() % updrules.size();}
-       else{rrule = rand() % updrules.size();
-            for (j=0;j<1000;j++){
-              if (crule == rrule){rrule = rand() % updrules.size();}
-              else{break;}
-            }
+  if (respt == true)
+    {expacc = acccheck(sresp,train,colskip,stimdim);
+     impacc = acccheck(sresp,train,colskip,stimdim);}
+  if (respt == false)
+    {expacc = acccheck(expresp,train,colskip,stimdim);
+     impacc = acccheck(impresp,train,colskip,stimdim);}
+  if (sused == 1)
+     {acc = acccheck(expresp,train,colskip,stimdim);}
+  else
+     {acc = acccheck(impresp,train,colskip,stimdim);}
+  // Update the explicit system based on the accuracy
+  if (expacc == 1)
+    {updrules[crule] = updsal(corcon,errcon,
+                              updrules[crule],expacc);
+     crule = crule;}
+  else
+    {if (crx == true)
+      {rrule = rand() % updrules.size();}
+     if (crx == false)
+      {rrule = rand() % updrules.size();
+          for (j=0;j<1000;j++){
+            if (crule == rrule)
+            {rrule = rand() % updrules.size();}
+            else
+            {break;}
+          }
        }
-       updrules[crule] = updsal(corcon, errcon, updrules[crule],expacc);
+       updrules[crule] = updsal(corcon,errcon,
+                                updrules[crule],expacc);
        for(j=0;j<updrules.size();j++){
          if (updrules[j] < 0){updrules[j] = 0;}
        }
@@ -577,33 +577,31 @@ for(i=0;i<length;i++){
        wrules[crule] = prerule(wrules[crule],perscon);
        wrules[rrule] = ranrule(wrules[rrule],lambda);
        crule = rchoose(Rcpp::clone(wrules),decsto);}
-  // This line updates the trust in the explicit system based on accuracy
-  if (expacc == 1){etrust = etrust + (ocp*(1-etrust));}
-  else {etrust = etrust - (oep*etrust);}
+  if (expacc == 1)
+    {etrust = etrust + (ocp*(1-etrust));}
+  else 
+    {etrust = etrust - (oep*etrust);}
   
   // Update Implicit system based on accuracy
-  
-  // THis line updates the predicted reward for the current trial
   prep = prerew(prep,prer,0.025);
-  // This line updates the obtained reward for the current trial
   prer = obtrew(impacc);
-  // This calculates the dopamine released on the current trial
   dn = doprel(prer,prep);
-  // This part of the code updates the synapse strengths
   for(j=0;j<nrow;j++){
     for(k=0;k<ncol;k++){
       updsy(j,k) = nsystr(updsy(j,k),acts(j),sumact(k),dn,
             alphaw,betaw,gammaw,nmda,ampa,dbase,wmax);
     }
   }
-  // This part of the code updates the trust in the implicit system
+  // Update the trust in the implicit system
   itrust = 1 - etrust;
   // Update output matrix
-  //if (xtdo == 1){
-            outmat(i,0) = i+1;
-            outmat(i,1) = sresp;
-            outmat(i,2) = sused;
-            outmat(i,3) = acc;
+  if (sresp == 1){outmat(i,0) = 1;
+                  outmat(i,1) = 0;}
+  if (sresp == 2){outmat(i,0) = 0;
+                  outmat(i,1) = 1;}
+  outmat(i,2) = acc;
+  if (xtdo){
+            outmat(i,3) = sused;
             outmat(i,4) = etrust;
             outmat(i,5) = itrust;
             outmat(i,6) = cdim;
@@ -635,29 +633,9 @@ for(i=0;i<length;i++){
               outmat(i,j) = sumact(n);
               n = n + 1;
               }
-            for(j=45;j<49;j++){
-              outmat(i,j) = updrules(o);
-              o = o + 1;
-              }
-            for(j=49;j<65;j++){
-              outmat(i,j) = updsy(p,0);
-              p = p + 1;
-              }
-            for(j=65;j<81;j++){
-              outmat(i,j) = updsy(q,1);
-              q = q + 1;
-              }
-    //}
-    //else{outmat(i,0) = i+1;
-        // outmat(i,1) = sresp;
-        // outmat(i,2) = sused;
-        // outmat(i,3) = acc;
-        // outmat(i,4) = etrust;
-        // outmat(i,5) = itrust;
-        // }
+            }
     }
-  return outmat;
+return Rcpp::List::create(Rcpp::Named("foutmat") = outmat,
+                          Rcpp::Named("frules") = updrules,
+                          Rcpp::Named("fsystr") = updsy);
 }
-
-// Rcout<< "crule = " << crule <<"\n";
-
