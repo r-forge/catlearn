@@ -15,7 +15,7 @@ slpRW <- function(st, tr) {
   #Runs loop for however many rows are contained within input matrix:
   for(i in 1:nrow(tr)) {
     #Data is pulled out of each row in turn:
-    arow <- tr[i,]
+    arow <- tr[6,]
     
     #Designates number of columns (i.e. length of vector) containing 
     #weights of stimuli:
@@ -33,26 +33,32 @@ slpRW <- function(st, tr) {
     #This creates a vector of activations by reading the contents of the
     #stimuli colums within input matrix:
     a <- arow[(colskip.m + 1):(colskip.m + nw)] 
-    
+  print(a)
+  print(w.m)
     #This is the RW equation - where delta is change in assoc strength:
     suma <- sum(a*w.m)
-    
+  print(suma)
     delta <- alpha.m * beta.m * (lambda - suma)
+  print(delta)
     
     #New weights are weights plus delta; unless 'ctrl' column contains
     #value of '2' in which case weights remain the same:
     if (arow['ctrl'] != 2) { 
-      w.m <- w.m + delta 
+      w.m <- w.m + delta #this is wrong - it needs to only add delta
+                         #to stimuli with an activation one one, not
+                         #to all stimuli!
     }
 
     #Output for each loop added to output from previous loops:
     out <- rbind(out, suma)
-
+  print(out)
     #n.b. could also include weights on each trial as an extended output.
   
  }
 
  #Data that model outputs:
  ret <- list(out = out, st = w.m)
+
+ print(ret)
  
 }
