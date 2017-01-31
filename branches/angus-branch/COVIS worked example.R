@@ -39,7 +39,19 @@ sourceCpp("src/slpcovis.cpp")
 
 #-----------------------------------------------------------
 
+# RBC
+
 critlist <- NULL
+
+for (j in 1:10000){
+  
+tr <- wa2001train(1,20,-1,0,1,200,FALSE)
+stims <- as.data.frame(tr[1:16,])
+stims <- stims[order(stims$stim),]
+stims <- as.matrix(stims)
+nextrules <- c(0.25,0.25,0.25,0.25)
+smat <- symat(16,2)
+scvmat <- scumat(16,4,3,0,stims)
 
 # No concurrent load
 st <- list(0.0025,0.02,1,1,0.5,5,0,0.5,0.2,0.65,0.19,0.02,
@@ -53,18 +65,7 @@ names(st) <- c('corcon','errcon','perscon','decsto',
                'stimdim','crule','initrules','initsy',
                'scups')
 
-
-# for (j in 1:10000){
-  
-tr <- wa2001train(1,20,-1,0,1,200,FALSE)
-stims <- as.data.frame(tr[1:16,])
-stims <- stims[order(stims$stim),]
-stims <- as.matrix(stims)
-nextrules <- c(0.25,0.25,0.25,0.25)
-smat <- symat(16,2)
-scvmat <- scumat(16,4,3,0,stims)
-
-covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,xtdo = TRUE,rgive = TRUE)
+covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,rgive = TRUE,xtdo = FALSE)
 if (length(covout$foutmat[1,]) > 2)
   {colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc',
                         'System','cdim','hvx','expresp',
@@ -79,12 +80,18 @@ if (length(covout$foutmat[1,]) > 2)
                         'acts12','acts13','acts14',
                         'acts15','acts16','sumact1',
                         'sumact2')}
-if (length(covout$foutmat[1,]) == 3) 
-{colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc')}
+if (length(covout$foutmat[1,]) == 2) 
+{colnames(covout$foutmat) <- c('Cat1P','Cat2P')}
 covout$foutmat
 
 respmat <- as.data.frame(covout$foutmat[,1:2])
-accmat <- as.data.frame(covout$foutmat[,3])
+for(i in 1:length(respmat$Cat1P)){
+  respmat[i,'Acc'] = 0
+  if (respmat[i,'Cat1P'] == 1 & tr[i,'t1'] == 1) respmat[i,'Acc'] = 1
+  if (respmat[i,'Cat2P'] == 1 & tr[i,'t2'] == 1) respmat[i,'Acc'] = 1
+}
+
+accmat <- as.data.frame(respmat[,3])
 colnames(accmat) <- c('Acc')
 
 
@@ -101,7 +108,7 @@ for (k in 1:200){
 
 critlist <- c(critlist,crit)
 
-#}
+}
 
 
 critlist <- critlist[critlist!=0]
@@ -112,18 +119,8 @@ errrbc<- sdrbc/100
 
 #-----------------------------------------------------------
 
-# Concurrent load
-st <- list(0.0025,0.02,20,1,0.5,0.5,0,0.5,0.2,0.65,0.19,0.02,
-           0.0022,0.01,1,0.00015625,0.00000000001,0,0,0.99,
-           0.01,0.01,0.04,3,4,0,nextrules,smat,scvmat)
-names(st) <- c('corcon','errcon','perscon','decsto',
-               'decbound','lambda','envar','emaxval',
-               'dbase','alphaw','betaw','gammaw','nmda',
-               'ampa','wmax','invar','sconst','prep','prer',
-               'etrust','itrust','ocp','oep','colskip',
-               'stimdim','crule','initrules','initsy',
-               'scups')
- 
+# RBDT
+
 critlist <- NULL
 
 
@@ -136,8 +133,20 @@ stims <- as.matrix(stims)
 nextrules <- c(0.25,0.25,0.25,0.25)
 smat <- symat(16,2)
 scvmat <- scumat(16,4,3,0,stims)
+
+# Concurrent load
+st <- list(0.0025,0.02,20,1,0.5,0.5,0,0.5,0.2,0.65,0.19,0.02,
+           0.0022,0.01,1,0.00015625,0.00000000001,0,0,0.99,
+           0.01,0.01,0.04,3,4,0,nextrules,smat,scvmat)
+names(st) <- c('corcon','errcon','perscon','decsto',
+               'decbound','lambda','envar','emaxval',
+               'dbase','alphaw','betaw','gammaw','nmda',
+               'ampa','wmax','invar','sconst','prep','prer',
+               'etrust','itrust','ocp','oep','colskip',
+               'stimdim','crule','initrules','initsy',
+               'scups')
   
-covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,xtdo = TRUE,rgive = TRUE)
+covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,rgive = TRUE,xtdo = FALSE)
 if (length(covout$foutmat[1,]) > 2)
 {colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc',
                                'System','cdim','hvx','expresp',
@@ -152,15 +161,21 @@ if (length(covout$foutmat[1,]) > 2)
                                'acts12','acts13','acts14',
                                'acts15','acts16','sumact1',
                                'sumact2')}
-if (length(covout$foutmat[1,]) == 3) 
-{colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc')}
+if (length(covout$foutmat[1,]) == 2) 
+{colnames(covout$foutmat) <- c('Cat1P','Cat2P')}
 covout$foutmat
   
 respmat <- as.data.frame(covout$foutmat[,1:2])
-accmat <- as.data.frame(covout$foutmat[,3])
+for(i in 1:length(respmat$Cat1P)){
+  respmat[i,'Acc'] = 0
+  if (respmat[i,'Cat1P'] == 1 & tr[i,'t1'] == 1) respmat[i,'Acc'] = 1
+  if (respmat[i,'Cat2P'] == 1 & tr[i,'t2'] == 1) respmat[i,'Acc'] = 1
+}
+
+accmat <- as.data.frame(respmat[,3])
 colnames(accmat) <- c('Acc')
-  
-  
+
+
 for (k in 1:200){
   if (accmat[k,'Acc'] == 0){accmat[k,'Acc'] = 0}
   if (accmat[k,'Acc'] == 1){
@@ -171,10 +186,11 @@ for (k in 1:200){
   break}
   else {crit <- 0}
 }
-  
+
 critlist <- c(critlist,crit)
-  
+
 }
+
 
 
 critlist <- critlist[critlist!=0]
@@ -186,8 +202,20 @@ errrbdt <- sdrbdt/100
 
 #-----------------------------------------------------------
 
+# IIC
+
 critlist <- NULL
 
+for (j in 1:10000){
+  
+tr <- wa2001train(2,20,-1,0,1,200,FALSE)
+stims <- as.data.frame(tr[1:16,])
+stims <- stims[order(stims$stim),]
+stims <- as.matrix(stims)
+nextrules <- c(0.25,0.25,0.25,0.25)
+smat <- symat(16,2)
+scvmat <- scumat(16,4,3,0,stims)
+  
 # No concurrent load
 st <- list(0.0025,0.02,1,1,0.5,5,0,0.5,0.2,0.65,0.19,0.02,
            0.0022,0.01,1,0.00015625,0.00000000001,0,0,0.99,
@@ -200,17 +228,7 @@ names(st) <- c('corcon','errcon','perscon','decsto',
                'stimdim','crule','initrules','initsy',
                'scups')
 
-for (j in 1:10000){
-  
-tr <- wa2001train(2,20,-1,0,1,200,FALSE)
-stims <- as.data.frame(train[1:16,])
-stims <- stims[order(stims$stim),]
-stims <- as.matrix(stims)
-nextrules <- c(0.25,0.25,0.25,0.25)
-smat <- symat(16,2)
-scvmat <- scumat(16,4,3,0,stims)
-  
-covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,xtdo = TRUE,rgive = TRUE)
+covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,rgive = TRUE,xtdo = FALSE)
 if (length(covout$foutmat[1,]) > 2)
 {colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc',
                                'System','cdim','hvx','expresp',
@@ -225,12 +243,18 @@ if (length(covout$foutmat[1,]) > 2)
                                'acts12','acts13','acts14',
                                'acts15','acts16','sumact1',
                                'sumact2')}
-if (length(covout$foutmat[1,]) == 3) 
-{colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc')}
+if (length(covout$foutmat[1,]) == 2) 
+{colnames(covout$foutmat) <- c('Cat1P','Cat2P')}
 covout$foutmat
 
 respmat <- as.data.frame(covout$foutmat[,1:2])
-accmat <- as.data.frame(covout$foutmat[,3])
+for(i in 1:length(respmat$Cat1P)){
+  respmat[i,'Acc'] = 0
+  if (respmat[i,'Cat1P'] == 1 & tr[i,'t1'] == 1) respmat[i,'Acc'] = 1
+  if (respmat[i,'Cat2P'] == 1 & tr[i,'t2'] == 1) respmat[i,'Acc'] = 1
+}
+
+accmat <- as.data.frame(respmat[,3])
 colnames(accmat) <- c('Acc')
   
   
@@ -259,6 +283,21 @@ erriic <- sdiic/100
 
 #-----------------------------------------------------------
 
+# IIDT
+
+critlist <- NULL
+
+
+for (j in 1:10000){
+  
+tr <- wa2001train(2,20,-1,0,1,200,FALSE)
+stims <- as.data.frame(tr[1:16,])
+stims <- stims[order(stims$stim),]
+stims <- as.matrix(stims)
+nextrules <- c(0.25,0.25,0.25,0.25)
+smat <- symat(16,2)
+scvmat <- scumat(16,4,3,0,stims)
+
 # Concurrent load
 st <- list(0.0025,0.02,20,1,0.5,0.5,0,0.5,0.2,0.65,0.19,0.02,
            0.0022,0.01,1,0.00015625,0.00000000001,0,0,0.99,
@@ -271,20 +310,7 @@ names(st) <- c('corcon','errcon','perscon','decsto',
                'stimdim','crule','initrules','initsy',
                'scups')
 
-critlist <- NULL
-
-
-for (j in 1:10000){
-  
-tr <- wa2001train(2,20,-1,0,1,200,FALSE)
-stims <- as.data.frame(train[1:16,])
-stims <- stims[order(stims$stim),]
-stims <- as.matrix(stims)
-nextrules <- c(0.25,0.25,0.25,0.25)
-smat <- symat(16,2)
-scvmat <- scumat(16,4,3,0,stims)
-
-covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,xtdo = TRUE,rgive = TRUE)
+covout <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,rgive = TRUE,xtdo = FALSE)
 if (length(covout$foutmat[1,]) > 2)
 {colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc',
                                'System','cdim','hvx','expresp',
@@ -299,12 +325,18 @@ if (length(covout$foutmat[1,]) > 2)
                                'acts12','acts13','acts14',
                                'acts15','acts16','sumact1',
                                'sumact2')}
-if (length(covout$foutmat[1,]) == 3) 
-{colnames(covout$foutmat) <- c('Cat1P','Cat2P','acc')}
+if (length(covout$foutmat[1,]) == 2) 
+{colnames(covout$foutmat) <- c('Cat1P','Cat2P')}
 covout$foutmat
-  
+
 respmat <- as.data.frame(covout$foutmat[,1:2])
-accmat <- as.data.frame(covout$foutmat[,3])
+for(i in 1:length(respmat$Cat1P)){
+  respmat[i,'Acc'] = 0
+  if (respmat[i,'Cat1P'] == 1 & tr[i,'t1'] == 1) respmat[i,'Acc'] = 1
+  if (respmat[i,'Cat2P'] == 1 & tr[i,'t2'] == 1) respmat[i,'Acc'] = 1
+}
+
+accmat <- as.data.frame(respmat[,3])
 colnames(accmat) <- c('Acc')
   
   
