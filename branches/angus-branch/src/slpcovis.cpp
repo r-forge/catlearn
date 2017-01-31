@@ -18,89 +18,41 @@ using namespace Rcpp;
 // Utility functions
 
 double poisvar(double lambda){
-  // Concpet checked: AW 2016-08-24
-  // Operation checked: AI 2016-09-07
   // This function is to generate the random variable for
-  // Equ 6. in E&W2016. It is generated from a poisson
+  // Equ 5. in P+W2012. It is generated from a poisson
   // distribution.
   double poisvar = R::rpois(lambda);
   return poisvar;
 }
 
-// Epsilon from Equation 2 (random normal variate)
-// TICK - AW - 2016-09-09
+// Epsilon from Page 68 of P+W2012.
 double epsilon(double nvar){
   double epsilon = R::rnorm(0,nvar);
   return epsilon;
+}
+
+NumericMatrix symat(int stims,int cats){
+  // Function to generate matrix of initial synapse 
+  // strengths
+  // stims - Number of sensory cortex units
+  // cats - Number of striatal units
+  int i,j;
+  double u;
+  NumericMatrix smat(stims,cats);
+  for(i=0;i < cats; i++){
+    for(j=0;j < stims; j++){
+      u = R::runif(0,1);
+      smat(j,i) = 0.001 + (0.0025 * u);
+    }
+  }
+  return smat;
 }
   
 // First is the functions for the implementation of the
 // explicit (rule-based) system
 
-// Explicit
-// Creates rule-set at initial salience
-// TICKED! - AW 2016-09-09
-
-// Notes: (1) Edmunds & Wills also have CJ of DJ
-// Notes: (2) Are CJ and DJ always in practice equivalent?
-// (they are for SHJ61).
-
-// AI checked: 2016-08-24, up to 6 dimensions.
-// AW checked: 2016-08-24, seems OK for single dimension
-// rules. Not sure I understand how the number of others 
-// is determined.
-
-// AI : 06/09/2016. rechecked and made it easier to
-// understand, handle up to 6 dimensions and handle
-// differential initialsaliencies for different types of
-// rules. 
-// Operation checked: AI 2016-09-07
-
-// stimdim - Number of stimulus dimensions
-// udsal - Initial salience for unidimensional rules
-// cjsal - Initial salience for conjunctive rules
-// djofcjsal - Initial salience for disjunction of
-// conjunction rules
-// incl - 0: single dimension only, 1: SD, CJ, DJ.
-
-
-NumericVector rules(int stimdim, double udsal, double cjsal,
-                    double djofcjsal, int incl){
-  int prules,i;
-  NumericVector exprules;
-  if (incl == 1)
-  { int ud = 2*stimdim;
-    int cj = 4 * (((stimdim-1)*stimdim)/2);
-    int dj = cj;
-    int djofcj = stimdim*(stimdim-1);
-    prules = ud + cj + dj + djofcj;
-    NumericVector exprules(prules);
-    
-    for(i=0;i < ud; i++) {
-      exprules[i] = udsal;}
-    
-    for(i=ud;i < (ud+cj); i++) {
-      exprules[i] = cjsal;}
-    
-    for(i=(ud+cj);i < (ud+cj+dj); i++) {
-      exprules[i] = cjsal;}
-    
-    for(i=(ud+cj+dj);i < (ud+cj+dj+djofcj); i++) {
-      exprules[i] = djofcjsal;}
-    return exprules;
-  }
-  else 
-  {prules = stimdim*2;
-    NumericVector exprules(prules,udsal);
-    return exprules;}
-  return exprules;
-}
-
-
 // Function to calculate the discrimant value used in the 
-// Response rule.
-// Operation checked : AI 07/09/2016
-// TICK - AW - 2016-09-09
+// Response rule, Eq1 in P+W2012.
 double disfunc(double stimval,double deccrit){
   double disval = stimval - deccrit;
   return disval;
@@ -108,50 +60,31 @@ double disfunc(double stimval,double deccrit){
 
 
 int expres(double disval, double nvar,int crule){
-  // TICK: AW 2016-08-16
-  
-  // Response rule for explicit system 
-  
   // This response rule exists in the explicit system to 
   // decide whether to respond with A or B, referencing two
   // categories as is the norm. Epsilon is a normally
-  // distributed variable
+  // distributed variable (Page 68 of P+W2012).
   
-  // Edmunds & Wills (2016, Equ. 2)
   // disval - discriminant value (h_v)
   // nvar - noise (sigma_v)
   // double epsilon = R::rnorm(0.0,nvar);
   int Response;
   double eps = epsilon(nvar);
-  //if(crule%2 == 0){
-    if(disval < eps)
-    {Response = 1;}
-    else
-    {Response = 2;}
-  //}
-  //else{
-  //  if(disval < eps) // These need to be commented back 
-  //  in later
-  //  {Response = 2;}
-  //  else
-  //  {Response = 1;}
-  //}
+  if(disval < eps)
+  {Response = 1;}
+  else
+  {Response = 2;}
   return Response;
 }
 
 
 int acccheck(int resp, NumericVector tr,int colskip,
              int stimdim){
-  // TICK: AW 2016-08-16
-  
-  // Explicit system
-  
   // Function to check accuracy of predicted response
   // against actual response
   
-  // Required to decide whether Equ. 3 or 4 is in force
-  // Edmunds & Wills (2016)
-  
+  // Required to decide whether Equ. 2 or 3 of P+W2012 is in
+  // force
   int acc;
   acc = 0;
   if ((resp == 1) & (tr[colskip+stimdim] == 1)) acc = 1;
@@ -159,23 +92,17 @@ int acccheck(int resp, NumericVector tr,int colskip,
   return acc;
 }
 
-
-// Function to update rule saliency based on accuracy of
-// response. Either increments salience positively based on
-// a constant if correct, and negatively based on a 
-// different constant if incorrect.
-
-// TICK - AW - 2016-09-09
-// Operation checked: AI 07/09/2016
-
-// Equ. 3,4
-// corcon - delta C
-// errcon - delta E
-// psal - Z
-// acc = 1 if correct, 0 if incorrect
-
 double updsal(double corcon, double errcon, double psal,
               int acc){
+  // Function to update rule saliency based on accuracy of
+  // response. Either increments salience positively based 
+  // on a constant if correct, and negatively based on a 
+  // different constant if incorrect.Equ. 2/3 of P+W2012.
+  
+  // corcon - delta C
+  // errcon - delta E
+  // psal - Z
+  // acc = 1 if correct, 0 if incorrect
   double tsal;
   if (acc == 1){
     tsal = psal + corcon;
@@ -188,45 +115,33 @@ double updsal(double corcon, double errcon, double psal,
 
 
 double prerule(double rulsal,double perscon){
-  // Explicit system
-  // TICK - AW - 2016-09-09
   // This is the first of the functions to transform the
-  // saliencies of the rulesto weights, Equ 5. in E&W2016.
+  // saliencies of the rules to weights, Equ 4. in P+W2012.
   // Used for the rule used on the previous trial.
-  
-  // Operation Checked: AI 07/09/2016 
   double rulweight = rulsal + perscon;
   return rulweight;
 }
 
  
 double ranrule(double rulsal,double lambda){
-  // Explicit system
-  
   // This is the second of the functions to transform the 
-  // saliences of the rules to weights, Equ 6. in E&W2016.
+  // saliences of the rules to weights, Equ 5. in P+W2012.
   // Used  for another rule from the set chosen at random.
-  
-  // Operation Checked: AI 07/09/2016
-  // TICK - AW - 2016-09-09
   double pois = poisvar(lambda);
   double rulweight = rulsal + pois;
   return rulweight;
 }
 
 int rchoose(NumericVector exprules, double stocon){
-  // Explicit system
-  
   // This function is to choose a rule based on the
   // probabilities of those rules (probabilities come from 
-  // EW2016, Eq.8)
+  // P+W2012, Eq.7)
   
   // exprules - The rule weights
-  // stocon - parameter a
-  
-  // Operation Checked: AI 07/09/2016
-  // AW - OK, except this changes exprules back in R, 
-  // which might cause problems later. 
+  // stocon - parameter a (this is from Edmunds and 
+  // Wills(2016); it is used to establish whether a rule is 
+  // chosen deterministically or probabilistically. 1 =
+  // probabilistic, >1 = deterministic)
   int i,rsec;
   double sumsto;
   NumericVector selrules,storules,res;
@@ -253,17 +168,13 @@ int rchoose(NumericVector exprules, double stocon){
 // Next is the functions for implementation of the
 // procedural (implicit) system
 
-// First are the activation equations
-
-// Utility Function to calculate sensory unit activation on 
-// a trial. 
-// Part of Equ. 9 in E&W2016
-// sconst: alpha
-// diff: distance
-// Checked: AI 19/09/2016
-// Checked: AW 28/09/2016
-
 double scuact(double sconst,double diff){
+  // Utility Function to calculate sensory unit activation on 
+  // a trial. 
+  // Part of Equ. 8 in P+W2012
+  
+  // sconst: alpha
+  // diff: distance
   double act,super,e;
   super = -(pow(diff,2)/sconst);
   e = 2.718282;
@@ -271,20 +182,15 @@ double scuact(double sconst,double diff){
   return act;
 }
 
-
-// Function to calculate the activation of sensory cortex 
-// units. Equ.9
-
-// scumat: Co-ordinates of the sensory cortex units in 
-// psychological space.
-// cstim: Co-ordinates of the presented stimulus.
-// sconst: alpha (Equ.9)
-
-// Checked: AI 27/09/2016
-// Checked: AW 28/09/2016
-
 NumericVector actcalc(NumericMatrix scumat,
                       NumericVector cstim, double sconst){
+  // Function to calculate the activation of sensory cortex 
+  // units. Equ.8 of P+W2012.
+  
+  // scumat: Co-ordinates of the sensory cortex units in 
+  // psychological space.
+  // cstim: Co-ordinates of the presented stimulus.
+  // sconst: alpha (Equ.8)
   int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
   NumericVector dists(nrow);
   for(i=0;i < nrow;i++){
@@ -301,25 +207,15 @@ NumericVector actcalc(NumericMatrix scumat,
   return dists;
 }
 
-
-// Function to calculate the activation of striatal units,
-// Equ 10 in E&W2016. Also generates a response based on the
-// summed activation.
-// wkj: sensory-striatal link strengths
-// ik: Activation of sensory cortical units
-// noisecon: Normally distributed noise (variance constant)
-
-// NOTE: Does activation calcs but does not return them, 
-// returns decision. This may not be the right thing to do,
-// as activationsprobably needed for learning rule.
-// Split into activation and decision components. 
-
-// Also, don't need intermediate matrix cortact, just sum.
-
-// Checked: AI 27/09/2016
-
 NumericVector stract(NumericMatrix wkj,NumericVector ik,
                      double noisecon){
+  // Function to calculate the activation of striatal units,
+  // Equ 9 in P&W2012. Also generates a response based on the
+  // summed activation.
+  
+  // wkj: sensory-striatal link strengths
+  // ik: Activation of sensory cortical units
+  // noisecon: Normally distributed noise (variance constant)
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
   double noise;
   NumericVector sumact(ncol);
@@ -333,15 +229,15 @@ NumericVector stract(NumericMatrix wkj,NumericVector ik,
   return sumact;
 }
 
-// Function for decision based on summed activations
 int decact(NumericVector sumact){
-int i,act=0,ncol = sumact.size();
-double largeact;
-largeact = max(sumact);
-for(i=0;i < ncol;i++){
-  if (sumact(i) == largeact){act = i + 1;}
-  }
-return act;
+  // Function for decision based on summed activations
+  int i,act=0,ncol = sumact.size();
+  double largeact;
+  largeact = max(sumact);
+  for(i=0;i < ncol;i++){
+    if (sumact(i) == largeact){act = i + 1;}
+    }
+  return act;
 }
 
 // Next are the learning equations
@@ -349,18 +245,9 @@ return act;
 // First are the equations necessary to specify the dopamine
 // released on each trial
 
-
-// Function to calculate obtained reward.
-// Part of Eq. 13
-// How is no feedback represented in the input training 
-// array?
-// Normally, it'd be something like [0,0] where normal
-// feedback trials are [1,-1] and [-1,1]
-
-// Checked: AI 27/09/2016
-// Not checked AW, too simple. 
-
 double obtrew(int acc){
+  // Function to calculate obtained reward.
+  // Part of Eq. 13 in P+W2012.
   double rew;
   if (acc == 1){rew = 1;}
   if (acc == 0){rew = -1;}
@@ -369,33 +256,24 @@ double obtrew(int acc){
 }
 
 
-// Function to calculate predicted reward.
-// Eq. 14 Edmunds-Wills(2016)
-
-// prep: previous P
-// prer: previous R
-
-// Checked: AI 27/09/2016
-// Check AW 03-10-2016
-
 double prerew(double prep,double prer,double precon){
+  // Function to calculate predicted reward.
+  // Eq. 12 in P+W2012
+  
+  // prep: previous P
+  // prer: previous R
   double rew,add;
   add = precon*(prer-prep);
   rew = prep + add;
   return rew;
 }
 
-
-// Function to calculate dopamine release.
-// Ashby et al. (2011), equ. 13
-
-// obtrew - obtained reward (1 = correct, 
-// 0 = absence of feedback, -1 = incorrect)
-
-// Checked: AI 27/09/2016
-// Checked: AW 03-10-2016
-
 double doprel(double obtrew, double prerew){
+  // Function to calculate dopamine release.
+  // Eq 13 of P+W2012.
+  
+  // obtrew - obtained reward (1 = correct, 
+  // 0 = absence of feedback, -1 = incorrect)
   double rpe,dn;
   rpe = obtrew - prerew;
   if (rpe > 1){dn = 1;}
@@ -404,34 +282,28 @@ double doprel(double obtrew, double prerew){
   return dn;
 }
 
-
-// Next is the large equation for adjusting synapse strength
-// Function to calculate equation 10 of Ashby et al. (2011)
-
-// Checked: AI 27/09/2016
-// Lightly checked: AW 03-10-2016
-
-// nsystr - New SYnapse STRength
-
-// Calculated values:
-// systr - SYnapse STRength
-// act - sensory cortex activation
-// sum - striatal unit activation
-// dn - Dopamine released
-
-// Free parameters:
-// alpha - alpha-w learning rate parameter of COVIS
-// beta - beta-w learning rate parameter of COVIS
-// gamma - gamma-w learning rate parameter of COVIS
-// nmda - theta nmda par.
-// dbase - baseline dopamine
-// wmax - Maximum link strength
-// ampa - theta ampa par.
-
 double nsystr(double systr,double act,double sum,double dn,
               double alpha,double beta,double gamma,
               double nmda,double ampa,double dbase,
               double wmax){
+  // Function to calculate equation 10 of P+W2012
+  
+  // nsystr - New SYnapse STRength
+  
+  // Calculated values:
+  // systr - SYnapse STRength
+  // act - sensory cortex activation
+  // sum - striatal unit activation
+  // dn - Dopamine released
+  
+  // Free parameters:
+  // alpha - alpha-w learning rate parameter of COVIS
+  // beta - beta-w learning rate parameter of COVIS
+  // gamma - gamma-w learning rate parameter of COVIS
+  // nmda - theta nmda par.
+  // dbase - baseline dopamine
+  // wmax - Maximum link strength
+  // ampa - theta ampa par.
   double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out;
   double out1,out2,out3;
   // section 1 : increases in strength
@@ -467,58 +339,82 @@ double nsystr(double systr,double act,double sum,double dn,
 // [[Rcpp::export]]
 List slpCOVIS(List st,
               NumericMatrix tr,
-              NumericVector initrules,
-              NumericMatrix initsy,
-              NumericMatrix scups,
               bool crx = true,
               bool respt = true,
-              bool xtdo = false){
+              bool xtdo = false,
+              bool rgive = false){
 // This clumsy section copies stuff out of an R List
 // There seems to be no way in RCpp to get direct access to
 // a List at input?
-double corcon = as<double>(st[0]);
-double errcon = as<double>(st[1]);
-double perscon = as<double>(st[2]);
-double decsto = as<double>(st[3]);
-double decbound = as<double>(st[4]);
-double lambda = as<double>(st[5]);
-double envar = as<double>(st[6]);
-double emaxval = as<double>(st[7]);
-double dbase = as<double>(st[8]);
-double alphaw = as<double>(st[9]);
-double betaw = as<double>(st[10]);
-double gammaw = as<double>(st[11]);
-double nmda = as<double>(st[12]);
-double ampa = as<double>(st[13]);
-double wmax = as<double>(st[14]);
-double invar = as<double>(st[15]);
-double sconst = as<double>(st[16]);
-double prep = as<double>(st[17]);
-double prer = as<double>(st[18]);
-double etrust = as<double>(st[19]);
-double itrust = as<double>(st[20]);
-double ocp = as<double>(st[21]);
-double oep = as<double>(st[22]);
-int colskip = as<int>(st[23]);
-int stimdim = as<int>(st[24]);
+double corcon = as<double>(st["corcon"]);
+double errcon = as<double>(st["errcon"]);
+double perscon = as<double>(st["perscon"]);
+double decsto = as<double>(st["decsto"]);
+double decbound = as<double>(st["decbound"]);
+double lambda = as<double>(st["lambda"]);
+double envar = as<double>(st["envar"]);
+double emaxval = as<double>(st["emaxval"]);
+double dbase = as<double>(st["dbase"]);
+double alphaw = as<double>(st["alphaw"]);
+double betaw = as<double>(st["betaw"]);
+double gammaw = as<double>(st["gammaw"]);
+double nmda = as<double>(st["nmda"]);
+double ampa = as<double>(st["ampa"]);
+double wmax = as<double>(st["wmax"]);
+double invar = as<double>(st["invar"]);
+double sconst = as<double>(st["sconst"]);
+double prep = as<double>(st["prep"]);
+double prer = as<double>(st["prer"]);
+double etrust = as<double>(st["etrust"]);
+double itrust = as<double>(st["itrust"]);
+double ocp = as<double>(st["ocp"]);
+double oep = as<double>(st["oep"]);
+int colskip = as<int>(st["colskip"]);
+int stimdim = as<int>(st["stimdim"]);
+int crule = as<int>(st["crule"]);
+NumericVector initrules = as<NumericVector>(st["initrules"]);
+NumericMatrix initsy = as<NumericMatrix>(st["initsy"]);
+NumericMatrix scups = as<NumericMatrix>(st["scups"]);
 // End of particularly clumsy section
-int i,j,k,x = 3,cdim=0,rrule = -1,expresp,impresp,expacc;
-int impacc,sresp=0,sused=0,acc=0, nrow = initsy.nrow();
+int i,j,k,cdim=0,rrule = -1,expresp,impresp,expacc=0;
+int impacc=0,sresp=0,sused=0,acc=0, nrow = initsy.nrow();
 int ncol = initsy.ncol(),length = tr.nrow();
-double hvx,hvp,econf,iconf,dn,crule,imaxval=0; 
-NumericVector updrules(clone(initrules)),
-                       acts,sumact,cstim,
-                       wrules(clone(initrules));
-crule = rchoose(Rcpp::clone(updrules),decsto);
-NumericMatrix updsy = (Rcpp::clone(initsy));
-NumericVector train = tr(0,_);
+double hvx,hvp,econf,iconf,dn=0,imaxval=0;
+List frules,fupdsy;
+NumericVector fetrust,fitrust,fcrule,fprep,fprer;
+NumericVector train = tr(0,_),acts,sumact,cstim;
+NumericMatrix updsy,outmat(length,2);
+NumericVector updrules = (clone(initrules));
+NumericVector wrules = (clone(initrules));
+if (rgive){crule = rchoose(Rcpp::clone(updrules),decsto);}
+updsy = symat(initsy.nrow(),initsy.ncol());
 // Setup output matrix
-if (xtdo){x = 45;}
-NumericMatrix outmat(length,x);
+if (xtdo){outmat = NumericMatrix(length,45);}
+// Run loop for length of training matrix
 for(i=0;i<length;i++){
   // Initial setup for current trial
   int l=0,m=0,n=0;
   train = tr(i,_);
+  // Conditional to establish whether the state of the
+  // model needs resetting
+  if(train(0) == 1)
+  { if (i>0){frules.push_back(updrules);
+             fupdsy.push_back(updsy);
+             fetrust.push_back(etrust);
+             fitrust.push_back(itrust);
+             fcrule.push_back(crule);
+             fprep.push_back(prep);
+             fprer.push_back(prer);}
+    crule = as<int>(st["crule"]);
+    etrust = as<double>(st["etrust"]);
+    itrust = as<double>(st["itrust"]);
+    prep = as<double>(st["prep"]);
+    prer = as<double>(st["prer"]);
+    updrules = NumericVector(clone(initrules));
+    wrules = NumericVector(clone(initrules));
+    if (rgive){crule = rchoose(Rcpp::clone(updrules),decsto);}
+    updsy = symat(initsy.nrow(),initsy.ncol());
+  }
   cstim = train[Range(colskip,((colskip-1)+stimdim))];
   // Generate a response from the Explicit system
   cdim = cstim[crule];
@@ -540,6 +436,9 @@ for(i=0;i<length;i++){
   else 
     {sresp = impresp;
      sused = 2;}
+  // There is a conditional here that lets us freeze 
+  // learning if we desire
+  if (train(0) < 2){
   // Update Explicit system rules based on accuracy
   if (respt == true)
     {expacc = acccheck(sresp,train,colskip,stimdim);
@@ -594,33 +493,34 @@ for(i=0;i<length;i++){
   }
   // Update the trust in the implicit system
   itrust = 1 - etrust;
+  }
   // Update output matrix
   if (sresp == 1){outmat(i,0) = 1;
                   outmat(i,1) = 0;}
   if (sresp == 2){outmat(i,0) = 0;
                   outmat(i,1) = 1;}
-  outmat(i,2) = acc;
   if (xtdo){
+            outmat(i,2) = acc;
             outmat(i,3) = sused;
-            outmat(i,4) = etrust;
-            outmat(i,5) = itrust;
-            outmat(i,6) = cdim;
-            outmat(i,7) = hvx;
-            outmat(i,8) = expresp;
-            outmat(i,9) = hvp;
-            outmat(i,10) = impresp;
-            outmat(i,11) = econf;
-            outmat(i,12) = iconf;
-            outmat(i,13) = imaxval;
-            outmat(i,14) = emaxval;
-            outmat(i,15) = expacc;
-            outmat(i,16) = impacc;
-            outmat(i,17) = respt;
-            outmat(i,18) = rrule;
-            outmat(i,19) = crule;
-            outmat(i,20) = prep;
-            outmat(i,21) = prer;
-            outmat(i,22) = dn;
+            outmat(i,4) = cdim;
+            outmat(i,5) = hvx;
+            outmat(i,6) = expresp;
+            outmat(i,7) = hvp;
+            outmat(i,8) = impresp;
+            outmat(i,9) = econf;
+            outmat(i,10) = iconf;
+            outmat(i,11) = imaxval;
+            outmat(i,12) = emaxval;
+            outmat(i,13) = expacc;
+            outmat(i,14) = impacc;
+            outmat(i,15) = respt;
+            outmat(i,16) = rrule;
+            outmat(i,17) = dn;
+            outmat(i,18) = etrust;
+            outmat(i,19) = itrust;
+            outmat(i,20) = crule;
+            outmat(i,21) = prep;
+            outmat(i,22) = prer;
             for(j=23;j<27;j++){
               outmat(i,j) = cstim(l);
               l = l + 1;
@@ -635,7 +535,19 @@ for(i=0;i<length;i++){
               }
             }
     }
+frules.push_back(updrules);
+fupdsy.push_back(updsy);
+fetrust.push_back(etrust);
+fitrust.push_back(itrust);
+fcrule.push_back(crule);
+fprep.push_back(prep);
+fprer.push_back(prer);
 return Rcpp::List::create(Rcpp::Named("foutmat") = outmat,
-                          Rcpp::Named("frules") = updrules,
-                          Rcpp::Named("fsystr") = updsy);
+                          Rcpp::Named("frules") = frules,
+                          Rcpp::Named("fsystr") = fupdsy,
+                          Rcpp::Named("fetrust") = fetrust,
+                          Rcpp::Named("fitrust") = fitrust,
+                          Rcpp::Named("frule") = fcrule,
+                          Rcpp::Named("fprep") = fprep,
+                          Rcpp::Named("fprer") = fprer);
 }

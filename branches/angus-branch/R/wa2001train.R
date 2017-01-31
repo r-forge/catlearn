@@ -50,7 +50,8 @@ scumat <- function(stims, dims, colskip, complex, tr){
 # problem = rule-based or information-integration
 # blocks = number of blocks to generate
 # absval = variable for checking category absence value
-wa2001train <- function(problem,blocks,absval){
+wa2001train <- function(problem,blocks,absval,learning,ppts,tlimit = 16*blocks,
+                        rep){
   wa2001 <- array(0,dim=c(16,10,2))
   colnames(wa2001) <- c('stim','x1','x2','x3','x4','t1','t2','m1','m2','m3')
   
@@ -90,8 +91,11 @@ wa2001train <- function(problem,blocks,absval){
     c(15,1,0,0,1,1,-1,0,0,0),
     c(16,1,0,0,0,1,-1,0,0,0)
   )
-  
+  if (rep == TRUE){reset <- 0}
+  else{reset <- 1}
   makelist <- NULL
+  fmakelist <- NULL
+  for (i in 1:ppts){
   for(blk in 1:blocks) { 
     # Load trials for one block
     block <- wa2001[,,problem]
@@ -99,17 +103,21 @@ wa2001train <- function(problem,blocks,absval){
     block <- cbind(blk,block)
     makelist <- rbind(makelist,block)
   }
-  ctrl <- c(1,rep(0,nrow(makelist)-1))
-  makelist <- cbind(ctrl,makelist)
+    makelist <- makelist[1:tlimit,]
+    ctrl <- c(reset,rep(learning,nrow(makelist)-1))
+    makelist <- cbind(ctrl,makelist)
+    fmakelist <- rbind(fmakelist,makelist)
+    makelist <- NULL
+  }
   
   # If the value for category absence is not -1
   # change the list to reflect this
   if(absval != -1) {
-    makelist[makelist[,'t1'] == -1,'t1'] <- absval
-    makelist[makelist[,'t2'] == -1,'t2'] <- absval
+    fmakelist[fmakelist[,'t1'] == -1,'t1'] <- absval
+    fakelist[fmakelist[,'t2'] == -1,'t2'] <- absval
   }
   
-  return(makelist)
+  return(fmakelist)
 }
 
 
