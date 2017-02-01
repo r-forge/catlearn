@@ -91,7 +91,6 @@ Stangle(rnwfile)
 
 produces code in example-1.R
 
-
 * Branching a repo
 Sections marked PMO (package maintainer only) should only be done by
 the project lead (normally Andy). However, the can be done by anyone
@@ -116,11 +115,11 @@ svn merge ^/pkg
 svn commit -m "Sync trunk changes to angus-branch."
 
 - Merging a branch back into the trunk (PMO)
-Make sure you're in the root directory for the repo on your machine
-then: 
+Make sure you're in the root directory for the trunk on your machine
+('pkg' for catlearn) then:
 
 svn merge ^/branches/angus-branch
-
+svn commit -m "Merge rw-branch with trunk."
 This can be done multiple times.
 
 ** Explanation of branching
