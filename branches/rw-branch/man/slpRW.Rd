@@ -1,11 +1,12 @@
 \name{slpRW}
   \alias{slpRW}
 \title{
-RW associative Learning Model
+Rescorla-Wagner (1972) associative learning model.
 }
 \description{
 
-Rescorla & Wagner's (1972) Theory of Pavlovian conditioning: variations in the effectiveness of reinforcement and non reinforcement.
+  Rescorla & Wagner's (1972) theory of Pavlovian conditioning. 
+
 }
 \usage{
 
@@ -16,61 +17,112 @@ slpRW(st, tr, xtdo = FALSE)
 
   \item{st}{List of model parameters}
   
-  \item{tr}{R matrix of training items}
+  \item{tr}{Matrix of training items}
   
-  \item{xtdo}{Boolean specifying whether to include extended information in the output (see below)}
+  \item{xtdo}{Boolean specifying whether to include extended information
+  in the output (see below)}
   
 }
 }
 \details{
 
-The contents of this help file are intended to provide a brief overview of slpRW. 
+  The contents of this help file are relatively brief; a more extensive
+  tutorial on using slpRW can be found in Spicer et al. (n.d.).
 
-The function operates as a stateful list processor (slp). Specifically, it takes a matrix (tr) as an argument, where each row represents a single training trial, while each column represents the different types of information required by the model, such as training stimuli, teaching signals and control signals. It returns a matrix where each row also represents a single trial, and where the column represents summed stumulus activations (i.e. associative strengths), generated over the course of a simulation. The slpRW function also returns the final state of the model, in the form of a vector of weights representing associative strengths.
+The function operates as a stateful list processor (slp; see Wills et
+al., 2017). Specifically, it takes a matrix (tr) as an argument, where
+each row represents a single training trial, while each column
+represents the different types of information required by the model,
+such as the elemental representation of the training stimuli, and the
+presence/absence of an otucome. It returns a vector of the output
+activations on each trial (a.k.a. sum of associative strengths of cues
+present on that trial). The slpRW function also returns the final state
+of the model - a vector of associative strengths between each stimulus
+and the outcome representation.
 
-Please note that further development is planned for slpRW, with the next release scheduled for September 2017. The most significant change will be model optimisation (by translation from R script to C++ script), which will greatly improve the speed at which the model can run. Also, there will be more flexibility in terms of setting the learning rate. The constant lr (see below) will be split into its constituent alpha and beta parts, while beta will be further split into beta-1 and beta-0.
+Argument \code{st} must be a list containing the following items:
 
-Argument st must be a list containing the following items:
+\code{lr} - the learning rate (fixed for a given simulation). In order to
+calculate lr, calculate the product of Rescorla-Wagner parameters alpha
+and beta. For example, if you want alpha = 0.1 and beta = 0.2, set lr =
+0.02.
 
-lr - the learning rate. This is set as a constant value for simulations. It is comprised of two constants multiplied together (alpha and beta: the salience of the conditioned stimuli, and the learning rate parameter of the unconditioned stimuli, respectively (Rescorla & Wagner, 1972)).
+\code{w} - a vector of initial associative strengths. If you are not sure what
+to use here, set all values to zero. 
 
-w - a vector of weights for the conditioned stimuli (set at an initial value of zero).
+\code{colskip} - the number of optional columns to be skipped in the tr
+matrix. colskip should be set to the number of optional columns you have
+added to the tr matrix, PLUS ONE. So, if you have added no optional
+columns, colskip=1. This is because the first (non-optional) column
+contains the control values (details below).
 
-colskip - the number of optional columns to be skipped in the tr matrix. colskip should be set to the number of optional columns you have added to the tr matrix, PLUS ONE. So, if you have added no optional columns, colskip=1. This is because the first (non-optional) column contains the control values (details below).
+Argument \code{tr} must be a matrix, where each row is one trial
+presented to the model. Trials are always presented in the order
+specified. The columns must be as described below, in the order
+described below:
 
-Argument tr must be a matrix, where each row is one trial presented to the model. Trials are always presented in the order specified. The columns must be as described below, in the order described below:
+\code{ctrl} - a vector of control codes. Available codes are: 0 = normal trial; 1 reset model (i.e. set associative strengths (weights) back to their initial values as specified in w (see above)); 2 = Freeze learning. Control codes are actioned before the trial is processed.
 
-ctrl - a vector of control codes. Available codes are: 0 = normal trial; 1 reset model (i.e. set associative strengths (weights) back to their initial values as specified in w (see above)); 2 = Freeze learning. Control codes are actioned before the trial is processed.
+\code{opt1, opt2, \dots} - any number of preferred optional columns, the
+names of which can be chosen by the user. It is important that these
+columns are placed after the control column, and before the remaining
+columns (see below). These optional columns are ignored by the slpRW
+function, but you may wish to use them for readability. For example, you
+might choose to include columns such as block number, trial number and
+condition. The argument colskip (see above) must be set to the number of
+optional columns plus one.
 
-opt1, opt2, ... any number of preferred optional columns, the names of which can be chosen by the user. It is important that these columns are placed after the control column, and before the remaining columns (see below). These optional columns are ignored by the slpRW function, but you may wish to use them for readability. For example, you might choose to include columns such as block number, trial number and condition. The argument colskip (see above) must be set to the number of optional columns plus one. 
+\code{x1, x2, \dots} - any number of input elements. There must be one
+column for each input element. Use 1 to represent the presence of this
+element, and 0 to represent its absence (other values are not currently
+supported). In simple applications, one element is used for each
+stimulus (e.g. a simulation of blocking would have two inputs, one for A
+and one for X). Use Each row is one trial.
 
-x1, x2, ... any number of preferred stimulus inputs to the model. There must be one column for each input unit (i.e. stimulus). Each row is one trial. The naming of the input columns can be defined by the user (for example you might wish to use different letters to represent individual stimuli). 
+\code{t} - Teaching signal (a.k.a. lambda). Traditionally, 1 is used to
+represent the presence of the outcome, and 0 is used to represent the
+absence of the outcome, although slpRW suports any real values for lambda.
 
-t - teaching signal to the model. This can be a value of one or zero, depending on whether the stimuli are paired with the outcome, or the absence of the outcome, respectively. The teaching signal provides the role of lambda, within the Rescorla-Wagner equation (i.e. the asymptote of associative strength for conditioned stimuli (Rescorla & Wagner, 1972)).
-
-Argument xtdo (eXTenDed Output), if set to TRUE, will include cumulative weights of associative strength (w.m) at the end of each trial (i.e. for each stimulus input).
+Argument \code{xtdo} (eXTenDed Output), if set to TRUE, function will
+return associative strength for the end of each trial (see Value).
 
 }
 
 \value{
 
-Returns a list containing two components: (1) matrix of summed output activations (suma) (i.e. sum of associative strengths) for each trial; (2) weights of associative strength (st) after the final trial.
- 
+  Returns a list containing two components (if xtdo = FALSE) or three
+  components (if xtdo = TRUE, xout is also returned):
 
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  \item{suma}{Vector of output activations for each trial}
+
+  \item{st}{Vector of final associative strengths}
+
+  \item{xout}{Matrix of associative strengths at the end of each trial}
+
 }
 \author{
-Stuart Spicer
+Stuart Spicer, Andy Wills
 
 }
 \references{
 
-Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian conditioning: Variations in the effectiveness of reinforcement and nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), Classical conditioning II: Current research and theory (pp. 64–99). New York: Appleton-Century-Crofts.
+Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian conditioning: Variations in the effectiveness of reinforcement and nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), \emph{Classical conditioning II: Current research and theory} (pp. 64–99). New York: Appleton-Century-Crofts.
 
-Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster, A.B.(2016). Progress in modeling through distributed collaboration: Concepts, tools, and category-learning examples. The Psychology of Learning and Motivation.
+Spicer, S., Jones, P.M., Inkster, A.B., Edmunds, C.E.R. & Wills,
+A.J. (n.d.). Progress in learning theory through distributed
+collaboration: Concepts, tools, and examples. \emph{Manuscript in preparation}.
+
+Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster,
+A.B.(2017). Progress in modeling through distributed collaboration:
+Concepts, tools, and category-learning examples. \emph{Psychology of
+  Learning and Motivation, 66}, 79-115.
+
+}
+\note{
+
+  Further development of slpRW is planned during 2017, including
+  substantially increase in speed of execution, inclusion of beta-1 and
+  beta-0 learning rates, and inclusion of the ability to represent cue
+  salience via input activations.
 
 }

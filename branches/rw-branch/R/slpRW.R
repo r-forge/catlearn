@@ -55,7 +55,7 @@ slpRW <- function(st, tr, xtdo = FALSE) {
 
  #Data that model outputs (incl if/else clause for extended output):
   if(xtdo==TRUE) {
-    ret <- list(out = out, xout = xout, st = w.m)
+    ret <- list(out = out, st = w.m, xout = xout)
   } else {
     ret <- list(out = out, st = w.m)
   }
