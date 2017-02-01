@@ -1,0 +1,94 @@
+How to develop packages in R using SVN and r-forge.
+
+* Getting your machine ready for development work
+
+1. Install the latest version of R  from CRAN
+2. Install the latest version of Rcpp from CRAN
+3. Make sure you've installed the tools to build packages on your
+machine, see 
+
+Linux:   https://cran.r-project.org/bin/linux/
+OS X:    http://r.research.att.com/tools/
+Windows: https://cran.r-project.org/bin/windows/Rtools/ 
+
+* Check out the repository (only once)
+ - Navigate to the local development directory: ~/r_packages
+ - Use SVN to checkout the files from R-forge:
+
+   svn checkout svn+ssh://ajwills@r-forge.r-project.org/svnroot/catlearn
+
+* Perform checks on the package
+ - Navigate inside the _development_ directory.
+ - Run the checks (NB: due to R-forge directory structure, it will
+   always be 'pkg').
+
+  R CMD build pkg
+
+  R CMD check catlearn_0.24.tar.gz
+
+- For a more rigorous check before CRAN submission
+
+  R CMD check --as-cran catlearn_0.24.tar.gz
+
+* Installl the package
+ - Navigate inside the _development_ directory, e.g. ~/r_packages/catlearn
+ - Install the package (NOTE: because of the R-forge directory
+   structue, it will always be 'pkg' in the following command. The
+   path is the _production_ library of the local R installation - i.e.
+   the location in which R expects finished packages to be located).
+
+   R CMD INSTALL -l ~/R/x86_64-pc-linux-gnu-library/3.3 pkg
+* Make your changes
+NOTE: These changes should be made to the local _development_ copy.
+* Re-install package
+  As for install package
+* Commit changes to the pacakge
+** Check for changes
+  - Enter the _catlearn_ directory in the local development directory
+  - Check the status of files:
+
+   svn status
+
+  - Add files to the repository where needed:
+
+   svn add data/shin92.RData
+** Commit changes
+ - Commit changes with an informative message:
+
+   svn commit -m "Added Shin & Nosofsky (1992) data set"
+* Dealing with RCpp development
+- Load the library
+
+  library(Rcpp)
+
+- Compile the source
+
+  sourceCpp('path/to/source')
+
+- Update hooks
+
+  Rcpp::compileAttributes()
+
+- Do build, check, install as usual.
+
+* Writing vignettes in Sweave
+** Example from the Sweave vignette.
+Retrieve the path of a file in a package:
+
+   rnwfile <- system.file("Sweave", "example-1.Rnw", package = "utils")
+
+Run Sweave:
+
+Sweave(rnwfile)
+
+which creates a .tex file and other bits it'll need to make the PDF.
+Make the PDF with
+
+tools::texi2pdf("example-1.tex")
+** Extracting code from a vignette:
+
+Stangle(rnwfile)
+
+produces code in example-1.R
+
+
