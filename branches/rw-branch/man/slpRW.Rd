@@ -45,10 +45,14 @@ Argument \code{st} must be a list containing the following items:
 \code{lr} - the learning rate (fixed for a given simulation). In order to
 calculate lr, calculate the product of Rescorla-Wagner parameters alpha
 and beta. For example, if you want alpha = 0.1 and beta = 0.2, set lr =
-0.02.
+0.02. If you want different elements to differ in salience (different
+alpha values) use the input activations (x1, x2, \dots, see below) to
+represent element-specific salience. For example, if alpha_A = 0.4,
+alpha_X = 0.2, and beta = 0.1, then set lr = 0.1, and the activations of
+A and B to 0.4 and 0.2, respectively.
 
-\code{w} - a vector of initial associative strengths. If you are not sure what
-to use here, set all values to zero. 
+\code{w} - a vector of initial associative strengths. If you are not
+sure what to use here, set all values to zero.
 
 \code{colskip} - the number of optional columns to be skipped in the tr
 matrix. colskip should be set to the number of optional columns you have
@@ -61,7 +65,10 @@ presented to the model. Trials are always presented in the order
 specified. The columns must be as described below, in the order
 described below:
 
-\code{ctrl} - a vector of control codes. Available codes are: 0 = normal trial; 1 reset model (i.e. set associative strengths (weights) back to their initial values as specified in w (see above)); 2 = Freeze learning. Control codes are actioned before the trial is processed.
+\code{ctrl} - a vector of control codes. Available codes are: 0 = normal
+trial; 1 reset model (i.e. set associative strengths (weights) back to
+their initial values as specified in w (see above)); 2 = Freeze
+learning. Control codes are actioned before the trial is processed.
 
 \code{opt1, opt2, \dots} - any number of preferred optional columns, the
 names of which can be chosen by the user. It is important that these
@@ -72,12 +79,14 @@ might choose to include columns such as block number, trial number and
 condition. The argument colskip (see above) must be set to the number of
 optional columns plus one.
 
-\code{x1, x2, \dots} - any number of input elements. There must be one
-column for each input element. Use 1 to represent the presence of this
-element, and 0 to represent its absence (other values are not currently
-supported). In simple applications, one element is used for each
-stimulus (e.g. a simulation of blocking would have two inputs, one for A
-and one for X). Use Each row is one trial.
+\code{x1, x2, \dots} - activation of any number of input elements. There
+must be one column for each input element. Each row is one trial. In
+simple applications, one element is used for each stimulus (e.g. a
+simulation of blocking, A+, AX+, would have two inputs, one for A and
+one for X). In simple applications, all present elements have an
+activation of 1 and all absence elements have an activation of
+0. However, slpRW supports any real number for activations, e.g. one
+might use values between 0 and 1 to represent differing cue saliences.
 
 \code{t} - Teaching signal (a.k.a. lambda). Traditionally, 1 is used to
 represent the presence of the outcome, and 0 is used to represent the
@@ -122,7 +131,6 @@ Concepts, tools, and category-learning examples. \emph{Psychology of
 
   Further development of slpRW is planned during 2017, including
   substantially increase in speed of execution, inclusion of beta-1 and
-  beta-0 learning rates, and inclusion of the ability to represent cue
-  salience via input activations.
+  beta-0 learning rates.
 
 }
