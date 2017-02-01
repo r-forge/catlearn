@@ -31,7 +31,7 @@ slpALCOVE(st, tr, dec = 'ER', humble = TRUE, attcon = FALSE, absval = -1,
     absence}
 
   \item{xtdo}{Boolean specifying whether to write extended information
-  to the console (see }
+  to the console (see below).}
   
 }  
   
@@ -190,10 +190,10 @@ Nosofsky, R.M., Gluck, M.A., Plameri, T.J., McKinley, S.C. and
   learning: A replication and extension of Shepaard, Hovland, and
   Jenkins (1961). \emph{Memory and Cognition, 22}, 352-369.
 
-  Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster, A.B.(2016).
-  Progress in modeling through distributed collaboration: Concepts,
-  tools, and category-learning examples.  \emph{The Psychology of
-  Learning and Motivation}.
+Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster,
+A.B.(2017). Progress in modeling through distributed collaboration:
+Concepts, tools, and category-learning examples. \emph{Psychology of
+  Learning and Motivation, 66}, 79-115.
 
 }
 
