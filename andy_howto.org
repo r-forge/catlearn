@@ -92,3 +92,70 @@ Stangle(rnwfile)
 produces code in example-1.R
 
 
+* Branching a repo
+Sections marked PMO (package maintainer only) should only be done by
+the project lead (normally Andy). However, the can be done by anyone
+who's checked out the repo at the root directory.
+
+- Create a branch (PMO):
+Make sure you're in the root directory for the repo on your machine
+then:
+
+svn copy ^/pkg ^/branches/angus-branch -m "Branching for Angus to add COVIS."
+
+- Checkout the branch
+(This should be done by the person using the branch).
+
+svn checkout
+svn+ssh://ainkster@r-forge.r-project.org/svnroot/catlearn/branches/angus-branch
+
+- Merging trunk developments to branch
+(Person using the branch should do this regularly)
+
+svn merge ^/pkg
+svn commit -m "Sync trunk changes to angus-branch."
+
+- Merging a branch back into the trunk (PMO)
+Make sure you're in the root directory for the repo on your machine
+then: 
+
+svn merge ^/branches/angus-branch
+
+This can be done multiple times.
+
+** Explanation of branching
+Hi,
+
+NOTE: I'm working on getting better instructions for this. Let me know
+if/where you get stuck.
+
+I've created you a private branch of the catlearn project. This is a
+copy of the catlearn package you can add COVIS into without changing
+the copy that produces the download for r-forge and CRAN (aka 'the
+trunk').
+
+Using RStudio, or the command line, checkout from:
+
+svn+ssh://jpminda@r-forge.r-project.org/svnroot/catlearn/branches/minda-branch
+
+using whatever password you chose when you set yourself up on
+r-forge.
+
+As you're developing your code, you should regularly update your
+branch from the trunk so you don't get out of sync with the main
+package. From the command line the way to do this is to navigate into
+your local working copy of the repo and type:
+
+svn merge ^/pkg
+svn commit -m "Sync trunk changes to minda-branch."
+
+This works from the command line. I don't know how to do that first
+command from within the RStudio, I'm afraid (let me know if you work
+it out).
+
+When we're ready to share your code with the world, I can show you how
+to merge your branch back into the trunk. 
+
+All the best
+
+Andy
