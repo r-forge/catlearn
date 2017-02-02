@@ -1,7 +1,0 @@
-useDynLib(catlearn)
-exportPattern("^[^\\.]")
-importFrom(Rcpp, evalCpp)
-importFrom("graphics", "axis", "box", "legend", "lines", "plot")
-importFrom("utils", "data")
-importFrom("stats", "aggregate")
-
