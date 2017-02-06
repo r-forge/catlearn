@@ -3,10 +3,10 @@ slpRW <- function(st, tr, xtdo = FALSE) {
     w.m <- st$w                    # Initialize weights
     nw <- length(w.m)              # Calculate number of weights    
     for(i in 1:nrow(tr)) {         # Run training loop
+        arow <- tr[i, ]            # extract current trial
         if (arow['ctrl'] == 1) {   # Reset weights?
             w.m <- st$w
         }
-        arow <- tr[i, ]            # extract current trial
         lambda <- arow['t']        # extract teaching signal
         a <- arow[(st$colskip + 1):(st$colskip + nw)]   # extract inputs
         suma <- sum(a*w.m)         # Calculate sum of act * weights

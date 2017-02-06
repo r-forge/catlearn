@@ -23,7 +23,7 @@ slpRW(st, tr, xtdo = FALSE)
   in the output (see below)}
   
 }
-}
+
 \details{
 
   The contents of this help file are relatively brief; a more extensive
@@ -66,7 +66,7 @@ specified. The columns must be as described below, in the order
 described below:
 
 \code{ctrl} - a vector of control codes. Available codes are: 0 = normal
-trial; 1 reset model (i.e. set associative strengths (weights) back to
+trial; 1 = reset model (i.e. set associative strengths (weights) back to
 their initial values as specified in w (see above)); 2 = Freeze
 learning. Control codes are actioned before the trial is processed.
 
@@ -92,7 +92,7 @@ might use values between 0 and 1 to represent differing cue saliences.
 represent the presence of the outcome, and 0 is used to represent the
 absence of the outcome, although slpRW suports any real values for lambda.
 
-Argument \code{xtdo} (eXTenDed Output), if set to TRUE, function will
+Argument \code{xtdo} (eXTenDed Output) - if set to TRUE, function will
 return associative strength for the end of each trial (see Value).
 
 }
@@ -115,7 +115,11 @@ Stuart Spicer, Andy Wills
 }
 \references{
 
-Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian conditioning: Variations in the effectiveness of reinforcement and nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), \emph{Classical conditioning II: Current research and theory} (pp. 64–99). New York: Appleton-Century-Crofts.
+Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian
+conditioning: Variations in the effectiveness of reinforcement and
+nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), \emph{Classical
+conditioning II: Current research and theory} (pp. 64-99). New York:
+Appleton-Century-Crofts.
 
 Spicer, S., Jones, P.M., Inkster, A.B., Edmunds, C.E.R. & Wills,
 A.J. (n.d.). Progress in learning theory through distributed
@@ -129,8 +133,8 @@ Concepts, tools, and category-learning examples. \emph{Psychology of
 }
 \note{
 
-  Further development of slpRW is planned during 2017, including
-  substantially increase in speed of execution, inclusion of beta-1 and
-  beta-0 learning rates.
+  Further development of slpRW is planned during 2017, including a
+  substantial increase in speed of execution, and inclusion of
+  beta-outcome-present and beta-outcome-absent learning rates.
 
 }

@@ -30,7 +30,13 @@ Windows: https://cran.r-project.org/bin/windows/Rtools/
 
   R CMD check --as-cran catlearn_0.24.tar.gz
 
-* Installl the package
+* Common warnings
+** Rd file is non-ascii
+Convert to ascii
+
+iconv -f utf8 -t ascii slpRW.Rd > slpRW.Rd~
+
+* Install the package
  - Navigate inside the _development_ directory, e.g. ~/r_packages/catlearn
  - Install the package (NOTE: because of the R-forge directory
    structue, it will always be 'pkg' in the following command. The
