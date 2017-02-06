@@ -164,3 +164,8 @@ to merge your branch back into the trunk.
 All the best
 
 Andy
+
+* General notes
+
+- Only keep in the R-forge SVN that which you intend to include in the
+  package release. 
