@@ -11,7 +11,7 @@ COVIS category learning model
 }
 \usage{
 
-slpCOVIS(st, tr, crx = TRUE, respt = TRUE, xtdo = FALSE, rgive = FALSE)
+slpCOVIS(st, tr, crx = TRUE, respt = TRUE, xtdo = FALSE, rgive = TRUE)
 
 }
 \arguments{

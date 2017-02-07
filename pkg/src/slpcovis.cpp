@@ -341,7 +341,7 @@ List slpCOVIS(List st,
               NumericMatrix tr,
               bool crx = true,
               bool respt = true,
-              bool rgive = false,
+              bool rgive = true,
               bool xtdo = false){
 // This clumsy section copies stuff out of an R List
 // There seems to be no way in RCpp to get direct access to
