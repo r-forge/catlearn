@@ -340,7 +340,7 @@ double nsystr(double systr,double act,double sum,double dn,
 List slpCOVIS(List st,
               NumericMatrix tr,
               bool crx = true,
-              bool respt = true,
+              bool respt = false,
               bool rgive = true,
               bool xtdo = false){
 // This clumsy section copies stuff out of an R List
