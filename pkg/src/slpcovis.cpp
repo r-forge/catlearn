@@ -1,41 +1,30 @@
-// This script contain the functions for the COVIS list
-// processor of the CATLEARN package.
-// It is written in C++, using templates from the Rcpp
-// package in R.
-// Plugin for enabling C++11
+// COVIS model, implemented as a list processor
+
+// Written in C++11 with tempaltes from Rcpp in R Comments using
+// equ. or page numbers refer to Ashby et al. (2011)
+
 // [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 #include <iostream>
 using namespace Rcpp;
 
-
-
-// There are three parts to implementing COVIS
-// A model of the explicit system, a model of the implicit
-// system and an algorithm to monitor the output of the 
-// systems and select a response on each trial
-
 // Utility functions
 
 double poisvar(double lambda){
-  // This function is to generate the random variable for
-  // Equ 5. in P+W2012. It is generated from a poisson
-  // distribution.
+  // Sample Poisson
   double poisvar = R::rpois(lambda);
   return poisvar;
 }
 
-// Epsilon from Page 68 of P+W2012.
 double epsilon(double nvar){
+  // Sample normally-distributed random noise
   double epsilon = R::rnorm(0,nvar);
   return epsilon;
 }
 
 NumericMatrix symat(int stims,int cats){
-  // Function to generate matrix of initial synapse 
-  // strengths
-  // stims - Number of sensory cortex units
-  // cats - Number of striatal units
+  // Generate matrix of initial synapse strengths. stims - Number of
+  // sensory cortex units. cats - Number of striatal units
   int i,j;
   double u;
   NumericMatrix smat(stims,cats);
@@ -47,27 +36,18 @@ NumericMatrix symat(int stims,int cats){
   }
   return smat;
 }
-  
-// First is the functions for the implementation of the
-// explicit (rule-based) system
 
-// Function to calculate the discrimant value used in the 
-// Response rule, Eq1 in P+W2012.
+// Explicit system
+
 double disfunc(double stimval,double deccrit){
+  // Calculate discriminant value, Eq. 1
   double disval = stimval - deccrit;
   return disval;
 }
 
-
 int expres(double disval, double nvar,int crule){
-  // This response rule exists in the explicit system to 
-  // decide whether to respond with A or B, referencing two
-  // categories as is the norm. Epsilon is a normally
-  // distributed variable (Page 68 of P+W2012).
-  
-  // disval - discriminant value (h_v)
-  // nvar - noise (sigma_v)
-  // double epsilon = R::rnorm(0.0,nvar);
+  // Explicit system response ruile, p.68.  disval - discriminant
+  // value (h_v).  nvar - noise (sigma_v)
   int Response;
   double eps = epsilon(nvar);
   if(disval < eps)
@@ -77,14 +57,9 @@ int expres(double disval, double nvar,int crule){
   return Response;
 }
 
-
 int acccheck(int resp, NumericVector tr,int colskip,
              int stimdim){
-  // Function to check accuracy of predicted response
-  // against actual response
-  
-  // Required to decide whether Equ. 2 or 3 of P+W2012 is in
-  // force
+  // Is response accurate? 
   int acc;
   acc = 0;
   if ((resp == 1) & (tr[colskip+stimdim] == 1)) acc = 1;
@@ -94,15 +69,8 @@ int acccheck(int resp, NumericVector tr,int colskip,
 
 double updsal(double corcon, double errcon, double psal,
               int acc){
-  // Function to update rule saliency based on accuracy of
-  // response. Either increments salience positively based 
-  // on a constant if correct, and negatively based on a 
-  // different constant if incorrect.Equ. 2/3 of P+W2012.
-  
-  // corcon - delta C
-  // errcon - delta E
-  // psal - Z
-  // acc = 1 if correct, 0 if incorrect
+  // Update rule salience - equ. 2 & 3.  corcon - delta C.  errcon -
+  // delta E.  psal - Z.  acc = 1 if correct, 0 if incorrect.
   double tsal;
   if (acc == 1){
     tsal = psal + corcon;
@@ -113,35 +81,23 @@ double updsal(double corcon, double errcon, double psal,
   return tsal;
 } 
 
-
 double prerule(double rulsal,double perscon){
-  // This is the first of the functions to transform the
-  // saliencies of the rules to weights, Equ 4. in P+W2012.
-  // Used for the rule used on the previous trial.
+  // Add perseveration constant, Equ. 4.
   double rulweight = rulsal + perscon;
   return rulweight;
 }
-
  
 double ranrule(double rulsal,double lambda){
-  // This is the second of the functions to transform the 
-  // saliences of the rules to weights, Equ 5. in P+W2012.
-  // Used  for another rule from the set chosen at random.
+  // Add Poisson sample, Equ. 5.
   double pois = poisvar(lambda);
   double rulweight = rulsal + pois;
   return rulweight;
 }
 
 int rchoose(NumericVector exprules, double stocon){
-  // This function is to choose a rule based on the
-  // probabilities of those rules (probabilities come from 
-  // P+W2012, Eq.7)
-  
-  // exprules - The rule weights
-  // stocon - parameter a (this is from Edmunds and 
-  // Wills(2016); it is used to establish whether a rule is 
-  // chosen deterministically or probabilistically. 1 =
-  // probabilistic, >1 = deterministic)
+  // Choose a rule based on the probabilities of those rules.
+  // Probabilities come from Eq.7.  exprules - The rule weights.
+  // stocon - parameter a (see .Rd file).
   int i,rsec;
   double sumsto;
   NumericVector selrules,storules,res;
@@ -165,16 +121,11 @@ int rchoose(NumericVector exprules, double stocon){
   return rsec;
 }
 
-// Next is the functions for implementation of the
-// procedural (implicit) system
+// Implicit system
 
 double scuact(double sconst,double diff){
-  // Utility Function to calculate sensory unit activation on 
-  // a trial. 
-  // Part of Equ. 8 in P+W2012
-  
-  // sconst: alpha
-  // diff: distance
+  // Assist calculataion of sensory unit activation on a trial. Part
+  // of Equ. 8.  sconst: alpha diff: distance
   double act,super,e;
   super = -(pow(diff,2)/sconst);
   e = 2.718282;
@@ -184,13 +135,10 @@ double scuact(double sconst,double diff){
 
 NumericVector actcalc(NumericMatrix scumat,
                       NumericVector cstim, double sconst){
-  // Function to calculate the activation of sensory cortex 
-  // units. Equ.8 of P+W2012.
-  
-  // scumat: Co-ordinates of the sensory cortex units in 
-  // psychological space.
-  // cstim: Co-ordinates of the presented stimulus.
-  // sconst: alpha (Equ.8)
+  // Calculate the activation of sensory cortex, Equ.8 of P+W2012.
+  // scumat: Co-ordinates of the sensory cortex units in psychological
+  // space.  cstim: Co-ordinates of the presented stimulus.  sconst:
+  // alpha (Equ.8).
   int i,j,nrow = scumat.nrow(), ncol = scumat.ncol();
   NumericVector dists(nrow);
   for(i=0;i < nrow;i++){
@@ -209,13 +157,10 @@ NumericVector actcalc(NumericMatrix scumat,
 
 NumericVector stract(NumericMatrix wkj,NumericVector ik,
                      double noisecon){
-  // Function to calculate the activation of striatal units,
-  // Equ 9 in P&W2012. Also generates a response based on the
-  // summed activation.
-  
-  // wkj: sensory-striatal link strengths
-  // ik: Activation of sensory cortical units
-  // noisecon: Normally distributed noise (variance constant)
+  // Calculate the activation of striatal units, Equ 9.  wkj:
+  // sensory-striatal link strengths.  ik: Activation of sensory
+  // cortical units.  noisecon: Normally distributed noise (variance
+  // constant).
   int i,j,nrow = wkj.nrow(), ncol = wkj.ncol();
   double noise;
   NumericVector sumact(ncol);
@@ -230,7 +175,7 @@ NumericVector stract(NumericMatrix wkj,NumericVector ik,
 }
 
 int decact(NumericVector sumact){
-  // Function for decision based on summed activations
+  // Make a decision based on summed activations
   int i,act=0,ncol = sumact.size();
   double largeact;
   largeact = max(sumact);
@@ -240,14 +185,12 @@ int decact(NumericVector sumact){
   return act;
 }
 
-// Next are the learning equations
+// Learning equations
 
-// First are the equations necessary to specify the dopamine
-// released on each trial
+// Dopamine release 
 
 double obtrew(int acc){
-  // Function to calculate obtained reward.
-  // Part of Eq. 13 in P+W2012.
+  // Calculate obtained reward, part of Eq.13.
   double rew;
   if (acc == 1){rew = 1;}
   if (acc == 0){rew = -1;}
@@ -255,13 +198,9 @@ double obtrew(int acc){
   return rew;
 }
 
-
 double prerew(double prep,double prer,double precon){
-  // Function to calculate predicted reward.
-  // Eq. 12 in P+W2012
-  
-  // prep: previous P
-  // prer: previous R
+  // Calculate predicted reward, Eq. 12.  prep: previous P.  prer:
+  // previous R. precon - ???
   double rew,add;
   add = precon*(prer-prep);
   rew = prep + add;
@@ -269,11 +208,8 @@ double prerew(double prep,double prer,double precon){
 }
 
 double doprel(double obtrew, double prerew){
-  // Function to calculate dopamine release.
-  // Eq 13 of P+W2012.
-  
-  // obtrew - obtained reward (1 = correct, 
-  // 0 = absence of feedback, -1 = incorrect)
+  // Calculate dopamine release, Eq. 14. obtrew - obtained reward (1 =
+  // correct, 0 = absence of feedback, -1 = incorrect). prerew - ???
   double rpe,dn;
   rpe = obtrew - prerew;
   if (rpe > 1){dn = 1;}
@@ -286,24 +222,16 @@ double nsystr(double systr,double act,double sum,double dn,
               double alpha,double beta,double gamma,
               double nmda,double ampa,double dbase,
               double wmax){
-  // Function to calculate equation 10 of P+W2012
+  // Equation 10. nsystr - New SYnapse STRength
   
-  // nsystr - New SYnapse STRength
+  // Calculated values: systr - SYnapse STRength.  act - sensory
+  // cortex activation.  sum - striatal unit activation.  dn -
+  // Dopamine released.
   
-  // Calculated values:
-  // systr - SYnapse STRength
-  // act - sensory cortex activation
-  // sum - striatal unit activation
-  // dn - Dopamine released
+  // Parameters: alpha - alpha-w.  beta - beta-w.  gamma - gamma-w.
+  // nmda - theta nmda.  dbase - dbase.  wmax - wmax.  ampa - theta
+  // ampa.
   
-  // Free parameters:
-  // alpha - alpha-w learning rate parameter of COVIS
-  // beta - beta-w learning rate parameter of COVIS
-  // gamma - gamma-w learning rate parameter of COVIS
-  // nmda - theta nmda par.
-  // dbase - baseline dopamine
-  // wmax - Maximum link strength
-  // ampa - theta ampa par.
   double a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3,out;
   double out1,out2,out3;
   // section 1 : increases in strength
@@ -335,7 +263,7 @@ double nsystr(double systr,double act,double sum,double dn,
   return out;
 }
 
-// Function for running one trial through the COVIS system
+// Run the simulation 
 // [[Rcpp::export]]
 List slpCOVIS(List st,
               NumericMatrix tr,
@@ -343,9 +271,7 @@ List slpCOVIS(List st,
               bool respt = false,
               bool rgive = true,
               bool xtdo = false){
-// This clumsy section copies stuff out of an R List
-// There seems to be no way in RCpp to get direct access to
-// a List at input?
+// This clumsy section copies stuff out of an R List.
 double corcon = as<double>(st["corcon"]);
 double errcon = as<double>(st["errcon"]);
 double perscon = as<double>(st["perscon"]);
@@ -375,7 +301,7 @@ int crule = as<int>(st["crule"]);
 NumericVector initrules = as<NumericVector>(st["initrules"]);
 NumericMatrix initsy = as<NumericMatrix>(st["initsy"]);
 NumericMatrix scups = as<NumericMatrix>(st["scups"]);
-// End of particularly clumsy section
+// End of clumsy section
 int i,j,k,cdim=0,rrule = -1,expresp,impresp,expacc=0;
 int impacc=0,sresp=0,sused=0,acc=0, nrow = initsy.nrow();
 int ncol = initsy.ncol(),length = tr.nrow();
@@ -395,8 +321,7 @@ for(i=0;i<length;i++){
   // Initial setup for current trial
   int l=0,m=0,n=0;
   train = tr(i,_);
-  // Conditional to establish whether the state of the
-  // model needs resetting
+  // Reset model to initial state?
   if(train(0) == 1)
   { if (i>0){frules.push_back(updrules);
              fupdsy.push_back(updsy);
@@ -425,7 +350,7 @@ for(i=0;i<length;i++){
   sumact = stract(updsy,acts,invar);
   hvp = fabs(sumact(0) - sumact(1));
   impresp = decact(sumact);
-  // Make a decision which system response to use
+  // Decide which system response to use
   econf = fabs(hvx)/emaxval; 
   if(fabs(sumact(0)-sumact(1)) > imaxval)
     {imaxval = fabs(sumact(0)-sumact(1));}
@@ -436,8 +361,7 @@ for(i=0;i<length;i++){
   else 
     {sresp = impresp;
      sused = 2;}
-  // There is a conditional here that lets us freeze 
-  // learning if we desire
+  // Freeze learning?   // learning if we desire
   if (train(0) < 2){
   // Update Explicit system rules based on accuracy
   if (respt == true)
