@@ -157,7 +157,7 @@ int rchoose(NumericVector exprules, double stocon){
   res = selrules;
   std::partial_sum(selrules.begin(), selrules.end(),
                    res.begin());
-  double val = (double)rand() / RAND_MAX;
+  double val = (double)R::runif(0,1);
   for(i=0;i < res.size();i++){
     if (res[i] > val) {rsec = i;break;}
     else {rsec = -1;}
