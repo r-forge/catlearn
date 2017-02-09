@@ -44,12 +44,12 @@ slpCOVIS(st, tr, crx = TRUE, respt = FALSE, rgive = TRUE, xtdo = FALSE)
   on each trial. For any given trial, [1,0] indicates a Category 1
   response; [0,1] indicates a Category 2 response. Responses are
   reported in this manner to facilitate cross-compatibility with models
-  that produce response probabilities on each trial.
+  that produce response probabilities on each trial.}
 
   \item{frules}{Explicit system - rule saliences after final trial}
 
   \item{fsystr}{Procedural system - cortico-striatal synaptic strengths
-    after final trial)
+    after final trial)}
 
   \item{fetrust}{Decision system - trust in explicit system after final
     trial}
