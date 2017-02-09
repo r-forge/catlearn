@@ -1,1 +1,0 @@
-ssecl <- function(obs,exp) return( sum( (obs-exp)^2 ) )
