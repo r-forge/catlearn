@@ -457,7 +457,7 @@ for(i=0;i<length;i++){
      crule = crule;}
   else
     {if (crx == true)
-      {rrule = rand() % updrules.size();}
+	{rrule = int(R::runif(0,32767)) % updrules.size();}
      if (crx == false)
       {rrule = rand() % updrules.size();
           for (j=0;j<1000;j++){
