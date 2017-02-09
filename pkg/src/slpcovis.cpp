@@ -459,10 +459,10 @@ for(i=0;i<length;i++){
     {if (crx == true)
 	{rrule = int(R::runif(0,32767)) % updrules.size();}
      if (crx == false)
-      {rrule = rand() % updrules.size();
+      {rrule = int(R::runif(0,32767)) % updrules.size();
           for (j=0;j<1000;j++){
             if (crule == rrule)
-            {rrule = rand() % updrules.size();}
+            {rrule = int(R::runif(0,32767)) % updrules.size();}
             else
             {break;}
           }
