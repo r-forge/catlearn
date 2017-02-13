@@ -1,0 +1,4 @@
+
+For the actor-critic, I would fix softmax parameter at 1, please look at the "Model fitting procedure" of our paper. I have explained this issue there.
+
+You can run both actor-critic models using the critic2_actor2 code, but you need adjustment for the parameters at the beginning of that script. 

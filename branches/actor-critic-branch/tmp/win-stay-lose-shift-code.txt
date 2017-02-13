@@ -1,0 +1,38 @@
+function [nll] = wsls2(params, data)
+% stimulus independent win-stay lose shift
+
+beta = params(1);
+b    = params(2);
+
+% extracting information
+state=data(:,2);
+reward=data(:,4);
+punishment=data(:,5);
+action=data(:,6);
+correctness=data(:,7);
+
+q     = 0;
+nll   = 0;
+probs = nan(size(action,1),1);
+
+at_1  = 1; % a(t-1)
+
+for t = 1:size(action,1)
+    
+    % computing nll
+    a = action(t);
+    s = state(t);
+    p = 1/(1+exp(-beta*q)); % probability of stay
+    if a~=at_1
+        p = 1-p;
+    end
+    nll = nll - log(p);
+    probs(t) = p;
+
+    r = correctness(t)*reward(t) - (1-correctness(t))*punishment(t);
+    q = -1;
+    if ( (r>0 && (s==1 || s==2)) || (r==0 && (s==3 || s==4)) ) % if win
+        q = b;
+    end
+    at_1 = a;
+end
