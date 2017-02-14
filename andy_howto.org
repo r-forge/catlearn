@@ -29,7 +29,7 @@ Windows: https://cran.r-project.org/bin/windows/Rtools/
 - For a more rigorous check before CRAN submission
 
   R CMD check --as-cran catlearn_0.24.tar.gz
-
+  
 * Common warnings
 ** Rd file is non-ascii
 Convert to ascii
