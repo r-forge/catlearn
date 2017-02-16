@@ -1,5 +1,5 @@
 nosof88train <- function(condition = 'B',blocks = 3, absval = -1,
-                     subjs = 1, seed = 4182) {
+                     subjs = 1, seed = 4182, missing = 'geo') {
   set.seed(seed)
   n88b <- rbind(
     c(1,-2.543,2.641,1,-1,0,0),
@@ -40,6 +40,9 @@ nosof88train <- function(condition = 'B',blocks = 3, absval = -1,
       makelist <- cbind(ctrl,makelist)
       finalist <- rbind(finalist,makelist)
   }
+  # If not using the geometric model representation of dimension
+  # absence (m1, m2, etc), drop these columns
+  if(missing != 'geo') finalist <- finalist[,1:8]
   
   # If the value for category absence is not -1
   # change the list to reflect this

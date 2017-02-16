@@ -1,6 +1,6 @@
 shin92train <- function(condition = 'equal3', learn.blocks = 8,
                         trans.blocks = 3, absval = -1, format = 'mds',
-                        subjs = 1, seed = 8416) {
+                        subjs = 1, seed = 8416, missing = 'geo') {
     set.seed(seed) 
     if(format != 'mds') print("Only MDS format is currently supported.")
     # Conditions are: equal3, equal10, unequal3, unequal10
@@ -129,7 +129,8 @@ shin92train <- function(condition = 'equal3', learn.blocks = 8,
                                         # Combine the two
         finalist <- rbind(finalist,makelist,makelist2)
     }
-    
+    # Drop m1 etc if not geo rep
+    if(missing != 'geo') finalist <- finalist[,1:11]
     # If the value for category absence is not -1
     # change the list to reflect this
     if(absval != -1) {

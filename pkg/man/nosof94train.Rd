@@ -2,7 +2,8 @@
 \alias{nosof94train}
 \title{
 
-  Input representation of nosof94 for models input-compatible with slpALCOVE.
+  Input representation of nosof94 for models input-compatible with
+  slpALCOVE.
   
 }
 \description{
@@ -11,12 +12,13 @@
   suitable for the \code{slpALCOVE} model, and other models that use the
   same input representation format. The stimulus co-ordinates are
   assumed, and use the same binary representation as the abstract
-  category structure. 
+  category structure.
 
 }
 \usage{
 
-nosof94train(cond = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624)
+nosof94train(cond = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624,
+missing = 'geo')
 
 }
 \arguments{
@@ -33,6 +35,10 @@ nosof94train(cond = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624)
   \item{subjs}{Number of simulated subjects to be run.}
 
   \item{seed}{Sets the random seet.}
+
+  \item{missing}{If set to 'geo', output missing dimension flags (see
+  below)}
+
   
 }  
   
@@ -62,7 +68,8 @@ trial) for all other trials.
 absent)
 
 \code{m1, m2, m3} - Missing dimension flags (always set to zero in this
-experiment, indicating all input dimensions are present on all trials)
+experiment, indicating all input dimensions are present on all
+trials). Only produced if \code{missing = 'geo'}.
 
 In Nosofsky et al. (1994), block 1 was randomized differently to later
 blocks. This feature is retained in this implementation.
@@ -97,11 +104,8 @@ Wills & O'Connell (n.d.).
    Wills, A.J. & O'Connell (n.d.). Averaging
  abstractions. \emph{Manuscript in preparation}.
 
-
-  
 }
 \seealso{
   
-  \code{\link{nosof94train}}, \code{\link{nosof94oat}}    
-
-  }
+  \code{\link{nosof94train}}, \code{\link{nosof94oat}}
+}

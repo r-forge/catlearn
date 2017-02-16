@@ -2,7 +2,8 @@
 \alias{nosof88train}
 \title{
 
-  Input representation of nosof88 for models input-compatible with slpALCOVE.
+  Input representation of nosof88 for models input-compatible with
+  slpALCOVE.
   
 }
 \description{
@@ -17,22 +18,25 @@
 \usage{
 
 nosof88train(condition = 'B', blocks = 3, absval = -1, subjs = 1, seed =
-4182)
+4182, missing = 'geo')
 
 }
 \arguments{
   
-  \item{condition}{Experimental condition 'B', 'E2', or 'E7', 
-    as defined by Nosofsky (1988).}
+  \item{condition}{Experimental condition 'B', 'E2', or 'E7', as defined
+    by Nosofsky (1988).}
   
-  \item{blocks}{Number of blocks to generate. Omit this argument to get the same
-    number of blocks as the published study (3).}
+  \item{blocks}{Number of blocks to generate. Omit this argument to get
+    the same number of blocks as the published study (3).}
   
   \item{absval}{Teaching value to be used where category is absent.}
 
   \item{subjs}{Number of simulated subjects to be run.}
 
   \item{seed}{Sets the random seed}
+
+  \item{missing}{If set to 'geo', output missing dimension flags (see
+  below)}
 
 }  
   
@@ -64,7 +68,8 @@ MDS solution for these stimuli (see Nosofsky, 1987).
 absent)
 
 \code{m1, m2} - Missing dimension flags (always set to zero in this
-experiment, indicating all input dimensions are present on all trials)
+experiment, indicating all input dimensions are present on all
+trials). Only produced if \code{missing = 'geo'}.
 
 Although the trial ordering is random, a random seed is used, so
 multiple calls of this function with the same parameters should produce
@@ -94,11 +99,10 @@ Wills & O'Connell (n.d.).
 
   Nosofsky, R.M. (1988). Similarity, frequency, and category
   representations, \emph{Journal of Experimental Psychology: Learning,
-    Memory and Cognition, 14}, 54-65.
+  Memory and Cognition, 14}, 54-65.
 
   Wills, A.J. & O'Connell (n.d.). Averaging
- abstractions. \emph{Manuscript in preparation}.
-
+  abstractions. \emph{Manuscript in preparation}.
 
 } 
 

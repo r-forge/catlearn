@@ -2,7 +2,8 @@
 \alias{shin92train}
 \title{
   
-   Input representation of shin92 for models input-compatible with slpALCOVE.
+   Input representation of shin92 for models input-compatible with
+   slpALCOVE.
 
  }
  
@@ -19,7 +20,8 @@
 \usage{
 
   shin92train(condition = 'equal3', learn.blocks = 8, trans.blocks = 3,
-          absval = -1, format = 'mds', subjs = 1, seed = 8416)
+          absval = -1, format = 'mds', subjs = 1, seed = 8416, missing =
+          'geo')
 
 }
 
@@ -45,6 +47,9 @@
   \item{subjs}{Number of simulated subjects to be run.}
 
   \item{seed}{Sets the random seed}
+
+  \item{missing}{If set to 'geo', output missing dimension flags (see
+  below)}
   
 }  
   
@@ -83,7 +88,8 @@ absent)
 
 \code{m1 ...  m6} - Missing dimension flags (always set to zero in this
 experiment, indicating all input dimensions are present on all
-trials). Note: ranges from m1 to m4 for Size 3 conditions. 
+trials). Note: ranges from m1 to m4 for Size 3 conditions. Only produced
+if \code{missing = 'geo'}.
 
 Although the trial ordering is random, a random seed is used, so
 multiple calls of this function with the same parameters should produce
@@ -92,7 +98,7 @@ stability of non-linear optimization. To get a different order, use the
 seed argument to set a different seed.
 
 This function was originally developed to support simulations reported
-in Wills et al. (2016).
+in Wills et al. (2017).
 
 }
 
@@ -107,10 +113,10 @@ in Wills et al. (2016).
   dot-pattern classification and recognition. \emph{Journal
     of Experimental Psychology: General, 121}, 278-304.
 
-  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2017).
   Progress in modeling through distributed collaboration: Concepts,
   tools, and category-learning examples. \emph{The Psychology of
-  Learning and Motivation}.
+  Learning and Motivation, 66}.
 
 }
 
