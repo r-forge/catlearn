@@ -241,8 +241,9 @@ slpDIVA <- function(st, tr, xtdo = FALSE) {
                 list(in_wts = st$in_wts, out_wts = st$out_wts)
 
             # # # generate new weights
-            wts <- .diva.get_wts(st$num_feats, st$num_hids, st$num_cats, st$wts_range,
-                           st$wts_center)
+            wts <- .diva.get_wts(st$num_feats, st$num_hids,
+                                 st$num_cats, st$wts_range,
+                                 st$wts_center)
             st$in_wts  <- wts$in_wts
             st$out_wts <- wts$out_wts
 

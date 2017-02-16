@@ -14,7 +14,6 @@ slpDIVA(st, tr, xtdo = FALSE)
   \item{xtdo}{When set to TRUE, produce extended output}
 }
 \details{
-  
   This function works as a stateful list processor (Wills et al.,
   2017). Specifically, it takes a matrix as an argument, where each row
   is one trial for the network, and the columns specify the input
@@ -74,7 +73,8 @@ slpDIVA(st, tr, xtdo = FALSE)
   \code{wts_range = 1}
 
   \code{wts_center} - A scalar value for the center of the
-  randoly-generated weights. This is commonly set to \code{wts_center = 0}
+  randomly-generated weights. This is commonly set to \code{wts_center =
+  0}
 
   \code{st} must also contain the following parameters that describe
   your \code{tr} array:
@@ -114,29 +114,25 @@ slpDIVA(st, tr, xtdo = FALSE)
   input features can be set to 0 to negate the contribution of the
   feature(s) for the classification decision of that trial.
 
-  \code{t1, t2, \dots} - Category membership of the current stimulus. There 
-  must be one column for each category. Each row is one trial. If the 
-  stimulus is a member of category X, then the value in the category X 
-  column must be set to \code{+1}, and the values for all other category 
-  columns must be set to \code{-1}. 
-
+  \code{t1, t2, \dots} - Category membership of the current
+  stimulus. There must be one column for each category. Each row is one
+  trial. If the stimulus is a member of category X, then the value in
+  the category X column must be set to \code{+1}, and the values for all
+  other category columns must be set to \code{-1}.
 }
 \value{
-  
   Returns a list containing two components: (1) matrix of response
   probabilities for each category on each trial, (2) an \code{st} list
   object that contains the model's final state. A weight initialization
   history is also available when the extended output parameter is set
   \code{xtdo = TRUE} in the \code{slpDIVA} call.
-
 }
 \author{
-  Garrett Honke
-  Nolan B. Conaway
+  Garrett Honke, 
+  Nolan B. Conaway, 
   Andy Wills
 }
 \references{
-  
   Conaway, N. B., & Kurtz, K. J. (2014). Now you know it, now you don't:
   Asking the right question about category knowledge. In P. Bello,
   M. Guarini, M. McShane, & B. Scassellati (Eds.), \emph{Proceedings of
@@ -153,9 +149,8 @@ slpDIVA(st, tr, xtdo = FALSE)
   A.B.(2017). Progress in modeling through distributed collaboration:
   Concepts, tools, and category-learning examples. \emph{The Psychology
     of Learning and Motivation, 66}, 79-115.
-  
 }
 \note{
-  A faster implementation of slpDIVA is planned for a future release of
-  catlearn. 
+  A faster (Rcpp) implementation of slpDIVA is planned for a future
+  release of catlearn.
 }
