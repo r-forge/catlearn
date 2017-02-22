@@ -17,7 +17,7 @@ Windows: https://cran.r-project.org/bin/windows/Rtools/
 
    svn checkout svn+ssh://ajwills@r-forge.r-project.org/svnroot/catlearn
 
-* Perform checks on the package
+* Build and perform checks on the package
  - Navigate inside the _development_ directory.
  - Run the checks (NB: due to R-forge directory structure, it will
    always be 'pkg').
@@ -29,7 +29,16 @@ Windows: https://cran.r-project.org/bin/windows/Rtools/
 - For a more rigorous check before CRAN submission
 
   R CMD check --as-cran catlearn_0.24.tar.gz
-  
+
+- If you pass this, the next level is to pass the winbuilder
+  checks. Check your package against both r-release and r-devel
+
+http://win-builder.r-project.org/
+
+- If and only if this works, upload to CRAN
+
+https://cran.r-project.org/submit.html
+
 * Common warnings
 ** Rd file is non-ascii
 Convert to ascii
@@ -63,6 +72,16 @@ NOTE: These changes should be made to the local _development_ copy.
 
    svn commit -m "Added Shin & Nosofsky (1992) data set"
 * Dealing with RCpp development
+https://github.com/RcppCore/Rcpp/issues/636
+Currently (2017-02-22) Rcpp has some problems playing nicely with
+R-devel. This means that packages using Rcpp are refused by CRAN.  The
+Rcpp people are working on this but, for now, this is the solution:
+
+1. Build the development release of r-devel. (Instructions for doing
+   this in debian are on CRAN.)
+
+2. Do these normal steps using R-devel rather than R:
+
 - Load the library
 
   library(Rcpp)
@@ -75,7 +94,18 @@ NOTE: These changes should be made to the local _development_ copy.
 
   Rcpp::compileAttributes()
 
-- Do build, check, install as usual.
+- Build, check, install as usual (using R-devel)
+
+3. Go inside the 'pkg' directory, run R-devel, and type this:
+
+tools::package_native_routine_registration_skeleton(".") 
+
+This puts a c file to standard output that you then copy to 
+
+src/init.c
+
+4. Rebuild, re-check. Worst case you need to also adapt NAMESPACE.
+
 
 * Writing vignettes in Sweave
 ** Example from the Sweave vignette.
