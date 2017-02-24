@@ -1,5 +1,9 @@
 
-# Start by importing data from csv:
+# Set initial state:
+st <- list(lr = 0.09, w = rep(0, 5), 
+           colskip = 3)
+
+# Next importing data from csv:
 
 partic1 <- read.csv("ply100_part1train.csv")
 
@@ -67,5 +71,7 @@ partic_train[1,1] = partic_train[1,1] + 1
 # stuff we no longer need:
 
 rm(ctrl, trial, trial_block, xrow, j)
+
+tr <- partic_train
 
 # Is next step to make a loop for all participants together?
