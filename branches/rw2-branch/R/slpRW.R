@@ -10,14 +10,19 @@ slpRW <- function(st, tr, xtdo = FALSE, ratings = FALSE) {
         lambda <- arow['t']        # extract teaching signal
         a <- arow[(st$colskip + 1):(st$colskip + nw)]   # extract inputs
         suma <- sum(a*w.m)         # Calculate sum of act * weights
+######### Could this go below and replace w.m part?
+  act <- suma
+#########        
         delta <- st$lr * (lambda - suma)   # Calculte error term
+  prob.delta <- st$lr * (lambda - p.rat) ################ hmm...
         if (arow['ctrl'] != 2) {   # Unless weights are frozen...
             w.m <- w.m + delta * a # ...update weights
+  p.w.m <- w.m + prob.delta * a ############ hmm...
 ######### Work in progress for converting to ratings:  
-            act <- w.m   # need act for act2probat
-            theta <- 
-            beta <- 
-            p.rat <- act2probat(act, theta, beta)
+     act <- w.m   # need act for act2probat
+     theta <- 0.1
+     beta <- 0.1
+     p.rat <- act2probrat(act, theta, beta)
 #########
         }
         out <- rbind(out, suma)    # Record output activation
