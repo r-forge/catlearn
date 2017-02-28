@@ -13,7 +13,7 @@ partic_train <- NULL
 
 # Converting data from stim column in partic to binary representation:
 for(j in 1:nrow(partic)) {           # Loop reads row by row in partic
-  xrow <- partic1[j, ]               # Extracts current row within loop
+  xrow <- partic[j, ]               # Extracts current row within loop
   if (xrow['stim'] == "A") {         # Converts A to binary representation
     partic_train <- rbind(partic_train, c(1,0,0,0,0,1)) 
   } else if (xrow['stim'] == "AX") {                    # Converts AX
