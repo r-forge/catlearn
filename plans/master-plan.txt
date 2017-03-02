@@ -3,10 +3,14 @@
 2017-01-31,Code freeze for version 0.4
 2017-02-15,R-forge release for version 0.4
 2017-03-15,CRAN release for version 0.4
+2017-08-31,Code freeze for version 0.5
+2017-09-15,R-forge release for version 0.5
+2017-10-14,CRAN release for version 0.5
 
 * General expressions of interest 
 
-2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested in contributing.
+2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested
+in contributing.
 
 * Developers joining
 
@@ -14,65 +18,98 @@
 2016-01-15,Angus Inkster
 2016-08-17,catlearn appears on CRAN. 
 2016-09-10,John Paul Minda
+2016-09-12,Nolan Conaway (not yet contributed)
+2016-09-12,Garrett Honke
 2016-11-10,Stuart Spicer
 2016-11-10,Charlotte Edmunds
+2017-02-21,catlearn v.0.4 appears on CRAN
 
 * Model implementations
 
 ** Actor-critic
 
-2016-09-02, Ahmed Moustafa suggested an Actor-Critic model implementation.
+2016-09-02, Ahmed Moustafa suggested an Actor-Critic model implementation, and provided some code, which is now in actor-critic-branch, tmp folder.
 
 ** ATRIUM
 
 2016-11-09,atrium-branch,Angus Inkster currently working on an ATRIUM implementation.
+2017-03-02,slated for v.0.5 release
 
 ** Bush-Mosteller model
 
 2016-11-09,rw-brnach,Stuart Spicer will develop a Bush-Mosteller model implementation.
+2017-03-02,slated for v.0.5 release
 
 ** COVIS
 
 2016-09-02,angus-branch,Angus Inkster currently working on a COVIS implementation.
+2017-03-02,v. 0.5 is a maintenance/update release?
 
 ** Decision-bound / General Recognition Theory
 
 2016-09-02,minda-branch,Paul Minda interested in contributing GRT implementation.
 2016-11-21,minda-branch,Paul Minda reviewing code for a basic GRT model.
+2017-03-02,is v.0.5 release practical?
 
 ** DIVA
 
 2016-09-09,A friend of Nolan Conaway is currently working on a DIVA implementation.
 2016-09-12,honke-branch,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
 2016-11-15,Garrett Honke has a working and implemented version of DIVA in R. It now needs tweaking to fit into the slp schema of catlearn.
+2017-03-02,Initial released in v.0.4
+2017-03-2,Rcpp re-implementation for v.0.5 release?
 
 ** GCM
 
 2016-09-09,Nolan Conaway is interested in contributing a model implementation.
 2016-09-12,Nolan Conaway would like to work on GCM if he has time.
 2016-11-15,Nolan Conaway has not yet had time to work on GCM.
-2016-11-210,minda-branch,Paul Minda is reviewing code for a GCM implementation. 
+2016-11-21,minda-branch,Paul Minda is reviewing code for a GCM implementation.
+2017-03-02,No GCM release in v.0.4
+2017-03-02,v.0.5 release?
+
+** Model-based, model-free learning model
+
+2017-02,Andy Wills and Tom Sambrook working on this
+2017-03-02,slated for a v.0.4 release
+
+** PMEGCM-RT
+2017-03-02,James Adelman and Chris Kent interested in supporting development of this
 
 ** Prototype model
 
-2016-11-20,minda-branch,Paul Minda is reviewing code for a prototype model.
+2016-11-20,minda-branch,Paul Minda is reviewing code for a prototype model
+2017-03-02,no progress for v.0.4 release
+2017-03-2,v.0.5 release?
 
 ** Rational model
 
 2016-09-02,Emmanuel Pothos suggested a Rational Model implementation.
+2017-03-02,no progress for v.0.4 release and no developer
+2017-03-02,any chance of a v.0.5 release?
 
 ** Rescorla-Wagner
 
 2016-09-02,Ahmed Moustafa suggested a Rescorla-Wagner model implementation.
 2016-11-09,rw-branch,Stuart Spicer will develop a Rescorla-Wagner model implementation.
+2017-03-02,initial release in v.0.4
+2017-03-02,slated for upgrade in v.0.5
+
+** SAMBA
+
+2017-03-02,James Adelman and Chris Kent interested in supporting this
 
 ** SUSTAIN
 
-2016-09-02,Emmanuel Pothos suggested a SUSTAIN model implementation.
+2016-09-02,Emmanuel Pothos suggested a SUSTAIN model implementation
+2017-03-02,no progress for v.0.4 release and no developer assigned
+2017-03-02,any chance of a v.0.5 release?
 
 ** Temporal difference model
 
 2016-09-02,Ahmed Moustafa suggested a Temporal Difference model implementation.
+2017-03-02,no progress for v.0.4 release and no developer assigned
+2017-03-02,any chance of a v.0.5 release?
 
 * CIRP
 
@@ -80,3 +117,20 @@
 
 2016-09-08,John Kruschke suggested an IBRE/highlighting CIRP.
 
+** Visual word recognition CIRP
+
+2017-03-02,Colin Davis considering what these might be
+
+** Absolute identification CIRP
+
+2017-03-02,Chris Kent considering what these might be
+
+* Simulation archive
+
+** Optimization schema
+
+2016-12,Stephanie Stacy (williams.edu) suggested simulation archives might contain the parameter optimization code. I said I would do an example to show how this might work.
+
+** lazyNut schema
+
+2017-03-02,James Adelman and Colin Davis possibly interested in link code to allow lazyNut simulations to inter-operate with catlearn.
