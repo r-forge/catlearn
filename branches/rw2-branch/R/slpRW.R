@@ -28,14 +28,15 @@ slpRW <- function(st, tr, xtdo = FALSE, ratings = FALSE) {
             rout <- rbind(rout, r.w.m)
         }
     }
-    if(xtdo==TRUE) {               # Return appropriate list
-        ret <- list(out = out, st = w.m, xout = xout)
-    } else if (ratings==TRUE) {
-        ret <- list(out = out, st = w.m, rout = rout)
+    if(xtdo==TRUE & ratings==FALSE) {                 # Return appropriate list
+        ret <- list(out = out, xout = xout, st = w.m) # Extended output
+    } else if (ratings==TRUE & xtdo==FALSE) {
+        ret <- list(out = out, rout = rout, r.st = r.w.m) # Ratings output
     } else if (xtdo==TRUE & ratings==TRUE) {
-      ret <- list(out = out, st = w.m, xout = xout, rout = rout)
+      ret <- list(out = out, xout = xout, rout = rout, st = w.m, 
+                  r.st = r.w.m)                       # 'The works' output
     } else {
-        ret <- list(out = out, st = w.m)
+        ret <- list(out = out, st = w.m)              # Default output
     }
     ret
 }

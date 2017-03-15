@@ -9,24 +9,24 @@ st <- list(lr = 0.09, w = rep(0, 5),
 partic <- read.csv("ply100_part1train.csv")
 
 # Need a matrix which we can populate with data:
-partic_train <- NULL
+tr <- NULL
 
 # Converting data from stim column in partic to binary representation:
-for(j in 1:nrow(partic)) {           # Loop reads row by row in partic
+for(j in 1:nrow(partic)) {          # Loop reads row by row in partic
   xrow <- partic[j, ]               # Extracts current row within loop
-  if (xrow['stim'] == "A") {         # Converts A to binary representation
-    partic_train <- rbind(partic_train, c(1,0,0,0,0,1)) 
+  if (xrow['stim'] == "A") {        # Converts A to binary representation
+    tr <- rbind(tr, c(1,0,0,0,0,1)) 
   } else if (xrow['stim'] == "AX") {                    # Converts AX
-    partic_train <- rbind(partic_train, c(1,0,0,1,0,1))
+    tr <- rbind(tr, c(1,0,0,1,0,1))
   } else if (xrow['stim'] == "BY") {                    # Converts BY
-    partic_train <- rbind(partic_train, c(0,1,0,0,1,1))
+    tr <- rbind(tr, c(0,1,0,0,1,1))
   } else if (xrow['stim'] == "CY") {                    # Converts CY
-    partic_train <- rbind(partic_train, c(0,0,1,0,1,0))
+    tr <- rbind(tr, c(0,0,1,0,1,0))
   }
 }
   
 # Provides standard names for columns:
-colnames(partic_train) <- c("A", "B", "C", "X", "Y", "t")
+colnames(tr) <- c("A", "B", "C", "X", "Y", "t")
 
 # Creates matrix for control column:
 ctrl <- matrix(rep(0, 32), 
@@ -47,15 +47,12 @@ trial_block <- matrix(rep(1:4, 8),
                                       c("trial_block")))
 
 # Binds separate matrices together:
-partic_train <- cbind(ctrl, trial, trial_block, partic_train)
+tr <- cbind(ctrl, trial, trial_block, tr)
 
 # Sets the first ctrl column entry to one:
-partic_train[1,1] = partic_train[1,1] + 1
+tr[1,1] = tr[1,1] + 1
 
 # Clears environment of objects no longer required:
 rm(ctrl, trial, trial_block, xrow, j)
-
-# Renames object so it can be read by slpRW:
-tr <- partic_train
 
 # Is next step to make a loop for all participants together?
