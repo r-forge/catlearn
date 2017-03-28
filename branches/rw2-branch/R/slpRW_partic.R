@@ -53,6 +53,6 @@ tr <- cbind(ctrl, trial, trial_block, tr)
 tr[1,1] = tr[1,1] + 1
 
 # Clears environment of objects no longer required:
-rm(ctrl, trial, trial_block, xrow, j)
+rm(partic, ctrl, trial, trial_block, xrow, j)
 
 # Is next step to make a loop for all participants together?

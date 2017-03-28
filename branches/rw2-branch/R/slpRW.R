@@ -1,5 +1,5 @@
-slpRW <- function(st, tr, xtdo = FALSE, ratings = FALSE) {
-    out <- NULL; xout <- NULL; rout <- NULL      # Initialize variables
+slpRW <- function(st, tr, xtdo = FALSE) {
+    out <- NULL; xout <- NULL      # Initialize variables
     w.m <- st$w                    # Initialize weights
     nw <- length(w.m)              # Calculate number of weights    
     for(i in 1:nrow(tr)) {         # Run training loop
@@ -11,30 +11,16 @@ slpRW <- function(st, tr, xtdo = FALSE, ratings = FALSE) {
         a <- arow[(st$colskip + 1):(st$colskip + nw)]   # extract inputs
         suma <- sum(a*w.m)         # Calculate sum of act * weights
         delta <- st$lr * (lambda - suma)   # Calculte error term
-          act <- suma              # Allows suma to be read by act2probrat
-          theta <- 0.1             # Constant required for act2probrat
-          beta <- 0.1              # Constant required for act2probrat
-          rat <- act2probrat(act, theta, beta) # Runs act2probrat function
-          rdelta <- st$lr * (lambda - rat) # Delta value for ratings
         if (arow['ctrl'] != 2) {   # Unless weights are frozen...
             w.m <- w.m + delta * a # ...update weights
-            r.w.m <- w.m + rdelta * a # ...update ratings
         }
         out <- rbind(out, suma)    # Record output activation
         if(xtdo == TRUE) {         # Record weights (if xtdo)
             xout <- rbind(xout, w.m)
         }
-        if(ratings == TRUE) {      # Record probability ratings if true
-            rout <- rbind(rout, r.w.m)
-        }
     }
-    if(xtdo==TRUE & ratings==FALSE) {                 # Return appropriate list
+    if(xtdo==TRUE) {                 # Return appropriate list
         ret <- list(out = out, xout = xout, st = w.m) # Extended output
-    } else if (ratings==TRUE & xtdo==FALSE) {
-        ret <- list(out = out, rout = rout, r.st = r.w.m) # Ratings output
-    } else if (xtdo==TRUE & ratings==TRUE) {
-      ret <- list(out = out, xout = xout, rout = rout, st = w.m, 
-                  r.st = r.w.m)                       # 'The works' output
     } else {
         ret <- list(out = out, st = w.m)              # Default output
     }

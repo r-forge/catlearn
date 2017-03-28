@@ -12,7 +12,7 @@ slpBM <- function(st, tr, xtdo = FALSE) {
       if (arow['ctrl'] != 2) {                  # Unless weights are frozen...
       w.m <- w.m + delta * a                    # ...update weights
         }
-      out <- rbind(out, a*w.m)                  # Record output
+# #   out <- rbind(out, a*w.m)    #need to sum this for output              # Record output
       if (xtdo==TRUE) {                         # If xtdo = TRUE, record weights
       xout <- rbind(xout, w.m)
         }
