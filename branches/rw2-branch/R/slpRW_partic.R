@@ -66,10 +66,13 @@ for(l in 1:nrow(tr)) {          # Loop reads tr row by row
   }
 }
 
+dimnames(ctrl) = list(c(),
+                      c("ctrl"))
+
 # Binds separate matrices together:
 tr <- cbind(ctrl, tr)
 
 # Clears environment of objects no longer required:
-rm(partic, ctrl, trial, trial_block, xrow, j, l, ntr.1, ntr.all, ppts, yrow)
+rm(partic, ctrl, trial, xrow, j, l, ntr.1, ntr.all, ppts, yrow)
 
 # Bosh!!!

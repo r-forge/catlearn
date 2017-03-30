@@ -24,3 +24,5 @@ rm(r_out, ratings, ratmat, arow, lambda, r_wm, rat, rdelta, teacher, k,
 # Returns list (rating output activations, ratings, and final state given as 
 # ratings):
 ret
+
+# Need to reset between participants!
