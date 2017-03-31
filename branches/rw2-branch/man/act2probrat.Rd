@@ -26,7 +26,7 @@
   to probability rating, determined by the value set for the two
   constants: 
 
-  \code{gamma} is a scaling constant; as its value rises, the function
+  \code{theta} is a scaling constant; as its value rises, the function
   relating activation to rating becomes less linear and at high values
   approximates a step function.
 
