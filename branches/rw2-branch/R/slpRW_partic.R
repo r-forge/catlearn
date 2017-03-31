@@ -45,9 +45,6 @@ for(j in 1:nrow(partic)) {          # Loop reads row by row in partic
 # Provides standard names for columns:
 colnames(tr) <- c("A", "B", "C", "X", "Y", "t")
 
-# Creates object for control matrix:
-ctrl <- NULL
-
 # Creates matrix for trial column:
 trial <- matrix(rep(1:ntr.1, ppts), 
                 nrow = ntr.all, ncol = 1, byrow = TRUE,
@@ -56,6 +53,9 @@ trial <- matrix(rep(1:ntr.1, ppts),
 
 # Binds separate matrices together:
 tr <- cbind(trial, tr)
+
+# Creates object for control matrix:
+ctrl <- NULL
 
 for(l in 1:nrow(tr)) {          # Loop reads tr row by row
   yrow <- tr[l, ]               # Extracts current row
@@ -66,6 +66,7 @@ for(l in 1:nrow(tr)) {          # Loop reads tr row by row
   }
 }
 
+# Gives column name to ctrl matrix:
 dimnames(ctrl) = list(c(),
                       c("ctrl"))
 
