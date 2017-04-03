@@ -8,7 +8,7 @@
 # Everything in bottom section section runs automatically & requires no editing.
 
 # Set initial state "st" (learning rate, weights matrix, & desired colskip):
-st <- list(lr = 0.09, w = rep(0, 5), 
+st <- list(lr = 0.16, w = rep(0, 5), 
            colskip = 2)
 
 # Define number of participants:
