@@ -41,7 +41,7 @@ for(j in 1:nrow(partic)) {          # Loop reads row by row in partic
     tr <- rbind(tr, c(0,0,1,0,1,0))
   }
 }
-  
+
 # Provides standard names for columns:
 colnames(tr) <- c("A", "B", "C", "X", "Y", "t")
 
@@ -51,8 +51,14 @@ trial <- matrix(rep(1:ntr.1, ppts),
                 dimnames = list(c(),
                                 c("trial")))
 
+# Creates matrix for participant column (extracts from partic):
+ppnt <- matrix(partic[ ,1],
+               nrow = ntr.all, ncol = 1, byrow = TRUE,
+               dimnames = list(c(),
+                               c("partic")))
+
 # Binds separate matrices together:
-tr <- cbind(trial, tr)
+tr <- cbind(ppnt, trial, tr)
 
 # Creates object for control matrix:
 ctrl <- NULL
@@ -74,6 +80,6 @@ dimnames(ctrl) = list(c(),
 tr <- cbind(ctrl, tr)
 
 # Clears environment of objects no longer required:
-rm(partic, ctrl, trial, xrow, j, l, ntr.1, ntr.all, ppts, yrow)
+rm(partic, ppnt, ctrl, trial, xrow, j, l, ntr.1, ntr.all, ppts, yrow)
 
 # Bosh!!!
