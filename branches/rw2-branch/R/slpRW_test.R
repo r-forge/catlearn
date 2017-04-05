@@ -49,9 +49,12 @@ rm(ctrl, ppnt, trial)
 
 
 ppts <- 40
-tr.test2 <- NULL
+tr.test <- NULL
 for (i in unique(tr[,"partic"])){ 
-  tr.test2 <- rbind(tr.test2,tr[tr[ ,"partic"] == i,], test)
+  tr.test <- rbind(tr.test,tr[tr[ ,"partic"] == i,], test)
 }
+
+# Tidy up environment:
+rm(test, ppts, i)
 
 # Boom!

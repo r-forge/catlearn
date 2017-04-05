@@ -9,7 +9,7 @@
 
 # Set initial state "st" (learning rate, weights matrix, & desired colskip):
 st <- list(lr = 0.16, w = rep(0, 5), 
-           colskip = 2)
+           colskip = 3)
 
 # Define number of participants:
 ppts <- 40
