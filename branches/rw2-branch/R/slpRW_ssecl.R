@@ -20,3 +20,5 @@ tpred <- predictions[predictions[ ,"ctrl"] == 2,]
 exp <- tpred[ ,10]
 
 ssecl(obs,exp)
+
+rm(aggdata, tpred)
