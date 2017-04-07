@@ -12,3 +12,11 @@ aggdata <- aggregate(testdata$resp,list(testdata$stim, testdata$subj),
 colnames(aggdata) <- c('stim','subj','resp')
 
 obs <- aggdata$resp
+
+# Select test stage prediction data
+
+tpred <- predictions[predictions[ ,"ctrl"] == 2,]
+
+exp <- tpred[ ,10]
+
+ssecl(obs,exp)
