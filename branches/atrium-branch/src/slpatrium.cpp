@@ -11,8 +11,12 @@ using namespace Rcpp;
 // Erickson and Krushke (1998)
 
 // General Utility Functions
-
-
+int acccheck(int cresp,int resp){
+  // Checked AI 13/02/2017
+  int out = 0;
+  if (resp == cresp){out = 1;}
+  return out;
+}
 
 // ATRIUM, much like COVIS has two parts, a rule module and 
 // an exemplar module. It also contains a gating mechanism.
@@ -29,16 +33,15 @@ using namespace Rcpp;
 // dimensional values and one for large values. This function
 // is the top half of Equ 1, the part for small values.
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // dimval = dimensional value on the primary dimension
 // gain = the gain parameter, defined in E+K1998
 // bias = the bias parameter, defined in E+K1998
-// [[Rcpp::export]]
 double smact(double dimval, double gain, double bias){
   double act,expcom;
   expcom = (gain*(dimval+bias))*-1;
-  act = 1 - (pow(1 + exp(expcom),-1));
+  act = 1 - (1/(1 + exp(expcom)));
   return act;
 }
 
@@ -46,39 +49,47 @@ double smact(double dimval, double gain, double bias){
 
 // This function is the bottom half of Equ 1, the part for large values
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // dimval = dimensional value on the primary dimension
 // gain = the gain parameter, defined in E+K1998
 // bias = the bias parameter, defined in E+K1998
-// [[Rcpp::export]]
 double lact(double dimval,double gain,double bias){
   double act,expcom;
   expcom = (gain*(dimval+bias))*-1;
-  act = pow(1 + exp(expcom),-1);
+  act = 1/(1 + exp(expcom));
   return act;
 }
 
-// This function is to calculate the activation of a specific
-// category node, based on the small-value and large-value
-// activations. Equ 2 in E+K1998
+// This function is to calculate the activation of a
+// category nodes, based on the small-value and large-value
+// activations, for all rule modules. Equ 2 in E+K1998
 
-// Checked AI: 01/12/2016
+// Checked AI: 06/02/2016
 
-// lvweight = the connection weight between the large value
+// rlweight = the connection weight between the large value
 // rule node to the rule module category node
-// svweight = the connection weight between the small value
+// rsweight = the connection weight between the small value
 // rule node to the rule module category node
-// lact = activation of the large value rule node
-// smact = activation of the small value rule node
-
+// rlact = activation of the large value rule node
+// rsact = activation of the small value rule node
 // [[Rcpp::export]]
-NumericVector catact(NumericVector lvweights,NumericVector svweights,double lact, double smact){
-  int i;
-  NumericVector act(lvweights.size());
-  for(i=0;i < lvweights.size(); i++) {
-  act(i) = (lvweights(i)*lact)+(svweights(i)*smact);}
-  return act;
+NumericMatrix catact(List rlweights,List rsweights, NumericMatrix rlact,
+                     NumericMatrix rsact,int cats,int mods){
+  int i,j,k;
+  NumericMatrix out(rlact.nrow(),cats);
+  for(i=0;i < mods; i++) {
+    SEXP cl = rlweights[i];
+    SEXP cs = rsweights[i];
+    NumericMatrix lw(cl);
+    NumericMatrix ls(cs);
+    for (j=0;j<lw.nrow();j++){
+      for (k=0;k<lw.ncol();k++){
+      out(i,j) += (lw(j,k)*rlact(i,k)) + (ls(j,k)*rsact(i,k));
+      }
+     }
+  }
+  return out;
 }
 
 
@@ -89,44 +100,47 @@ NumericVector catact(NumericVector lvweights,NumericVector svweights,double lact
 // Calculate distances on each dimension from presented stimulus to
 // each of exemplar nodes for use in Equ 3 of E+K1998
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // h = matrix of positions of exemplar nodes, columns are nodes, 
 // rows are dimensions in stimulus space
 // x = vector of stimulus dimensions for the currently presented stimulus
-// [[Rcpp::export]]
 NumericMatrix xdcalc(NumericMatrix h, NumericVector x) {
   int i, j, nrow = h.nrow(), ncol = h.ncol();
   NumericMatrix out(nrow,ncol);
   for(i=0;i < nrow; i++) {
     for(j=0;j < ncol; j++) {
-      out(i,j) = fabs( h(i,j) - x(i));  
+      out(i,j) = fabs( h(i,j) - x(j));  
     }
   }
   return out;
 }
 
-// Need to check the function of m in next function with Andy
-
 // Calculate activation of exemplar nodes. Produce a vector,
 // with length of the number of exemplar nodes, of activations
 // for each node. Equ 3 in E+K1998.
 
+// Checked AI 13/02/2017
+
 // hmx = matrix of distances between exemplar nodes and the current stimulus
-// m
+// m = whether the stimulus dimension is missing
 // alpha = vector of attentional strengths for stimulus dimensions
 // c = specificty of the node
 // [[Rcpp::export]]
 NumericVector axcalc(NumericMatrix hmx, NumericVector m, 
                      NumericVector alpha, double c) {
   int i, j, nrow = hmx.nrow(), ncol = hmx.ncol();
-  NumericVector out(ncol);
-  for(j=0;j < ncol; j++) {
-    out(j) = 0.0;
-    for(i=0;i < nrow; i++) {
-      if( m[i] == 0 ) out(j) += hmx(i,j) * alpha(i);
+  NumericVector out(nrow);
+  //Rcout << "out = " << out <<"\n";
+  for(i=0;i < nrow; i++) {
+    out(i) = 0.0;
+    //Rcout << "out = " << out <<"\n";
+    for(j=0;j < ncol; j++) {
+      if( m[j] == 0 ) out(i) += hmx(i,j) * alpha(j);
+      //Rcout << "out = " << out <<"\n";
     }
-    out(j) = exp(-0.5 * c);
+    out(i) = exp(((-0.5 * c)*out(i)));
+    //Rcout << "out = " << out <<"\n";
   }
   return out;
 }
@@ -134,20 +148,26 @@ NumericVector axcalc(NumericMatrix hmx, NumericVector m,
 
 // Calculate activation of output nodes, Equ 4 in E+K1998.
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // w = matrix of connection weights from exemplar nodes to category nodes
-// ah = vector of category node activations
+// ah = vector of exemplar node activations
 // [[Rcpp::export]]
 NumericVector cncalc(NumericMatrix w, NumericVector ah) {
   int i,j, nrow = w.nrow(), ncol = w.ncol();
   NumericVector out(nrow);
-  for(j=0;j < nrow; j++) {
-    out(j) = 0.0;
-    for(i=0;i < ncol; i++) {
-      out(j) += ah(i) * w(j,i);
+  //Rcout << "out = " << out <<"\n";
+  for(i=0;i < nrow; i++) {
+    out(i) = 0.0;
+    //Rcout << "out = " << out <<"\n";
+    for(j=0;j < ncol; j++) {
+      out(i) += ah(j) * w(i,j);
+      //Rcout << "out = " << out <<"\n";
     }
   }
+  //Rcout << "w = " << w <<"\n";
+  //Rcout << "ah = " << ah <<"\n";
+  //Rcout << "out = " << out <<"\n";
   return out;
 }
 
@@ -159,14 +179,13 @@ NumericVector cncalc(NumericMatrix w, NumericVector ah) {
 // THis function is to calculate the activation of the gating
 // node, Equ 5 in E+K1998
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // exact = vector of exemplar node activations
 // gnweights = vector of connection weights between gating
 // node and exemplar nodes
 // gbias = bias for the gate
 // ggain = gain for the gate
-// [[Rcpp::export]]
 double gnact(NumericVector exact, NumericVector gnweights,
              double gbias, double ggain){
   int i;
@@ -175,7 +194,7 @@ double gnact(NumericVector exact, NumericVector gnweights,
     out += gnweights(i) * exact(i);
   }
   expcon = ((-1*(ggain * out)) + gbias);
-  act = 1 + pow(exp(expcon),-1) ;
+  act = 1/(1+(exp(expcon)));
   return act;
 }
 
@@ -183,7 +202,7 @@ double gnact(NumericVector exact, NumericVector gnweights,
 // This function is to calculate the probability for picking
 // each of the categorys, Equ 6 in E+K1998.
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // arnodes = vector of category node activations in the rule module
 // aenodes = vector of category node activations in the exemplar module
@@ -192,17 +211,17 @@ double gnact(NumericVector exact, NumericVector gnweights,
 // [[Rcpp::export]]
 NumericVector catprob(NumericVector arnodes,NumericVector aenodes,
                       double gatact,double scacon){
-  int i,j;
+  int i;
   double expconar,expconae,sumar=0,sumae=0;
   NumericVector out(arnodes.size());
   for(i=0;i < arnodes.size(); i++){
-    for(j=0;j < arnodes.size(); j++){
-      sumar += exp(scacon*arnodes(j));
-      sumae += exp(scacon*aenodes(j));
-    }
+    sumar += exp(scacon*arnodes(i));
+    sumae += exp(scacon*aenodes(i));
+  }
+  for(i=0;i < arnodes.size(); i++){
     expconar = (exp(scacon*arnodes(i))/sumar);
     expconae = (exp(scacon*aenodes(i))/sumae);
-    out(i) = (gatact*expconar) + ((1-gatact)*expconae);
+    out(i) = (gatact*expconae) + ((1-gatact)*expconar);
   }
   return out;
 }
@@ -215,21 +234,22 @@ NumericVector catprob(NumericVector arnodes,NumericVector aenodes,
 // of category nodes are for the rule module, with the second
 // x values being for the exemplar module.
 
-// Checked AI: 01/12/2016
+// Checked AI 13/02/2017
 
 // currht = ht values for the current trial, i.e what category is active
 // rmout = output of the rule module
 // emout = output of the exemplar module
 // [[Rcpp::export]]
-NumericVector htval(NumericVector currht, NumericVector rmout,
-                    NumericVector emout){
+NumericVector htval(int cresp, NumericVector rmout,NumericVector emout){
   int i;
   NumericVector out(rmout.size()+emout.size());
   for(i=0;i < rmout.size(); i++){
-    if (currht(i) == 1){out(i) = max(NumericVector::create(1,rmout(i)));}
-    else{out(i) = min(NumericVector::create(0,rmout(i)));}
-    if (currht(i) == 1){out(i+rmout.size()) = max(NumericVector::create(1,emout(i)));}
-    else{out(i+rmout.size()) = min(NumericVector::create(0,emout(i)));}
+    if (i == cresp)
+      {out(i) = max(NumericVector::create(1,rmout(i)));
+       out(i+rmout.size()) = max(NumericVector::create(1,emout(i)));}
+    else
+      {out(i) = min(NumericVector::create(0,rmout(i)));
+       out(i+rmout.size()) = min(NumericVector::create(0,emout(i)));}
   }
   return out;
 }
@@ -237,27 +257,25 @@ NumericVector htval(NumericVector currht, NumericVector rmout,
 
 // This function is to calculate the error, Equ 8 in E+K1998.
 
-// Checked AI: 01/12/2016
+// Checked AI: 14/02/2016
 
 // tm = Vector of humble teacher values
 // rma = vector of rule modules activations
 // ema = vector of rule modules activations
-// modprob = vector of probabilities for each module
 // rcost = cost of rule module
 // ecost = cost of exemplar module
-// [[Rcpp::export]]
 List error(NumericVector tm, NumericVector rma, NumericVector ema,
-             NumericVector modprob,double rcost,double ecost){
+             double gact,double rcost,double ecost){
   int i;
   double out,ksumr=0,ksume=0,msum;
-  NumericVector rtm = tm[Range(0,rma.size())],etm = tm[Range(rma.size()+1,rma.size()*2)];
+  NumericVector rtm = tm[Range(0,(rma.size()-1))],etm = tm[Range(rma.size(),((rma.size()*2)-1))];
   for(i=0;i < rma.size(); i++){
-    ksumr += pow(rtm(i)-rma(i),2);
-    ksume += pow(etm(i)-ema(i),2);
+    ksumr += pow((rtm(i)-rma(i)),2);
+    ksume += pow((etm(i)-ema(i)),2);
   }
   ksumr = exp(((-0.5*rcost)*ksumr));
   ksume = exp(((-0.5*ecost)*ksume));
-  msum = (ksumr*modprob(0))+(ksume*modprob(1));
+  msum = (ksumr*(1-gact))+(ksume*gact);
   out = -1*(log(msum));
   return Rcpp::List::create(Rcpp::Named("Error") = out,
                             Rcpp::Named("RA") = ksumr,
@@ -268,9 +286,11 @@ List error(NumericVector tm, NumericVector rma, NumericVector ema,
 // Next function is Equ 12 in E+K1998, rmwu stands for rule
 // module weight update.
 
+// Checked AI: 20/02/2016
+
 // tm = vector of teacher values
 // rma = vector of rule module category node activations
-// ruleact = vector of small and large rule activations(columns are large-small, rows are rules)
+// act = vector of activations
 // rmw = matrix of weights between rules and rule category nodes (columns are rules, in the order large-small...., rows are category nodes)
 // rcost = cost of rule module
 // RA = accuracy of the rule module
@@ -278,23 +298,16 @@ List error(NumericVector tm, NumericVector rma, NumericVector ema,
 // rmlr = rule module learning rate parameter
 // gact = gating node activation
 // [[Rcpp::export]]
-NumericMatrix rmwu(NumericVector tm,NumericVector rma, NumericMatrix ruleact,
+NumericMatrix rmwu(NumericVector tm,NumericVector rma, NumericVector act,
                    NumericMatrix rmw,double rcost,double RA,
                    double MA,double rmlr,double gact){
-  int i,j,nrow = rmw.nrow(),ncol = rmw.ncol(), sorl;
-  NumericVector rtm = tm[Range(0,rma.size())];
-  Rcout<< "rtm = " << rtm <<"\n";
+  int i,j,nrow = rmw.nrow(),ncol = rmw.ncol();
+  NumericVector rtm = tm[Range(0,rma.size()-1)];
   NumericMatrix out(clone(rmw));
-  Rcout<< "out = " << out <<"\n";
   for (i=0;i < ncol; i++){
-    Rcout<< "out = " << out <<"\n";
     for (j=0;j < nrow; j++){
-      Rcout<< "out = " << out <<"\n";
-      if(j%2 == 0){sorl = 0;}
-      else{sorl = 1;}
-      out(j,i) += (rmlr) * (((1-gact)*(RA)*(rcost))/(MA)) * ((rtm(i)) - (rma(i))) * (ruleact(sorl,i));
-      Rcout<< "out+ = " << (rmlr) * (((1-gact)*(RA)*(rcost))/(MA)) * ((rtm(i)) - (rma(i))) * (ruleact(sorl,i)) <<"\n";
-      
+      out(j,i) += (rmlr) * (((1-gact)*(RA)*(rcost))/(MA)) * ((rtm(j)) - (rma(j))) * (act(i));
+
     }
   }
   return out;
@@ -303,6 +316,8 @@ NumericMatrix rmwu(NumericVector tm,NumericVector rma, NumericMatrix ruleact,
 
 // Next function is Equ 13 in E+K1998, emwu stands for rule
 // module weight update.
+
+// Checked AI: 20/02/2016
 
 // tm = vector of teacher values
 // ema = vector of exemplar module category node activations
@@ -324,7 +339,7 @@ NumericMatrix emwu(NumericVector tm,NumericVector ema,
   for (i=0;i < ncol; i++){
     for (j=0;j < nrow; j++){
       out(j,i) += (emlr) * (((gact)*(EA)*(ecost))/(MA)) * ((etm(j)) - (ema(j))) * (exact(i));
-    }
+      }
   }
   return out;
 }
@@ -333,6 +348,8 @@ NumericMatrix emwu(NumericVector tm,NumericVector ema,
 
 // Next is function 14 from E+K1998, the change in the attention
 // for each stimulus dimension. 
+
+// Checked AI: 20/02/2016
 
 // tm = vector of teacher values
 // ema = vector of exemplar module category node activations
@@ -358,12 +375,12 @@ NumericVector achange(NumericVector tm,NumericVector ema,NumericVector exact,
   NumericVector out(clone(dimatt));
   for (i=0;i < cstim.size(); i++){
     sumej = 0;
-    for (j=0;j < exact.size(); j++){
+    for (j=0;j < emw.ncol(); j++){
       sumek = 0;
-      for (k=0;k < ema.size(); k++){
-        sumek += (((gact)*(EA)*(ecost))/(MA)) * (etm(k)-ema(k)) * (emw(k,j)) ;
+      for (k=0;k < emw.nrow(); k++){
+        sumek += (((gact)*(EA)*(ecost))/(MA)) * (etm(k)-ema(k)) * (emw(k,j));
       }
-      sumej += (sumek) * (exact(j)) * (c) * (fabs(hmx(j,i) - cstim(j)));
+      sumej += (sumek) * (exact(j)) * (c) * (fabs(hmx(j,i) - cstim(i)));
     }
     out(i) += (-1) * (alr) * (sumej);
   }
@@ -374,7 +391,9 @@ NumericVector achange(NumericVector tm,NumericVector ema,NumericVector exact,
 
 // Next is function 15 from E+K1998, the change in weight from 
 // the exemplars to the gating node. THis function works by adding
-// the change calculated to the existing weight.
+// the change calculated to the existing weight.7
+
+// Checked AI: 20/02/2016
 
 // egnweight = vector of weight between the gating node and the exemplars
 // exact = vector of exemplar activations
@@ -401,37 +420,187 @@ NumericVector egnchange(NumericVector egnweight, NumericVector exact,
 
 
 // Now for the full function for slpATRIUM
-
-//NumericMatrix slpATRIUM(NumericMatrix train,
-//                        List rmpar,List empar,List gnpar,List extpar){
+// [[Rcpp::export]]
+List slpATRIUM(List st,
+               NumericMatrix tr,
+               bool rgive = false,
+               bool xtdo = false){
 // This clumsy section copies stuff out of an R List
 // There seems to be no way in RCpp to get direct access to a 
 // List at input?
-//double rbias = as<double>(rmpar[0]);
-//double rgain = as<double>(rmpar[1]);
-//double rcost = as<double>(rmpar[2]);
-//double rmlr = as<double>(rmpar[3]);
+double rcost = as<double>(st["rcost"]);
+double rmlr = as<double>(st["rmlr"]);
+double c = as<double>(st["c"]);
+double ecost = as<double>(st["ecost"]);
+double emlr = as<double>(st["emlr"]);
+double gbias = as<double>(st["gbias"]);
+double ggain = as<double>(st["ggain"]);
+double cpsc = as<double>(st["cpsc"]);
+double gnlr = as<double>(st["gnlr"]);
+double alr = as<double>(st["alr"]);
+int stimdim = as<int>(st["stimdim"]);
+int cats = as<int>(st["cats"]);
+int mods = as<int>(st["mods"]);
+//int exmplrs = as<int>(st["exmplrs"]);
+int colskip = as<int>(st["colskip"]);
+int rdim = as<int>(st["rdim"]);
+NumericMatrix rbias = as<NumericMatrix>(st["rbias"]);
+NumericMatrix rgain = as<NumericMatrix>(st["rgain"]);
+NumericMatrix ssxval = as<NumericMatrix>(st["ssxval"]);
+NumericVector alpha = as<NumericVector>(st["alpha"]);
+List sweights = as<List>(st["sweights"]);
+List lweights = as<List>(st["lweights"]);
+NumericMatrix excweights = as<NumericMatrix>(st["excweights"]);
+NumericVector exgweights = as<NumericVector>(st["exgweights"]);
 
-//double c = as<double>(empar[0]);
-//double ecost = as<double>(empar[1]);
-//double emlr = as<double>(empar[2]);
-
-//double gbias = as<double>(gnpar[0]);
-//double ggain = as<double>(gnpar[1]);
-//double cpsc = as<double>(gnpar[2]);
-//double gnlr = as<double>(gnpar[3]);
-
-//double alr = as<double>(extpar[0]);
 // End of particularly clumsy section
+// Initialising various variables
+int i,j,k,a,b=0,cresp=0,x;
+int length=tr.nrow();
+double ag;
+NumericVector cstim,xact,m,emout,respprob,htvec;
+NumericMatrix rmout(mods,cats),sxdist,rweights,racts,rlact(mods,rgain.nrow()),rsact(mods,rgain.nrow());
+List cerr,output,outlist;
+//Rcout << "rlact = " << rlact <<"\n";
+//Rcout << "rsact = " << rsact <<"\n";
+
+// Ensure that tr starts with some value rather than being empty
+NumericVector train = tr(0,_);
+//Rcout << "train = " << train <<"\n";
+// Initial model setup
+// Setup an initial matrix for the rule weights based on
+// number of stimulus dimensions and response categories
+// NOTE: Rcout cannot handle List types at the minute.
+List rlweights = clone(lweights);
+List rsweights = clone(sweights);
+
+NumericMatrix ecweights = clone(excweights);
+//Rcout << "ecweights = " << ecweights <<"\n";
+NumericVector egweights = clone(exgweights);
+//Rcout << "egweights = " << egweights <<"\n";
+NumericVector aweights = clone(alpha);
+//Rcout << "aweights = " << aweights <<"\n";
+
+for (i=0;i < length; i++){
+  // set tr to the current training trial row in the training matrix
+  train = tr(i,_);
+  //Rcout << "train = " << train <<"\n";
+  if(train(0) == 1){
+  rlweights = List(clone(lweights));
+  rsweights = List(clone(sweights)); 
+  ecweights = NumericMatrix(clone(excweights));
+  egweights = NumericVector(clone(exgweights));
+  aweights = NumericVector(clone(alpha));
+  }
+  //Rcout << "ecweights = " << ecweights <<"\n";
+  //Rcout << "egweights = " << egweights <<"\n";
+  //Rcout << "aweights = " << aweights <<"\n";
+  // set the stimulus dimension values for the current stimulus
+  cstim = train[Range(colskip,((colskip-1)+stimdim))];
+  m = train[Range(((colskip)+stimdim+cats),((train.size())-1))];
+  //Rcout << "cstim = " << cstim <<"\n";
+  //Rcout << "m = " << m <<"\n";
+  // First is the calculations for the activations in the rule module
+  for (j=0;j < rlact.nrow(); j++){
+    for (k=0;k < rlact.ncol(); k++){
+      rlact(j,k) = lact(cstim(j),rgain(j,k),rbias(j,k));
+      rsact(j,k) = smact(cstim(j),rgain(j,k),rbias(j,k));
+      if (rgive){
+                 rlact(j,k) = lact(cstim(rdim-1),rgain(j,k),rbias(j,k));
+                 rsact(j,k) = smact(cstim(rdim-1),rgain(j,k),rbias(j,k));
+                }
+    }
+  }
+  //Rcout << "lact = " << rlact <<"\n";
+  //Rcout << "smact = " << rsact <<"\n";
+  for (j=0;j < rlact.nrow(); j++){
+    rmout(j,_) = catact(rlweights,rsweights,rlact,rsact,cats,mods);
+  }
+  //Rcout << "rmout = " << rmout <<"\n";
+  // Next is the calculations for the activations in the exemplar module
+  // First calculate the distances of the exemplars from the current stimulus
+  sxdist = xdcalc(ssxval,cstim);
+  //Rcout << "sxdist = " << sxdist <<"\n";
+  // Next calculate the activation of the Exemplar nodes
+  xact = axcalc(sxdist,m,aweights,c);
+  //Rcout << "xact = " << xact <<"\n";
+  // Finally activation of the exemplar category nodes
+  emout = cncalc(ecweights,xact);
+  //Rcout << "emout = " << emout <<"\n";
+  // Now, we calculate the activations for the gating node
+  ag = gnact(xact,egweights,gbias,ggain);
+  //Rcout << "ag = " << ag <<"\n";
+  // Now we calculate the probability that each category is chosen
+  respprob = catprob(rmout,emout,ag,cpsc);
+  //Rcout << "respprob = " << respprob <<"\n";
+  // Next is the learning part of the model, first is the 
+  // generation of the vector of humble teacher values.
+  if (train(0) < 2){
+  for (j=0;j<cats;j++){
+      if(train(colskip+stimdim+j) == 1){cresp = j;}
+      } 
+  //Rcout << "cresp = " << cresp <<"\n";
+  htvec = htval(cresp,rmout,emout);
+  //Rcout << "htvec = " << htvec <<"\n";
+  cerr = error(htvec,rmout,emout,ag,rcost,ecost);
+  //double error = cerr("Error");
+  //double RA = cerr("RA");
+  //double EA = cerr("EA");
+  //double MA = cerr("MA");
+  //Rcout << "error = " << error <<"\n";
+  //Rcout << "RA = " << RA <<"\n";
+  //Rcout << "EA = " << EA <<"\n";
+  //Rcout << "MA = " << MA <<"\n";
+  // Update the weighted connections for each module and the gate node
+  for (j=0;j< rlweights.size();j++){
+    rlweights(j) = rmwu(htvec,rmout,rlact,rlweights(j),rcost,cerr("RA"),
+                        cerr("MA"),rmlr,ag);
+    rsweights(j) = rmwu(htvec,rmout,rsact,rsweights(j),rcost,cerr("RA"),
+              cerr("MA"),rmlr,ag);
+  }
+  //Rcout << "rlweights.size() = " << rlweights.size() <<"\n";
+  //Rcout << "rlw = " << rlw <<"\n";
+  //Rcout << "rsw = " << rsw <<"\n";
+  aweights = achange(htvec,emout,xact,cstim,ecweights,ssxval,aweights,
+                  cerr("EA"),cerr("MA"),ecost,ag,alr,c);
+  
+  //Rcout << "aweights = " << aweights <<"\n";
+  ecweights = emwu(htvec,emout,xact,ecweights,ecost,cerr("EA"),
+                   cerr("MA"),emlr,ag);
+  //Rcout << "ecweights = " << ecweights <<"\n";
+  egweights = egnchange(egweights,xact,gnlr,cerr("RA"),
+                        cerr("EA"),cerr("MA"),ggain,ag);
+  //Rcout << "egweights = " << egweights <<"\n";
+  }
+  // Update output list
+  if (xtdo){output = Rcpp::List::create(Rcpp::Named("respprob") = respprob,
+                                        Rcpp::Named("cresp") = cresp+1,
+                                        Rcpp::Named("ag") = ag,
+                                        Rcpp::Named("cerr") = cerr,
+                                        Rcpp::Named("cstim") = cstim,
+                                        Rcpp::Named("htvec") = htvec,
+                                        Rcpp::Named("rlact") = rlact,
+                                        Rcpp::Named("rsact") = rsact,
+                                        Rcpp::Named("rmout") = rmout,
+                                        Rcpp::Named("emout") = emout,
+                                        Rcpp::Named("sxdist") = sxdist,
+                                        Rcpp::Named("xact") = xact,
+                                        Rcpp::Named("aweights") = aweights,
+                                        Rcpp::Named("ecweights") = ecweights,
+                                        Rcpp::Named("egweights") = egweights,
+                                        Rcpp::Named("rsw") = rsweights,
+                                        Rcpp::Named("rlw") = rlweights);
+            outlist.push_back(output);}
+  
+  else {output = Rcpp::List::create(Rcpp::Named("respprob") = respprob,
+                                    Rcpp::Named("cresp") = cresp+1);
+        outlist.push_back(output);}
+}
+return outlist;
+}
 
 
 
-//int length;
-//NumericMatrix outmat(length,5);
 
 
-
-
-
-//return outmat;
-//}
+// Rcout<< "out = " << out <<"\n";
