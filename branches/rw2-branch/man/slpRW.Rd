@@ -34,7 +34,7 @@ al., 2017). Specifically, it takes a matrix (tr) as an argument, where
 each row represents a single training trial, while each column
 represents the different types of information required by the model,
 such as the elemental representation of the training stimuli, and the
-presence/absence of an otucome. It returns a vector of the output
+presence/absence of an outcome. It returns a vector of the output
 activations on each trial (a.k.a. sum of associative strengths of cues
 present on that trial). The slpRW function also returns the final state
 of the model - a vector of associative strengths between each stimulus
