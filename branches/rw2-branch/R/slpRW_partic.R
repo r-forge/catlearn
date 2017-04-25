@@ -42,6 +42,8 @@ for(j in 1:nrow(partic)) {          # Loop reads row by row in partic
   }
 }
 
+### do above without for loop e.g. array[array$stim == "Q", 10:14] <- c(1,1,0,1,1)
+
 # Provides standard names for columns:
 colnames(tr.) <- c("A", "B", "C", "X", "Y", "t")
 
@@ -50,6 +52,8 @@ trial <- matrix(rep(1:ntr.1, ppts),
                 nrow = ntr.all, ncol = 1, byrow = TRUE,
                 dimnames = list(c(),
                                 c("trial")))
+
+### Don't need to use matrix - applies to rest - e.g. trial <- rep(1:ntr, ppts)
 
 # Creates matrix for participant column (extracts from partic):
 ppnt <- matrix(partic[ ,1],
@@ -63,7 +67,7 @@ tr. <- cbind(ppnt, trial, tr.)
 # Creates object for control matrix:
 ctrl <- NULL
 
-for(l in 1:nrow(tr.)) {         # Loop reads tr row by row
+for(l in 1:nrow(tr.)) {         # Loop reads tr. row by row
   yrow <- tr.[l, ]              # Extracts current row
   if (yrow["trial"] == 1) {     # Sets ctrl to 1 if at first trial
     ctrl <- rbind(ctrl, 1) 
@@ -71,6 +75,8 @@ for(l in 1:nrow(tr.)) {         # Loop reads tr row by row
     ctrl <- rbind(ctrl, 0)
   }
 }
+
+### Shorter way of doing this - c(1, rep(0,(nrow(tr.)-1)))
 
 # Gives column name to ctrl matrix:
 dimnames(ctrl) = list(c(),
