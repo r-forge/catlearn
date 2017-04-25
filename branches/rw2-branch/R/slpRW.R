@@ -29,6 +29,6 @@ slpRW <- function(st, tr, xtdo = FALSE) {
 
 
 
-sourceCpp('src/slpRW.cpp')
+#sourceCpp('src/slpRW.cpp')
 
-slpRWcalc(st,tr)
+#slpRWcalc(st,tr)

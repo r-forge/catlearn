@@ -1,4 +1,16 @@
+# Sources functions into env:
+source('R/slpRW.R')
+source('R/act2probrat.R')
+source('R/ssecl.R')
+
+# Generates output:
+output <- slpRW(st, tr)
+
 # Generates ratings:
-output <- slpRW(st, tr.test)
 ratings <- act2probrat(output$out, theta, beta)
-predictions <- cbind(tr.test, ratings)
+
+# Creates matrix displaying model predictions:
+predictions <- cbind(tr, ratings)
+
+# Tidy environment:
+rm(theta, beta, output, ratings)

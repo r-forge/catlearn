@@ -22,7 +22,7 @@ test <- matrix(c(1, 0, 0, 0, 0, 0,
                                  "CX", "CY", "XY"),
                                c("A", "B", "C", "X", "Y", "t")))
 
-# As before we need the control column:
+# As with training we need the control column:
 ctrl <- matrix(rep(2, 15), 
                nrow = 15, ncol = 1, byrow = TRUE,
                dimnames = list(c(),
@@ -47,14 +47,18 @@ test <- cbind(ctrl, ppnt, trial, test)
 # stuff we no longer need:
 rm(ctrl, ppnt, trial)
 
-
+# Sets number of participants:
 ppts <- 40
-tr.test <- NULL
-for (i in unique(tr[,"partic"])){ 
-  tr.test <- rbind(tr.test,tr[tr[ ,"partic"] == i,], test)
+
+# Creates object 'tr':
+tr <- NULL
+
+# Add in training+test trials for each participant to complete matrix:
+for (i in unique(tr.[,"partic"])){ 
+  tr <- rbind(tr, tr.[tr.[ ,"partic"] == i,], test)
 }
 
 # Tidy up environment:
-rm(test, ppts, i)
+rm(test, ppts, i, tr.)
 
 # Boom!
