@@ -356,7 +356,7 @@ NumericMatrix emwu(NumericVector tm,NumericVector ema,
 // exact = vector of exemplar activations
 // cstim = vector of current stimulus dimension values
 // emw = matrix of weights between category nodes and exemplars (rows are category nodes, columns are exemplars)
-// hmx = matrix of exemplar locations in stimulus space
+// sxdist = matrix of distance from exemplars to current stimulus
 // dimatt = vector of current dimensional attentional weights
 // EA = Exemplar module accuracy as defined by the function called error
 // MA = Mean accuracy as defined by the function called error
@@ -366,24 +366,38 @@ NumericMatrix emwu(NumericVector tm,NumericVector ema,
 // c = specificity of the exemplar nodes
 // [[Rcpp::export]]
 NumericVector achange(NumericVector tm,NumericVector ema,NumericVector exact,
-                      NumericVector cstim, NumericMatrix emw, NumericMatrix hmx,
+                      NumericVector cstim, NumericMatrix emw, NumericMatrix sxdist,
                       NumericVector dimatt, double EA,double MA, double ecost,
                       double gact,double alr, double c){
   int i,j,k;
   double sumek,sumej;
   NumericVector etm = tm[Range((ema.size()),(ema.size()*2)-1)];
   NumericVector out(clone(dimatt));
+  //Rcout << "out = " << out <<"\n";
+  //Rcout << "EA = " << EA <<"\n";
+  //Rcout << "MA = " << MA <<"\n";
+  //Rcout << "ecost = " << ecost <<"\n";
+  //Rcout << "gact = " << gact <<"\n";
+  //Rcout << "alr = " << alr <<"\n";
+  //Rcout << "c = " << c <<"\n";
   for (i=0;i < cstim.size(); i++){
     sumej = 0;
     for (j=0;j < emw.ncol(); j++){
       sumek = 0;
       for (k=0;k < emw.nrow(); k++){
         sumek += (((gact)*(EA)*(ecost))/(MA)) * (etm(k)-ema(k)) * (emw(k,j));
+        //Rcout << "(etm(k)-ema(k)) = " << (etm(k)-ema(k)) <<"\n";
+        //Rcout << "(emw(k,j)) = " << (emw(k,j)) <<"\n";
+        //Rcout << "sumek = " << sumek <<"\n";
       }
-      sumej += (sumek) * (exact(j)) * (c) * (fabs(hmx(j,i) - cstim(i)));
+      sumej += (sumek) * (exact(j)) * (c) * (sxdist(j,i));
+      //Rcout << "(sxdist(j,i)) = " << (sxdist(j,i)) <<"\n";
+      //Rcout << "sumej = " << sumej <<"\n";
     }
     out(i) += (-1) * (alr) * (sumej);
+    //Rcout << "out = " << out <<"\n";
   }
+  //Rcout << "out = " << out <<"\n";
   return out;
 }
 
@@ -455,7 +469,7 @@ NumericVector exgweights = as<NumericVector>(st["exgweights"]);
 
 // End of particularly clumsy section
 // Initialising various variables
-int i,j,k,a,b=0,cresp=0,x;
+int i,j,k,cresp=0;
 int length=tr.nrow();
 double ag;
 NumericVector cstim,xact,m,emout,respprob,htvec;
@@ -463,6 +477,8 @@ NumericMatrix rmout(mods,cats),sxdist,rweights,racts,rlact(mods,rgain.nrow()),rs
 List cerr,output,outlist;
 //Rcout << "rlact = " << rlact <<"\n";
 //Rcout << "rsact = " << rsact <<"\n";
+
+
 
 // Ensure that tr starts with some value rather than being empty
 NumericVector train = tr(0,_);
@@ -480,17 +496,16 @@ NumericVector egweights = clone(exgweights);
 //Rcout << "egweights = " << egweights <<"\n";
 NumericVector aweights = clone(alpha);
 //Rcout << "aweights = " << aweights <<"\n";
-
 for (i=0;i < length; i++){
   // set tr to the current training trial row in the training matrix
   train = tr(i,_);
   //Rcout << "train = " << train <<"\n";
   if(train(0) == 1){
-  rlweights = List(clone(lweights));
-  rsweights = List(clone(sweights)); 
-  ecweights = NumericMatrix(clone(excweights));
-  egweights = NumericVector(clone(exgweights));
-  aweights = NumericVector(clone(alpha));
+     rlweights = List(clone(lweights));
+     rsweights = List(clone(sweights)); 
+     ecweights = NumericMatrix(clone(excweights));
+     egweights = NumericVector(clone(exgweights));
+     aweights = NumericVector(clone(alpha));
   }
   //Rcout << "ecweights = " << ecweights <<"\n";
   //Rcout << "egweights = " << egweights <<"\n";
@@ -551,27 +566,6 @@ for (i=0;i < length; i++){
   //Rcout << "RA = " << RA <<"\n";
   //Rcout << "EA = " << EA <<"\n";
   //Rcout << "MA = " << MA <<"\n";
-  // Update the weighted connections for each module and the gate node
-  for (j=0;j< rlweights.size();j++){
-    rlweights(j) = rmwu(htvec,rmout,rlact,rlweights(j),rcost,cerr("RA"),
-                        cerr("MA"),rmlr,ag);
-    rsweights(j) = rmwu(htvec,rmout,rsact,rsweights(j),rcost,cerr("RA"),
-              cerr("MA"),rmlr,ag);
-  }
-  //Rcout << "rlweights.size() = " << rlweights.size() <<"\n";
-  //Rcout << "rlw = " << rlw <<"\n";
-  //Rcout << "rsw = " << rsw <<"\n";
-  aweights = achange(htvec,emout,xact,cstim,ecweights,ssxval,aweights,
-                  cerr("EA"),cerr("MA"),ecost,ag,alr,c);
-  
-  //Rcout << "aweights = " << aweights <<"\n";
-  ecweights = emwu(htvec,emout,xact,ecweights,ecost,cerr("EA"),
-                   cerr("MA"),emlr,ag);
-  //Rcout << "ecweights = " << ecweights <<"\n";
-  egweights = egnchange(egweights,xact,gnlr,cerr("RA"),
-                        cerr("EA"),cerr("MA"),ggain,ag);
-  //Rcout << "egweights = " << egweights <<"\n";
-  }
   // Update output list
   if (xtdo){output = Rcpp::List::create(Rcpp::Named("respprob") = respprob,
                                         Rcpp::Named("cresp") = cresp+1,
@@ -590,11 +584,33 @@ for (i=0;i < length; i++){
                                         Rcpp::Named("egweights") = egweights,
                                         Rcpp::Named("rsw") = rsweights,
                                         Rcpp::Named("rlw") = rlweights);
-            outlist.push_back(output);}
+             outlist.push_back(output);}
   
   else {output = Rcpp::List::create(Rcpp::Named("respprob") = respprob,
                                     Rcpp::Named("cresp") = cresp+1);
         outlist.push_back(output);}
+  // Update the weighted connections for each module and the gate node
+  for (j=0;j< rlweights.size();j++){
+    rlweights(j) = rmwu(htvec,rmout,rlact,rlweights(j),rcost,cerr("RA"),
+                        cerr("MA"),rmlr,ag);
+    rsweights(j) = rmwu(htvec,rmout,rsact,rsweights(j),rcost,cerr("RA"),
+              cerr("MA"),rmlr,ag);
+  }
+  Rcout << "rmout = " << rmout <<"\n";
+  //Rcout << "rlweights.size() = " << rlweights.size() <<"\n";
+  //Rcout << "aweights = " << aweights <<"\n";
+  aweights = achange(htvec,emout,xact,cstim,ecweights,sxdist,aweights,
+                  cerr("EA"),cerr("MA"),ecost,ag,alr,c);
+  //Rcout << "achange = " << achange(htvec,emout,xact,cstim,ecweights,sxdist,aweights,
+  //                       cerr("EA"),cerr("MA"),ecost,ag,alr,c) <<"\n";
+  //Rcout << "aweights = " << aweights <<"\n";
+  ecweights = emwu(htvec,emout,xact,ecweights,ecost,cerr("EA"),
+                   cerr("MA"),emlr,ag);
+  //Rcout << "ecweights = " << ecweights <<"\n";
+  egweights = egnchange(egweights,xact,gnlr,cerr("RA"),
+                        cerr("EA"),cerr("MA"),ggain,ag);
+  //Rcout << "egweights = " << egweights <<"\n";
+  }
 }
 return outlist;
 }
