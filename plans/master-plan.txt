@@ -83,7 +83,7 @@ in contributing.
 
 ** PMEGCM-RT
 2017-03-02,James Adelman and Chris Kent interested in supporting development of this
-2017-05-03,Andy asks "how it's going?"
+2017-05-03,Andy nudges Chris Kent who suggests liaising with James Adelman instead
 
 ** Prototype model
 
@@ -109,7 +109,7 @@ in contributing.
 ** SAMBA
 
 2017-03-02,James Adelman and Chris Kent interested in supporting this
-2017-05-03,Andy asks "how it's going?"
+2017-05-03,Chris Kent has not yet asked the original authors but plans to do so
 
 ** SUSTAIN
 
@@ -139,7 +139,7 @@ in contributing.
 ** Absolute identification CIRP
 
 2017-03-02,Chris Kent considering what these might be
-2017-05-03,Andy asks "how it's going?"
+2017-05-03,Chris says he'll do this next week
 
 ** Face recognition CIRP
 
