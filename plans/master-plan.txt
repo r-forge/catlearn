@@ -11,18 +11,23 @@
 
 2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested
 in contributing.
+2017-05-04, Rene Scheleglmilch interested in contributing.
 
 * Developers joining
 
 2015-08-18,Andy Wills
 2016-01-15,Angus Inkster
+
 2016-08-17,catlearn appears on CRAN. 
-2016-09-10,John Paul Minda
+
+2016-09-10,John Paul Minda (not yet contributed)
 2016-09-12,Nolan Conaway (not yet contributed)
 2016-09-12,Garrett Honke
 2016-11-10,Stuart Spicer
 2016-11-10,Charlotte Edmunds
+
 2017-02-21,catlearn v.0.4 appears on CRAN
+
 
 * Model implementations
 
@@ -50,6 +55,7 @@ in contributing.
 2016-09-02,minda-branch,Paul Minda interested in contributing GRT implementation.
 2016-11-21,minda-branch,Paul Minda reviewing code for a basic GRT model.
 2017-03-02,Paul Minda will ask K. Matsuki about taking this over.
+2017-05-03,Andy asks "how it's going?"
 
 ** DIVA
 
@@ -57,7 +63,8 @@ in contributing.
 2016-09-12,honke-branch,That friend is Garrett Honke. He's in the late stages of writing DIVA in plain R. 
 2016-11-15,Garrett Honke has a working and implemented version of DIVA in R. It now needs tweaking to fit into the slp schema of catlearn.
 2017-03-02,Initial released in v.0.4
-2017-03-2,Rcpp re-implementation for v.0.5 release?
+2017-03-02,Rcpp re-implementation for v.0.5 release?
+2017-05-03,Andy asks "how it's going?"
 
 ** GCM
 
@@ -67,26 +74,30 @@ in contributing.
 2016-11-21,minda-branch,Paul Minda is reviewing code for a GCM implementation.
 2017-03-02,No GCM release in v.0.4
 2017-03-02,Paul Minda intending to have ready for v.0.5.
+2017-05-03,Andy asks "how it's going?"
 
 ** Model-based, model-free learning model
 
 2017-02,Andy Wills and Tom Sambrook working on this
-2017-03-02,slated for a v.0.4 release
+2017-03-02,slated for a v.0.5 release
 
 ** PMEGCM-RT
 2017-03-02,James Adelman and Chris Kent interested in supporting development of this
+2017-05-03,Andy asks "how it's going?"
 
 ** Prototype model
 
 2016-11-20,minda-branch,Paul Minda is reviewing code for a prototype model
 2017-03-02,no progress for v.0.4 release
 2017-03-2,Paul Minda intending to have ready for v.0.5.
+2017-05-03,Andy asks "how it's going?"
 
 ** Rational model
 
 2016-09-02,Emmanuel Pothos suggested a Rational Model implementation.
 2017-03-02,no progress for v.0.4 release and no developer
 2017-03-02,any chance of a v.0.5 release?
+2017-05-03,still no developer identified
 
 ** Rescorla-Wagner
 
@@ -98,18 +109,21 @@ in contributing.
 ** SAMBA
 
 2017-03-02,James Adelman and Chris Kent interested in supporting this
+2017-05-03,Andy asks "how it's going?"
 
 ** SUSTAIN
 
 2016-09-02,Emmanuel Pothos suggested a SUSTAIN model implementation
 2017-03-02,no progress for v.0.4 release and no developer assigned
 2017-03-02,any chance of a v.0.5 release?
+2017-05-03,still no developer identified
 
 ** Temporal difference model
 
 2016-09-02,Ahmed Moustafa suggested a Temporal Difference model implementation.
 2017-03-02,no progress for v.0.4 release and no developer assigned
 2017-03-02,any chance of a v.0.5 release?
+2017-05-03,still no developer identified
 
 * CIRP
 
@@ -120,17 +134,29 @@ in contributing.
 ** Visual word recognition CIRP
 
 2017-03-02,Colin Davis will contribute some once the lazyNut schema is in place. 
+2017-05-03,Andy asks "how it's going?"
 
 ** Absolute identification CIRP
 
 2017-03-02,Chris Kent considering what these might be
+2017-05-03,Andy asks "how it's going?"
+
+** Face recognition CIRP
+
+2017-05-03,Andy follows up a conversation he had with Mike Burton at ICPS
+
+** Working memory CIRP
+
+2017-04-24,Stephan Lewandowsky and Klaus Oberauer are working on a list of benchmark phenomena for working memory https://wmbenchmarks.wordpress.com/
 
 * Simulation archive
 
 ** Optimization schema
 
 2016-12,Stephanie Stacy (williams.edu) suggested simulation archives might contain the parameter optimization code. I said I would do an example to show how this might work.
+2017-05-03,slated for v.0.5 release.
 
 ** lazyNut schema
 
 2017-03-02,James Adelman to develop code to allow lazyNut simulations to inter-operate with catlearn (Colin Davis is also a contact point for this work, but James is the programmer).
+2017-05-03,Andy asks "how it's going?"
