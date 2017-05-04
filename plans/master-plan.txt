@@ -109,7 +109,7 @@ in contributing.
 ** SAMBA
 
 2017-03-02,James Adelman and Chris Kent interested in supporting this
-2017-05-03,Chris Kent has not yet asked the original authors but plans to do so
+2017-05-03,Chris Kent has asked original authors Scott Brown and Chris Donkin
 
 ** SUSTAIN
 
@@ -133,8 +133,8 @@ in contributing.
 
 ** Visual word recognition CIRP
 
-2017-03-02,Colin Davis will contribute some once the lazyNut schema is in place. 
-2017-05-03,Andy asks "how it's going?"
+2017-03-02,Colin Davis will contribute some once the lazyNut schema is in place.
+2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
 
 ** Absolute identification CIRP
 
@@ -159,4 +159,5 @@ in contributing.
 ** lazyNut schema
 
 2017-03-02,James Adelman to develop code to allow lazyNut simulations to inter-operate with catlearn (Colin Davis is also a contact point for this work, but James is the programmer).
-2017-05-03,Andy asks "how it's going?"
+2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
+
