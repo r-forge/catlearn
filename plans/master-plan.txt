@@ -156,8 +156,18 @@ in contributing.
 2016-12,Stephanie Stacy (williams.edu) suggested simulation archives might contain the parameter optimization code. I said I would do an example to show how this might work.
 2017-05-03,slated for v.0.5 release.
 
+* Interoperability projects
+
+** CAL-R
+
+Andy and Angus had discussions with the CAL-R team in 2016 but we hit a brick wall with CAL-R's licence conditions (it isn't free software)
+
 ** lazyNut schema
 
 2017-03-02,James Adelman to develop code to allow lazyNut simulations to inter-operate with catlearn (Colin Davis is also a contact point for this work, but James is the programmer).
 2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
+
+** AltSIM schema
+
+2017-05-04,Ann Thorwart considering GPL for ALTsim and Andy discussing possible interoperability schema for catlearn to/form altSIM. Andy to nudge around 22-May
 
