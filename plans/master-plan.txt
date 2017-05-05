@@ -75,7 +75,10 @@ in contributing.
 2016-11-21,minda-branch,Paul Minda is reviewing code for a GCM implementation.
 2017-03-02,No GCM release in v.0.4
 2017-03-02,Paul Minda intending to have ready for v.0.5.
+2017-03-02,See PMEGCM-RT also -- GCM is a special case
 2017-05-03,Andy asks "how it's going?"
+2017-05-05,Paul Minda and lab are working on this over the summer
+2017-05-05,Rene Schlegelmilch would like to work on a GCM implementation
 
 ** Model-based, model-free learning model
 
@@ -128,6 +131,21 @@ in contributing.
 
 * CIRP
 
+** Absolute identification CIRP
+
+2017-03-02,Chris Kent considering what these might be
+2017-05-03,Chris says he'll do this next week
+
+** Exemplars vs prototypes CIRP
+
+2017-05-05,Andy Wills has a bunch of CIRP in this area to add for version 0.5
+2017-05-05,Paul Minda has a bunch, too, again slated for version 0.5 release
+
+
+** Face recognition CIRP
+
+2017-05-03,Andy follows up a conversation he had with Mike Burton at ICPS
+
 ** Inverse base-rate effect / highlighting
 
 2016-09-08,John Kruschke suggested an IBRE/highlighting CIRP.
@@ -136,15 +154,6 @@ in contributing.
 
 2017-03-02,Colin Davis will contribute some once the lazyNut schema is in place.
 2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
-
-** Absolute identification CIRP
-
-2017-03-02,Chris Kent considering what these might be
-2017-05-03,Chris says he'll do this next week
-
-** Face recognition CIRP
-
-2017-05-03,Andy follows up a conversation he had with Mike Burton at ICPS
 
 ** Working memory CIRP
 
