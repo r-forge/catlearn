@@ -28,6 +28,7 @@ in contributing.
 
 2017-02-21,catlearn v.0.4 appears on CRAN
 
+2017-05-05,René Schlegelmilch 
 
 * Model implementations
 
