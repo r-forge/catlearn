@@ -60,7 +60,7 @@ slpDIVA(st, tr, xtdo = FALSE)
   control code 1, \code{ctrl = 1}.
 
   \code{out_wts} - A matrix of initial hidden-to-output weights with
-  \code{num_feats + 1} rows, \code{num_hids} columns and with the third
+  \code{num_hids + 1} rows, \code{num_feats} columns and with the third
   dimension being \code{num_cats} in extent. Can be set to \code{NULL}
   when the first line of the \code{tr} matrix includes control code 1,
   \code{ctrl = 1}.
