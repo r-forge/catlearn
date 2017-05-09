@@ -57,6 +57,7 @@ in contributing.
 2016-11-21,minda-branch,Paul Minda reviewing code for a basic GRT model.
 2017-03-02,Paul Minda will ask K. Matsuki about taking this over.
 2017-05-03,Andy asks "how it's going?"
+2017-05-08,Now an inter-operability project with grt package see below.
 
 ** DIVA
 
@@ -79,6 +80,7 @@ in contributing.
 2017-05-03,Andy asks "how it's going?"
 2017-05-05,Paul Minda and lab are working on this over the summer
 2017-05-05,Rene Schlegelmilch would like to work on a GCM implementation
+2017-05-08,Paul Minda will have something up and running soon
 
 ** Model-based, model-free learning model
 
@@ -114,6 +116,7 @@ in contributing.
 
 2017-03-02,James Adelman and Chris Kent interested in supporting this
 2017-05-03,Chris Kent has asked original authors Scott Brown and Chris Donkin
+2017-05-08,Chris Kent says Scott Brown interested in placing the next (rather than current) version of SAMBA within catlearn
 
 ** SUSTAIN
 
@@ -139,8 +142,7 @@ in contributing.
 ** Exemplars vs prototypes CIRP
 
 2017-05-05,Andy Wills has a bunch of CIRP in this area to add for version 0.5
-2017-05-05,Paul Minda has a bunch, too, again slated for version 0.5 release
-
+2017-05-08,Paul Minda would like to add Smith & Minda (1998)
 
 ** Face recognition CIRP
 
@@ -168,16 +170,22 @@ in contributing.
 
 * Interoperability projects
 
+** AltSIM schema
+
+2017-05-04,Ann Thorwart considering GPL for ALTsim and Andy discussing possible interoperability schema for catlearn to/form altSIM. Andy to nudge around 22-May
+
 ** CAL-R
 
 Andy and Angus had discussions with the CAL-R team in 2016 but we hit a brick wall with CAL-R's licence conditions (it isn't free software)
+
+** grt package
+
+2017-05-08,Andy to be added as collaborator on grt package github page.
+2017-05-08,Andy plans to looks into grt as an inter-operability project with catlearn
 
 ** lazyNut schema
 
 2017-03-02,James Adelman to develop code to allow lazyNut simulations to inter-operate with catlearn (Colin Davis is also a contact point for this work, but James is the programmer).
 2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
 
-** AltSIM schema
-
-2017-05-04,Ann Thorwart considering GPL for ALTsim and Andy discussing possible interoperability schema for catlearn to/form altSIM. Andy to nudge around 22-May
 
