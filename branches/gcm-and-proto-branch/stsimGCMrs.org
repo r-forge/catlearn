@@ -1,3 +1,6 @@
+Notes written to Rene S on code contributed to catlearn for GCM
+simulations (now called stsimGCMrs)
+
 * Overall impressions
 
 This is quite impressive, well done! You obviously know some stuff
@@ -43,12 +46,14 @@ pass to the function and what it should return, covered below.
 I also think it would make sense to retain the 'slp' prefix for models
 that are stateful. Let's call this function:
 
-stsimGCMbk
+stsimGCMrs
 
 with the prefix meaning 'static simulation'
 
-the suffix 'bk' just indicates the backup / bug testing function this
-particular piece of code has within the catlearn package.
+the suffix 'rs' is there because Minda's lab is also working on a GCM
+implementation and we need a way of keeping the code bases distinct
+for now (when it comes to release, we'll need to merge, or pick one,
+or something).
 
 ** What arguments should be passed?
 
