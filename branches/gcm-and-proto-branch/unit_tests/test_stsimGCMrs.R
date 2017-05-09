@@ -4,10 +4,10 @@
 ## published package.
 
 ## Load development code
-source("../R/stsimGCMbk.R")
+source("../R/stsimGCMrs.R")
 
 ## Load stored outputs known (believed?) to be correct
-load("test_stsimGCMbk.RData")
+load("test_stsimGCMrs.RData")
 
 ## slpGCMbk unit test 1
 
@@ -51,7 +51,7 @@ st$test_items <- matrix(
 ## columns of the output correspond to category numbers as defined
 ## above rows correspond to the column indices of the test_items
 
-t1 <- stsimGCMbk(st)
+t1 <- stsimGCMrs(st)
 if(sum(t1 == ut1) == 30) print("Test 1 passed.")
 
 ## Unit test 2
@@ -75,7 +75,7 @@ st$memory_items[[3]]<-c(2)
 st$mp<-5 
 
 ## get predictions
-t2 <- stsimGCMbk(st)
+t2 <- stsimGCMrs(st)
 if(sum(t2 == ut2) == 30) print("Test 2 passed.")
 
 ## Unit test 3 
@@ -108,7 +108,7 @@ st$mp[[2]]<-c(3)
 
 
 ## get predictions
-t3 <- stsimGCMbk(st)
+t3 <- stsimGCMrs(st)
 if(sum(t3 == ut3) == 30) print("Test 3 passed.")
 
 

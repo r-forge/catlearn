@@ -3,7 +3,7 @@
 
 ## Main function
 
-stsimGCMbk<-function(st) {
+stsimGCMrs<-function(st) {
     ## Add weight for last feature dimension
     st$weights <- as.numeric(c(st$weights, 1-sum(st$weights)))
     
