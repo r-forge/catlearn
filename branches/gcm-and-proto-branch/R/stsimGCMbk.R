@@ -1,4 +1,5 @@
-## Rene S.
+## Author: Rene Schlegelmilch
+## (Andy Wills made some minor changes)
 
 ## Main function
 
