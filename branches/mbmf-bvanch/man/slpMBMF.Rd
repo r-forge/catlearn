@@ -41,7 +41,7 @@ slpMBMF(st, tr, xtdo = FALSE)
   for the model-based system, and \code{x} for the model-free system),
   and \code{y} Q-values at stage 2 (one for each state; there are no
   actions at stage 2, and the MB and MF systems evaluate stage 2
-  Q-values the same way in this model).
+  Q-values the same way in this model). See Note 3.
 
   Argument \code{st} must be a list containing the following items:
 
@@ -142,7 +142,7 @@ potential neural regressors).
 
 }
 \author{
-  Tom Sambrook, Andy Wills
+  Andy Wills ( andy@willslab.co.uk ), Tom Sambrook
 }
 \references{
 
@@ -159,7 +159,8 @@ potential neural regressors).
   Concepts, tools, and category-learning examples. \emph{Psychology of
   Learning and Motivation, 66}, 79-115.
 
-}\note{ 
+}
+\note{ 
 
   1. Gillan et al.'s (2015) choice rule, at least as stated in their
   supplementary materials, would lead to the response probabilities
@@ -167,11 +168,11 @@ potential neural regressors).
   current implementation uses Daw et al. (2011, suppl. mat., Eq. 2).
 
   2. Gillan et al. (2015) decay Q values for unselected actions by
-  (1-alpha). This is not part of the curren implementation.
+  (1-alpha). This is not part of the current implementation.
 
-  3. This is an early development version of slpMBMF, not suitable for
-  inclusion in catlearn. One principal limitation is that the number of
-  stage 1 actions, and the number of stage 2 states, must be equal to 2,
-  otherwise the code will fail. This will be fixed before release.
+  3. In the current implementation of the model, \code{x} must be 2 and
+  \code{y} must be two, otherwise the model will fail or behave
+  unpredictably. If you'd like to develop a more general version of this
+  implementation, contact the author. 
 
 }

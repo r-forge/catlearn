@@ -1,4 +1,4 @@
-choice.rule <- function(qs, rpt, beta, p) {
+.choice.rule <- function(qs, rpt, beta, p) {
     vals <- exp(qs * beta + p * rpt)
     return(vals/sum(vals))
 }
@@ -15,7 +15,7 @@ slpMBMF <- function(st, tr, xtdo = FALSE) {
         s1.act <- tr[i,'s1.act']
         s2.state <- tr[i,'s2.state']
         t <- tr[i,'t']
-        ## Track repeated of previous action for perseveration
+        ## Track repeats of previous action for perseveration
         if(i>1) {
             prev.act <- tr[i-1,'s1.act']
             rpt <- c(0,0)
@@ -30,7 +30,7 @@ slpMBMF <- function(st, tr, xtdo = FALSE) {
         q1.h[1] <- st$q1.mb[1] * st$w + st$q1.mf[1] * (1 - st$w)
         q1.h[2] <- st$q1.mb[2] * st$w + st$q1.mf[2] * (1 - st$w)        
         ## Record response probabilities
-        out[i,] <- choice.rule(q1.h, rpt, st$beta, st$p)
+        out[i,] <- .choice.rule(q1.h, rpt, st$beta, st$p)
         ## Calculate MF delta at S2, wrt to S1 choice
         s1.d.mf <- st$q2[s2.state] - st$q1.mf[s1.act]
         ## Calculate a bunch of stuff the model doesn't use
