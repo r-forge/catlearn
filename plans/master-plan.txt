@@ -71,7 +71,6 @@ in contributing.
 ** Esber-Haselgrove
 2017-05-12,Mark Haselgrove interested in contributing his model - happy to share MATLAB code he has - but won't have time until the summer. Guillermo Esber is the main programmer. Contact again around 2017-06-05
 
-
 ** GCM
 
 2016-09-09,Nolan Conaway is interested in contributing a model implementation.
@@ -142,6 +141,7 @@ in contributing.
 
 2017-03-02,Chris Kent considering what these might be
 2017-05-03,Chris says he'll do this next week
+2017-05-12,Chris emails Andy to discuss
 
 ** Exemplars vs prototypes CIRP
 
