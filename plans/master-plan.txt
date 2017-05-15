@@ -68,6 +68,10 @@ in contributing.
 2017-03-02,Rcpp re-implementation for v.0.5 release?
 2017-05-03,Andy asks "how it's going?"
 
+** Esber-Haselgrove
+2017-05-12,Mark Haselgrove interested in contributing his model - happy to share MATLAB code he has - but won't have time until the summer. Guillermo Esber is the main programmer. Contact again around 2017-06-05
+
+
 ** GCM
 
 2016-09-09,Nolan Conaway is interested in contributing a model implementation.
