@@ -69,6 +69,7 @@ in contributing.
 2017-05-03,Andy asks "how it's going?"
 
 ** Esber-Haselgrove
+
 2017-05-12,Mark Haselgrove interested in contributing his model - happy to share MATLAB code he has - but won't have time until the summer. Guillermo Esber is the main programmer. Contact again around 2017-06-05
 
 ** GCM
@@ -121,6 +122,7 @@ in contributing.
 2017-05-03,Chris Kent has asked original authors Scott Brown and Chris Donkin
 2017-05-08,Chris Kent says Scott Brown interested in placing the next (rather than current) version of SAMBA within catlearn
 2017-05-17,Scott Brown says Andrew Heathcote might engage Peter Kvam on this - Andy asked Andrew H whether he could contact Peter K direct
+2017-05-18,Andrew H says new version of SAMBA is a way off but will bear us in mind when it does happen. Andy reads this as being not for version 0.5 
 
 ** SUSTAIN
 
