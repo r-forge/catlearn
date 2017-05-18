@@ -16,7 +16,7 @@
 
 \usage{
 
-  shin92exalcove(params = c(1.589, 0.6576, 0.1050, 0.7979))
+  shin92exalcove(params = c(2.165, 0.6366, 0.09857, 0.9))
 
 }
 
