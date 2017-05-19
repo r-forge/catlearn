@@ -16,15 +16,17 @@
 
 \usage{
 
-  shin92exalcove(params = c(2.165, 0.6366, 0.09857, 0.9))
+  shin92exalcove(params = NULL)
 
 }
 
 \arguments{
   
   \item{params}{A vector containing values for c, phi, la, and lw, in
-  that order. See \code{\link{slpALCOVE}} for an explanation of these
-  parameters.}
+  that order, e.g. params = c(2.1, 0.6, 0.09, 0.9). See
+  \code{\link{slpALCOVE}} for an explanation of these parameters.  Where
+  params = NULL, best-fitting parameters are derived from
+  optimzation archive \code{\link{shin92exalcove_opt}} }
   
 }  
   
@@ -74,10 +76,4 @@
   tools, and category-learning examples. \emph{The Psychology of
   Learning and Motivation}.
   
-}
-
-\seealso{
-
-\code{\link{shin92}}, \code{\link{slpALCOVE}}, \code{\link{shin92train}}
-
 }

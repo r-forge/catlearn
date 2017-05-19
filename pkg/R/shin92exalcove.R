@@ -1,4 +1,6 @@
-shin92exalcove <- function(params = c(2.165, 0.6366, 0.09857, 0.9)) {
+shin92exalcove <- function(params = NULL) {
+    ## Retrieve parameters from optimization archive as a default
+    if(is.null(params)) params <- shin92exalcove_opt()
     # Size 3 condition
     # Set training
     bigtr3 <- shin92train(condition = 'equal3', absval = -1,

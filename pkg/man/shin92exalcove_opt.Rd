@@ -36,9 +36,10 @@
 
 }   
 \value{
-  
-  The output of the optimization routine (see the \code{\link{optim}} help
-  file for details).
+
+  A vector containing the best-fitting values for c, phi, la,
+  and lw, in that order. See \code{\link{slpALCOVE}} for an explanation
+  of these parameters.
   
 }
 \details{
