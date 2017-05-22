@@ -16,15 +16,17 @@
 
 \usage{
 
-  nosof88exalcove(params = c(0.787,2.359,0.990,0.057))
+  nosof88exalcove(params = NULL)
 
 }
 
 \arguments{
   
   \item{params}{A vector containing values for c, phi, la, and lw, in
-  that order. See \code{\link{slpALCOVE}} for an explanation of these
-  parameters.}
+  that order, e.g. params = c(2.1, 0.6, 0.09, 0.9). See
+  \code{\link{slpALCOVE}} for an explanation of these parameters. Where
+  params = NULL, best-fitting parameters are derived from
+  optimzation archive \code{\link{shin92exalcove_opt}} }
   
 }  
   

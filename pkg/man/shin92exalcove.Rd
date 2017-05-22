@@ -56,7 +56,7 @@
  within the \code{shin92exaclove} function, and hence can't be changed
  without re-writing the function.
 
- This simulation was reported in Wills et al. (2016). 
+ This simulation was reported in Wills et al. (2017). 
 
 }
 
@@ -71,9 +71,9 @@
   dot-pattern classification and recognition. \emph{Journal
     of Experimental Psychology: General, 121}, 278--304.
 
-  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2017).
   Progress in modeling through distributed collaboration: Concepts,
   tools, and category-learning examples. \emph{The Psychology of
-  Learning and Motivation}.
+  Learning and Motivation, 66}, 79-115.
   
 }

@@ -16,15 +16,17 @@
 
 \usage{
 
-  shin92protoalcove(params = c(0.3522, 0.9649, 0.0156, 0.9900))
+  shin92protoalcove(params = NULL)
 
 }
 
 \arguments{
   
   \item{params}{A vector containing values for c, phi, la, and lw, in
-  that order. See \code{\link{slpALCOVE}} for an explanation of these
-  parameters.}
+  that orderr, e.g. params = c(2.1, 0.6, 0.09, 0.9). See
+  \code{\link{slpALCOVE}} for an explanation of these parameters.  Where
+  params = NULL, best-fitting parameters are derived from optimzation
+  archive \code{\link{shin92exalcove_opt}} }
   
 }  
   
@@ -55,7 +57,7 @@
  within the \code{shin92exaclove} function, and hence can't be changed
  without re-writing the function.
 
- This simulation was reported in Wills et al. (2016). 
+ This simulation was reported in Wills et al. (2017). 
 
 }
 
@@ -70,15 +72,10 @@
   dot-pattern classification and recognition. \emph{Journal
     of Experimental Psychology: General, 121}, 278--304.
 
-  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2017).
   Progress in modeling through distributed collaboration: Concepts,
   tools, and category-learning examples. \emph{The Psychology of
-  Learning and Motivation}.
+  Learning and Motivation, 66}, 79-115.
   
 }
 
-\seealso{
-
-\code{\link{shin92}}, \code{\link{slpALCOVE}}, \code{\link{shin92train}}
-
-}

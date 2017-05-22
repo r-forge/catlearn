@@ -1,4 +1,6 @@
-nosof88exalcove <- function(params = c(0.787,2.359,0.990,0.057)) {
+nosof88exalcove <- function(params = NULL) {
+    ## Retrieve parameters from optimization archive as a default
+    if(is.null(params)) params <- nosof88exalcove_opt()
     # Set training
     bigtr <- nosof88train('B',blocks = 3, absval = -1, subjs = 100,
                           seed = 4182)
