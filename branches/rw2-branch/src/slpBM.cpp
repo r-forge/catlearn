@@ -1,64 +1,50 @@
 #include <Rcpp.h>
-#include <cstdio>
 using namespace Rcpp;
-using namespace std;
-
-
-/* Function is defined here
- * function is called within the code
- * with the function name, a pair of parenthesis and a semicolon to end the line */
-// Update weights
-
-// Freeze learning
 
 // [[Rcpp::export]]
 List slpBM (List st, NumericMatrix tr,
             bool xtdo = false) {
-// declare everything that will not change by trial
-double wm = as<double>(st["w"]);            //initial weights
-double lr = as<double>(st["lr"]);           //the product of learning rate and stimuli salience
-int colskip = as<int>(st["colskip"]);       //optional coloumns (e.g block and trial number)
-int i , j,k, nrow = tr.nrow(), ncol = tr.ncol();
-NumericMatrix OUT;
-NumericMatrix xOUT;
+int i, j, k, nrow = tr.nrow(), ncol = tr.ncol();
+NumericVector w = as<NumericVector>(st["w"]);             // Initial weights of stimuli
+int initw = w.size();
+NumericVector wm; wm = (clone(w));
+double lr = as<double>(st["lr"]);                         // The product of learning rate and stimuli salience
+int colskip = as<int>(st["colskip"]);                     // Optional coloumns (e.g block and trial number)
+NumericVector lambda = tr( _, ncol-1);                    // Subset Asymptote of learning
+NumericVector inputs(initw), activ(initw), delta(initw);  // Initialise vectors for stimuli activation, activated stimuli's weights, and change in associative strength respectively
+NumericVector arow, sumET(nrow);                          // Initialise vector for subsetting current trial and for summed error terms
+NumericMatrix xOUT(nrow, initw);                          // Create matrix for extended output
 
-for (i = 0; i <= tr.nrow(); ++i)
-{
-    for ( j = colskip; j < ncol; ++j)
-    {
-        double lambda = i["t"]; lambda = tr(i,'t');            // Extract teaching signal
-        // Reset weight at each participants
-        if (i["ctrl"] == 1)
-        {
-        wm = st["w"];
-        }
-        double delta;
-        delta = lr * (lambda - j);
-        for(k=0;k<5;k++){
-          delta += lr *(lambda - wm(k))
-        }
-        wm += delta + wm;
-    }
-    /* Record output
-    - Have to write a function that stores the output?
-    - Have to write function to update weights? */
-}
-// Extended output to console
-if(xtdo){
-  for(k=0;k<wm.size();k++){
-  XOUT(i,k) = wm(k);
+Rcout << "1-------------------------------"  << std::endl;
+
+for (i = 0; i < tr.nrow(); ++i) {
+  arow = tr(i, _);                                        // Extract current trial
+  if (i["ctrl"] == 1)                                     // Reset weights at each participant
+  {
+    wm = st["w"];
   }
-  //Rcpp::Rcout << ;
-}
-// Run next trial and list the outputs
-return Rcpp::List::create(Rccp::Named("delta") = delta,
-                        Rccp::Named("wm") = wm);
+      for (k = 0; k < initw; ++k) {
+      inputs[k] = arow[colskip+k];                        // Subset stimuli activations from current trial
+      activ[k] = inputs[k] * wm[k];                       // Current stimuli weights according to activations
+      sumET[i] += activ[k];                               // Record output (uses summed error value even though BM uses a seperable error term)
+      delta[k] = lr * (lambda[i] - activ[k]);             // Calculate the change in associative strength
+      }
+  if (i["ctrl"] != 2 ) {                                  // Unless weights are frozen
+    for (k = 0; k < initw; ++k) {
+    wm[k] += delta[k] * inputs[k];                        // Update weights
+    }
+  }
+  if (xtdo) {
+      xOUT(i, _) = wm;                                    // If xtdo true, record updated weights to the row corresponding the current trial
+  }
 }
 
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically
-// run after the compilation.
-
-/*** R
-timesTwo(42)
-*/
+if (xtdo) {
+  return Rcpp::List::create(Rcpp::Named("Summed error terms") = sumET,
+                            Rcpp::Named("Extended Output, where rows represent trials and coloumns stimuli weights") = xOUT,
+                            Rcpp::Named("Last state of the model") = wm);
+} else {
+  return Rcpp::List::create(Rcpp::Named("Summed error terms") = sumET,
+                            Rcpp::Named("The last state of the model") = wm);
+}
+}
