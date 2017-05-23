@@ -1,6 +1,5 @@
 ## Run minimization
 nosof88exalcove_opt <- function(recompute = FALSE, trace = 0) {
-    
     ##  Define objective function to minimize
     .alcove.nosof88 <- function(params) {
         out <- nosof88exalcove(params)
@@ -30,15 +29,15 @@ nosof88exalcove_opt <- function(recompute = FALSE, trace = 0) {
     if(recompute) {
         bigresults = NULL
         ## Run optimzation
-        for(i in 1:2) {
+        for(i in 1:15) {
             params <- pset[i,]
             names(params) <- c('c','phi','la','lw')
             result <- optim(params, .alcove.nosof88,
                             method = "L-BFGS-B",
                             lower = lb, upper = ub,
                             control = ctrl)
-            bigresults <- rbind(bigresults, cbind(result$par,
-                                                  result$value))
+            bigresults <- rbind(bigresults, c(params, result$par,
+                                              result$value))
         }
     } 
     return(bigresults)
