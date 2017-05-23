@@ -45,6 +45,9 @@ nosof88exalcove_opt <- function(recompute = FALSE, trace = 0) {
         
         tempres # Equivalent to rbind into bigresults
     }
+    ## Stop Cluster
+    stopCluster(c1)
+
     return(bigresults)
 
     ## Cached results of each starting point
@@ -78,6 +81,8 @@ nosof88exalcove_opt <- function(recompute = FALSE, trace = 0) {
                               "result.13", "result.14", "result.15"),
                             c("i.c", "i.phi", "i.la", "i.lw", "c", "phi",
                               "la", "lw", "")))
+
+    params <- res.cache[which.min(res.cache[,9]),5:8]
 
     
 }
