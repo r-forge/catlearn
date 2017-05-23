@@ -12,6 +12,7 @@
 2016-09-02, Ken Kurtz and lab (Matt Wetzel, Garrett Honke) interested
 in contributing.
 2017-05-04, Rene Scheleglmilch interested in contributing.
+2017-05-23, Peter Kvam interested in contributing.
 
 * Developers joining
 
