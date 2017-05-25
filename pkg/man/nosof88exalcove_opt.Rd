@@ -13,63 +13,45 @@
 }
 \usage{
 
-  shin92exalcove_opt(params = c(2, 1, .25, .25), recompute = FALSE,
-  trace = 0)
+  shin92exalcove_opt(recompute = FALSE)
 
 }
 \arguments{
   
-  \item{params}{A vector containing the initial values for c, phi, la,
-  and lw, in that order. See \code{\link{slpALCOVE}} for an explanation
-  of these parameters. Where \code{recompute} is FALSE, this argument
-  has no effect.}
-
   \item{recompute}{When set to TRUE, the function re-runs the
-  optimization (which takes about 25 minutes on a 2.4 GHz
-  processor). When set to FALSE, the function returns a stored copy of
-  the results of the optimization (which is instantaneous).}
-
-  \item{trace}{Sets the level of tracing information (i.e. information
-  about the progress of the optimization), as defined by the
-  \code{\link{optim}} function. Set to 6 for maximally verbose
-  output. Where \code{recompute} is FALSE, this argument has no effect.}
+    optimization. When set to FALSE, the function returns a stored copy
+    of the results of the optimization.}
 
 }   
 \value{
 
-  A vector containing the best-fitting values for c, phi, la,
-  and lw, in that order. See \code{\link{slpALCOVE}} for an explanation
-  of these parameters.
+  A vector containing the best-fitting values for c, phi, la, and lw, in
+  that order. See \code{\link{slpALCOVE}} for an explanation of these
+  parameters.
   
 }
 \details{
 
   This function is an archive of the optimization procedure used to
-  derive the best-fitting parameters for the \code{\link{shin92exalcove}}
+  derive the best-fitting parameters for the \code{\link{nosof88exalcove}}
   simulation; see Spicer et al. (2017) for a tutorial introduction to
   the concept of simulation archives.
 
   Optimization used the L-BFGS-B method from the \code{\link{optim}}
   function of the standard R \code{stats} package. The objective
   function was sum of squared errors. Please inspect the source code for
-  further details (e.g. type \code{shin92exalcove_opt}). 
+  further details (e.g. type \code{nosof88exalcove_opt}). The
+  optimization was repeated for 16 different sets of starting values.
 
-  This function was run in 16 times from different starting points,
-  using 8 threads on a Core i7 3.6 GHz processor. The default
-  parameters of this function are those for the best fit from those 16
-  starting points. The 16 starting points were
-
-  \code{
-    pset <- rbind(
-      c(2,1,.25,.25),c(2,1,.25,.75),c(2,1,.75,.25),c(2,1,.75,.75),
-      c(2,3,.25,.25),c(2,3,.25,.05),c(2,3,.75,.25),c(2,3,.75,.75),
-      c(8,1,.25,.25),c(8,1,.25,.75),c(8,1,.75,.25),c(8,1,.75,.75),
-      c(8,3,.25,.25),c(8,3,.25,.75),c(8,3,.75,.25),c(8,3,.75,.75)
-    )
-  }
-
-  not all of which converged successfully.
-
+  Where \code{recompute = TRUE}, the function can take many hours to
+  run, depending on your system, and there is no progress bar. You can
+  use Task Manager (Windows) or equivalent if you want some kind of
+  visual feedback that the code is working hard. The code uses all the
+  processor cores on the local machine, so speed of execution is a
+  simple function of clock speed times processor cores. So, for example,
+  a 4 GHz i7 processor (8 virutal cores) will take a quarter of the time
+  to run this compared to a 2 GHz i5 processor (4 virtual cores).
+  
 }
 
 \author{
