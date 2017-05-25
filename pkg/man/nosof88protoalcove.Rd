@@ -16,15 +16,17 @@
 
 \usage{
 
-  nosof88protoalcove(params = c(.230,1.375,.049,.990))
+  nosof88protoalcove(params = NULL)
 
 }
 
 \arguments{
   
   \item{params}{A vector containing values for c, phi, la, and lw, in
-  that order. See \code{\link{slpALCOVE}} for an explanation of these
-  parameters.}
+  that order, e.g. params = c(2.1, 0.6, 0.09, 0.9). See
+  \code{\link{slpALCOVE}} for an explanation of these parameters.  Where
+  params = NULL, best-fitting parameters are derived from optimzation
+  archive \code{\link{nosof88protoalcove_opt}} }
   
 }  
   
@@ -47,17 +49,12 @@
  stimuli. Hence, the prototypes for each condition of the experiment
  are different. 
  
- The defaults for \code{params} are the best fit of the model to the
- \code{\link{nosof88}} CIRP. They were derived through minimization of
- SSE using non-linear optimization from 16 different initial
- states (using code not included in this archive). 
-
- The other parameters of slpALCOVE are set as follows: \code{r} = 2,
- \code{q} = 1, initial \code{alpha} = 1 / (number of input
- dimensions), initial \code{w} = 0. These values are conventions of
- modeling with ALCOVE, and should not be considered as free
- parameters. They are set within the \code{nosof88protoalcove} function,
- and hence can not be changed without re-writing the function.
+ Other parameters of slpALCOVE are set as follows: \code{r} = 2,
+ \code{q} = 1, initial \code{alpha} = 1 / (number of input dimensions),
+ initial \code{w} = 0. These values are conventions of modeling with
+ ALCOVE, and should not be considered as free parameters. They are set
+ within the \code{nosof88protoalcove} function, and hence can not be
+ changed without re-writing the function.
 
  This simulation is reported in Wills & O'Connell (n.d.). 
 

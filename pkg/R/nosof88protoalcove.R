@@ -1,4 +1,7 @@
-nosof88protoalcove <- function(params = c(.230,1.375,.049,.990)) {
+nosof88protoalcove <- function(params = NULL) {
+    ## Retrieve parameters from optimization archive as a default
+    if(is.null(params)) params <- nosof88protoalcove_opt()
+
     bigout <- NULL
     # Define prototypes, by condition
     h = cbind(c(-2.543,2.641), c(.943,4.341), c(-1.092,1.848),
