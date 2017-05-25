@@ -84,6 +84,7 @@ nosof88exalcove_opt <- function(recompute = FALSE) {
     }
     ## Pick the best and return parameters
     params <- res.cache[which.min(res.cache[,9]),5:8]
+    names(params) <- c('c','phi','la','lw')
     return(params)
 }
 

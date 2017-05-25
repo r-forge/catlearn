@@ -1,4 +1,7 @@
-nosof94exalcove <- function(params = c(1.666,1.825,0.990,0.0956)) {
+nosof94exalcove <- function(params = NULL) {
+    ## Retrieve parameters from optimization archive as a default
+    if(is.null(params)) params <- nosof94exalcove_opt()
+
     # Set training
     bigtr <- NULL
     for(cond in 1:6) {
@@ -7,7 +10,7 @@ nosof94exalcove <- function(params = c(1.666,1.825,0.990,0.0956)) {
                                     subjs = 100, seed = 7624))
         }
     # Set initial model state
-    init.state <- list(colskip = 4, r = 1, q = 1, alpha = c(1,1,1),
+    init.state <- list(colskip = 4, r = 1, q = 1, alpha = c(1/3,1/3,1/3),
                        w = array(0,dim=c(2,8)),
                        h = cbind( c(0,0,0), c(0,0,1), c(0,1,0), c(0,1,1), 
                                  c(1,0,0), c(1,0,1), c(1,1,0), c(1,1,1)),

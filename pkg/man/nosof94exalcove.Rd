@@ -16,15 +16,17 @@
 
 \usage{
 
-  nosof94exalcove(params = c(1.666,1.825,0.990,0.0956))
+  nosof94exalcove(params = NULL)
 
 }
 
 \arguments{
   
   \item{params}{A vector containing values for c, phi, la, and lw, in
-  that order. See \code{\link{slpALCOVE}} for an explanation of these
-  parameters.}
+  that order, e.g. params = c(2.1, 0.6, 0.09, 0.9). See
+  \code{\link{slpALCOVE}} for an explanation of these parameters. Where
+  params = NULL, best-fitting parameters are derived from optimzation
+  archive \code{\link{nosof94exalcove_opt}}}
   
 }  
   
@@ -46,23 +48,13 @@
  \code{\link{nosof94train}}. The co-ordinates for the radial-basis units
  are assumed, and use the same binary representation as the abstract
  category structure.
- 
- The defaults for \code{params} are the best fit of the model to the
- \code{\link{nosof94}} CIRP. They were derived through minimization of
- SSE using non-linear optimization from 16 different initial
- states (using code not included in this archive). 
 
- The other parameters of slpALCOVE are set as follows: \code{r} = 1,
- \code{q} = 1, initial \code{alpha} = 1, initial \code{w} = 0. These
+ Other parameters of slpALCOVE are set as follows: \code{r} = 1,
+ \code{q} = 1, initial \code{alpha} = 1/3, initial \code{w} = 0. These
  values are conventions of modeling with ALCOVE, and should not be
  considered as free parameters. They are set within the
  \code{nosof88exalcove} function, and hence can't be changed without
  re-writing the function.
-
- NOTE: The choice of initial alpha in this simulation is somewhat
- non-standard (one normally uses 1 / number of dimensions). In a future
- version of catlearn, this simulation may be replaced by a more standard
- verison.
  
  This simulation is reported in Wills & O'Connell (n.d.). 
 
