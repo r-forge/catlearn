@@ -13,7 +13,7 @@
 }
 \usage{
 
-  shin92exalcove_opt(recompute = FALSE)
+  nosof88exalcove_opt(recompute = FALSE)
 
 }
 \arguments{

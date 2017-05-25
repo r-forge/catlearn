@@ -13,7 +13,7 @@
 }
 \usage{
 
-  shin92exalcove_opt(params = c(8,1,.75,.25), recompute = FALSE,
+  shin92protoalcove_opt(params = c(2,1,.25,.75), recompute = FALSE,
   trace = 0)
 
 }

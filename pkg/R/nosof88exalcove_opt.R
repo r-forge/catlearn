@@ -33,6 +33,7 @@ nosof88exalcove_opt <- function(recompute = FALSE) {
         print("This can take some hours, and there is no progress bar.")
         print("Calculating...")
         ## Parallel loop around initial conditions
+        i=NULL # Pre-defining i here stops CRAN complaining.
         bigresults <- foreach(i=1:15, .combine=rbind,
                               .packages=c('catlearn')) %dopar% {
             params <- pset[i,]

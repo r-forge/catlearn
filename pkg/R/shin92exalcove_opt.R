@@ -6,7 +6,7 @@ shin92exalcove_opt <- function(params = c(2, 1, .25, .75),
     ##  Define objective function to minimize
     .alcove.shin92 <- function(params) {
         out <- shin92exalcove(params)
-        ret <- ssecl(out$c2p,shin92$c2acc)
+        ret <- ssecl(out$c2p,catlearn::shin92$c2acc)
         ## 'shin92' for development 
         ## 'catlearn::shin92' for package release
         return(ret)
