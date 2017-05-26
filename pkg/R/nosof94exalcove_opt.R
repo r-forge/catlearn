@@ -1,4 +1,4 @@
-nosof94exalcove_opt <- function(recompute = FALSE, xtdo = TRUE) {
+nosof94exalcove_opt <- function(recompute = FALSE, xtdo = FALSE) {
     if(recompute) {
         ##  Define objective function to minimize
         .alcove.nosof94 <- function(params) {
