@@ -1,6 +1,6 @@
 nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
                          seed = 7624, missing = 'geo') {
-  
+  set.seed(seed)
   shj61 <- array(0,dim=c(8,9,6))
   colnames(shj61) <- c('stim','x1','x2','x3','t1','t2','m1','m2','m3') 
   

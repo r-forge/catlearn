@@ -13,7 +13,7 @@
 }
 \usage{
 
-  nosof94exalcove_opt(recompute = FALSE)
+  nosof94exalcove_opt(recompute = FALSE, xtdo = FALSE)
 
 }
 \arguments{
@@ -21,6 +21,9 @@
   \item{recompute}{When set to TRUE, the function re-runs the
     optimization. When set to FALSE, the function returns a stored copy
     of the results of the optimization.}
+
+  \item{xtdo}{eXTenDed Output; where set to TRUE, some further details
+  of the optimization procedure are printed to the console.}
 
 }   
 \value{
