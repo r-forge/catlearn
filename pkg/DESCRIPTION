@@ -1,8 +1,8 @@
 Package: catlearn
 Type: Package
 Title: Formal Modeling for Psychology
-Version: 0.4.4
-Date: 2017-05-25
+Version: 0.4.5
+Date: 2017-05-26
 Author: Andy Wills, Angus Inkster, Stuart Spicer, Garrett Honke
 Maintainer: Andy Wills <andy@willslab.co.uk>
 Description: Formal psychological models, independently-replicated data sets against which to test them, and simulation archives.
