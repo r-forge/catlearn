@@ -86,11 +86,13 @@ in contributing.
 2017-05-05,Paul Minda and lab are working on this over the summer
 2017-05-05,Rene Schlegelmilch would like to work on a GCM implementation
 2017-05-08,Paul Minda will have something up and running soon
+2017-05-09,Rene S contributes GCM implementation to R-forge
 
 ** Model-based, model-free learning model
 
 2017-02,Andy Wills and Tom Sambrook working on this
 2017-03-02,slated for a v.0.5 release
+2017-05-11,Andy Wills adds slpMBMF to R-forge
 
 ** PMEGCM-RT
 2017-03-02,James Adelman and Chris Kent interested in supporting development of this
