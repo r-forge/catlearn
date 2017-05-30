@@ -177,6 +177,7 @@ in contributing.
 
 2016-12,Stephanie Stacy (williams.edu) suggested simulation archives might contain the parameter optimization code. I said I would do an example to show how this might work.
 2017-05-03,slated for v.0.5 release.
+2017-05-30,optimization archives on R-forge for all version 0.4 simulation archives (except nosof94bnalcove, which was not optimized by the author anyway, the parameters were taken direct from Nosofsky et al, 1994).
 
 * Interoperability projects
 
