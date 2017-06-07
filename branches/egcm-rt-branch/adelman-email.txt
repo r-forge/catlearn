@@ -1,0 +1,60 @@
+Dear Andy,
+
+I have now located the source code for the model.
+
+All the fitting already happens via R, but the C++ code is compiled as a shared object (or dll) library, with -DSHARED.
+
+It is then loaded as
+dyn.load(“egcmmatrixfix4.so”)
+
+Then there are a couple of R wrappers, which for the final model are:
+
+egcmpredraw<- function(p) .C("egcm",p,pr=double(p[1]*p[1]),rt=double(p[1]))
+
+egcmpred2cc<- function(dur,set,params,els,spac) {(Vectorize(function(dur,set,params,el,spac) {egcmpredraw(c(set,els,ifelse(spac==1,ifelse(set==6,params[2],params[3]),ifelse(set==6,params[4],params[5])),params[6],params[7],params[8:9],dur))->x ; x},vectorize.args=c("dur","set","spac")))(dur,set,params,els,spac)->temp; list(pr=unlist(temp[2,]),rt=params[1]+unlist(temp[3,]))}
+
+Best,
+--
+James S. Adelman
+
+From: Andy Wills<mailto:andy.wills@plymouth.ac.uk>
+Sent: 03 May 2017 16:22
+To: Adelman, James<mailto:J.S.Adelman@warwick.ac.uk>
+Subject: PMEGCM-RT
+
+Hi James,
+
+Congratulations on your recently accepted paper at JEP:LMC on absolute
+identification!
+
+Chris Kent suggested I contact you  about the
+possibility of using your PMEGCM-RT code within the 'catlearn'
+package. Hopefully you've already heard a bit about catlearn from both
+Chris Kent and Colin Davis, if not I'm happy to expand on the
+topic. In brief, it's a free and open archive of model
+implementations, classic datasets against which to test them, and
+simulation archives.
+
+It'd be great to have PMEGCM-RT as one of the model implementations,
+and I'm strongly motivated to see this work, so I stand ready to help
+in whatever way I can. I think the publication of models and CIRP
+(canonical independently-replicated phenomena) is crucial to efficient
+progress in formal modelling.
+
+I seem to recall Chris saying your implementation was written in C -
+catlearn supports C (via RCpp, which I have some experience of
+using).
+
+Anyway, let me know what you think and, if it's a go-er, how I can
+help.
+
+All the best
+
+Andy
+
+
+________________________________
+[http://www.plymouth.ac.uk/images/email_footer.gif]<http://www.plymouth.ac.uk/worldclass<http://www.plymouth.ac.uk/images/email_footer.gif%5d%3chttp:/www.plymouth.ac.uk/worldclass>>
+
+This email and any files with it are confidential and intended solely for the use of the recipient to whom it is addressed. If you are not the intended recipient then copying, distribution or other use of the information contained is strictly prohibited and you should not rely on it. If you have received this email in error please let the sender know immediately and delete it from your system(s). Internet emails are not necessarily secure. While we take every care, Plymouth University accepts no responsibility for viruses and it is your responsibility to scan emails and their attachments. Plymouth University does not accept responsibility for any changes made after it was sent. Nothing in this email or its attachments constitutes an order for goods or services unless accompanied by an official order form.
+
