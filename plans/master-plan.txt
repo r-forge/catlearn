@@ -98,6 +98,8 @@ in contributing.
 ** PMEGCM-RT
 2017-03-02,James Adelman and Chris Kent interested in supporting development of this
 2017-05-03,Andy nudges Chris Kent who suggests liaising with James Adelman instead
+2017-06-07,James Adelman sends Andy some C++ source code and Andy commits to making this a version 0.5 model implementation
+
 
 ** Prototype model
 
