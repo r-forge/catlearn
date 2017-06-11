@@ -101,7 +101,9 @@
 
   For example, \code{st$memory_items[[2]]<-c(1,4)} says that in category
   2 the items in columns 1 and 4 from the corresponding
-  \code{training_items} matrix receive a memory boost.
+  \code{training_items} matrix receive a memory boost. (Also
+  works with characterized columnanes, then the memory_items should
+  be vectors holding strings of column names.)
 
   Memory strength for all items which do not appear in this vector will
   be set to 1, in this case, for all \code{training_items[[2]]}, except
@@ -112,8 +114,7 @@
   (all equal) automatically.
 
   \code{mp} - memory parameter. When set to 1, all items are treated as
-  having the same memory strength (the same is done when mp is not set
-  or NULL).
+  having the same memory strength (the same is done when mp is not set).
 
   When setting mp higher than 1 (can take any value) the pre-defined
   \codee{memory_items} receive a memory strength boost, corresponding to
@@ -122,7 +123,11 @@
 
   Setting mp smaller than 1 yields a memory loss, e.g. mp=.5 means half
   the memory strength compared to non-specified exemplars, mp=2 means
-  twice the memory strength compared to non-sepcified exemplars.
+  twice the memory strength compared to non-sepcified exemplars. (Note:
+  If you want to check whether mp's into different directions, i.e. 
+  mp<1 and mp>1 are of equal strength, just compare the natural logs of 
+  both, e.g. -log(.5)=log(2), hence different directions (memory loss
+  and memory gain, respectively), but to an equal extent.)
 
   \code{mp} can either be defined by a single integer, thus, giving all
   specified items the same boost, or it can be defined in an
@@ -137,9 +142,9 @@
   
   mp[[n]] - category n memory strengths
 
-  each [[n]] list then has to be a vector with the same length as the
-  corresponding to the \code{memory_items} vectors, and each position in
-  the mp[[n]] vector refers to the item on the corresponding position in
+  each [[n]] list then has to be a vector with the same length as 
+  the \code{memory_items} vectors, and each position in the mp[[n]] 
+  vector refers to the item on the corresponding position in
   the st$memory_items vectors.
 
   A third option is, letting \code{mp} differ between categories, but
@@ -150,50 +155,73 @@
 
   \code{r_metric} - From Nosofsky (2011):
   
-  r determines the form of the distance metric. In situations involving
+  "r determines the form of the distance metric. In situations involving
   highly separable-dimension stimuli [...], the value r is typically set
   equal to 1, which yields a city-block distance metric . By contrast,
   in situations involving integral-dimension stimuli, the value r is set
-  equal to 2, which yields a Euclidean distance metric.
+  equal to 2, which yields a Euclidean distance metric."- 
+  
+  NOTE: Please see Tversky & Gati (1982) on extensive studies on r 
+  (highly recommended). In sum, if r > 1, then a large difference
+  on only one feature outweighs small differences on all features.
+  In contrast, if r < 1, then small differences on all features 
+  outweigh a large difference on only one features. In Tversky and Gati
+  (1982) this r<1 is referred to as 'corner inequality'. Thus,
+  r > 1 comes with the assumption that small differences in all features
+  may be less recognized (or less important), than a large noticable 
+  differences on one feature, which may be depend on perceptual 
+  confusability (more common) or on cognitive strategies.
   
   \code{p} - From Nosofsky (2011):
 
-  The value p [...] determines the shape of the function relating
+  "The value p [...] determines the shape of the function relating
   similarity to distance. In most cases, p is set equal to one, which
   yields an exponential relation between similarity and psychological
   distance [...]. In situations involving highly confusable stimuli,
   however, p is sometimes set equal to 2, yielding a Gaussian relation
-  between similarity and distance[...].
+  between similarity and distance[...].""
 
-  NOTE: When \code{r_metric} and \code{p} are both set to .1, then the
-  similarity function acts (nearly exactly) like a simple matching
+  NOTE: Again, please see Tversky & Gati (1982).When \code{r_metric} and
+  \code{p} are both set to .1, (given equal attention weights) then the
+  similarity function acts (nearly exactly) like a matching
   algorithm, i.e. as if the feature values from a current test item are
-  simply identity-matched onto the features of the exemplar under
+  identity-matched onto the features of the exemplar under
   consideration. This might become important, when there are
   qualitatively different feature values (i.e. with no 'real' distance
-  scaling).
+  scaling, see further, Gati & Tversky, 1982, on qualitative dimensions).
 
   For example, consider a current test item with 2 dimensions having the
   (numerically-coded) values 2 (\emph{sales}) and 3(\emph{english}),
   which is compared to an exemplar having the values 2 (\emph{sales})
   and 6 (\emph{latin}), representing the qualitative abilities of a
-  job-applicant.  With r and p set to .1, the difference between 3
-  (\emph{english}) and 6 (\emph{latin}) on the language-skill feature is
-  simply treated as 1 (instead of a distance of 3), indicating that
-  there is a simple mismatch, but no higher or lower distance on this
-  qualitative dimension. On the other hand, the match on the
-  job-experience feature (\emph{sales}) is treated as 0. In other words,
-  with r and p set to .1, similarity is just a count function of how
-  many features directly match / are identical.
+  job-applicant.  With r and p set to .1, (given equal weights) the 
+  difference between 3 (\emph{english}) and 6 (\emph{latin}) on the 
+  language-skill feature is simply treated as 1 (instead of a distance 
+  of 3), indicating that there is a simple mismatch, but no higher or 
+  lower distance on this qualitative dimension. On the other hand, 
+  the match on the job-experience feature (\emph{sales}) is treated as 0.
+  In other words, with r and p set to .1, similarity is just a count 
+  function of how many features directly match / are identical.
 }
 
 \author{ Rene Schlegelmilch, Andy Wills }
 
 \references{
-
+  Gati, I., & Tversky, A. (1982). Representations of qualitative and 
+  quantitative dimensions. \emph{Journal of Experimental Psychology: 
+  Human Perception and Performance, 8}(2), 325.
+  
+  Nosofsky, R. M. (1984). Choice, similarity, and the context theory 
+  of classification. \emph{Journal of Experimental Psychology: 
+  Learning, memory, and cognition, 10}(1), 104.
+  
   Nosofsky, R. M. (2011). The generalized context model: An exemplar
   model of classification. In Pothos, E.M. & Wills, A.J. \emph{Formal
   approaches in categorization}. Cambridge University Press.
+  
+  Tversky, A., & Gati, I. (1982). Similarity, separability, and the 
+  triangle inequality. \emph{Psychological review, 89}(2), 123.
+  
 
 }
 

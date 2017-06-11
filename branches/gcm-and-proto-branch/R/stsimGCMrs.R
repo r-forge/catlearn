@@ -49,10 +49,14 @@ stsimGCMrs<-function(st) {
                          test_items = st$test_items,
                          p_shape = st$p,
                          nCats = st$nCats)
-    ## output <- st
-    ## output$out <- get_p
     return(get_p)
 }
+
+Vectorize(st$training_items[[1]],function(x){ 
+  x*2
+})
+
+
 
 
 ## Predictions Function
@@ -62,50 +66,49 @@ stsimGCMrs<-function(st) {
 ## (gcm.similarity), and then calculates overall summed similarity,
 ## returns category choice probabilites.
 
-.gcm.predictions <- function(sensitivity, weights, choice_bias, gamma,
-                            is_memory_pars, r_metric, p_shape,
-                            training_items, test_items, nCats) {
-    ## number of test items
-    nTest <- ncol(test_items)
-    
-    ## matrix for test item predictions (ncol = number of categories,
-    ## nrow = number of test items in order of appearence)
-    predProbs <- matrix(0, ncol = nCats, nrow = nTest)
 
-    for (currentItem in 1:nTest){
-        ## vector holding predicted category response probabilities
-        ## for the current test item
-        summed_similarity <- rep(0, nCats)
-        for (cat in 1:nCats){
-            summed_similarity[cat] <- (
-                sum(
-                    is_memory_pars[[cat]] * (
-                        apply(
-                            training_items[[cat]], 2,
-                            FUN = function(x) {
-                                .gcm.similarity(
-                                    c = sensitivity,
-                                    wt = weights,
-                                    r = r_metric,
-                                    p = p_shape,
-                                    x,
-                                    test_items[,currentItem])
-                            }
-                        )
-                    )
-                )
-            )
-        }
-        ## gamma response determinism
-        summed_similarity <- summed_similarity ^ gamma
-        ## choice biases
-        summed_similarity <- summed_similarity * choice_bias
-        ## summed similarites for the current item and each category
-        predProbs[currentItem,] <- summed_similarity /
-            sum(summed_similarity)
-  }
-  return(predProbs)
+.gcm.predictions <- function(sensitivity, weights, choice_bias, gamma,
+                             is_memory_pars, r_metric, p_shape,
+                             training_items, test_items, nCats) {
+  
+  ## ALL RAW TEST-ITEM - EXEMPLAR SIMILARITIES (sims)
+  ## for each category of training items:
+  sims<-lapply(training_items,function(x){ 
+    
+    ## for each test item:
+    apply(test_items,2, function(y){ 
+      
+      ## get all exemplar similarities for each test item
+      apply(x,2,  
+            FUN = function(x) {
+              .gcm.similarity(
+                c = sensitivity,
+                wt = weights,
+                r = r_metric,
+                p = p_shape,
+                x,
+                y)
+              })
+      })
+  })
+  
+  ## apply memory strength parameters on test item exemplar sims
+  sims<-Map('*',is_memory_pars,sims)
+  
+  ## sum all exemplar similarities for each test-item
+  sim_sums<-t(matrix(unlist(lapply(sims,colSums)), ncol=nCats))
+  
+  ## gamma weighting and choice bias
+  sums<-t(choice_bias*(sim_sums^gamma))
+  
+  # relaitivize summed similarities
+  predProbs<-sums/rowSums(sums)
+  out<-list()
+  out$predictions<-predProbs
+  out$summed_sims<-t(sim_sums)
+  return(out)
 }
+
 
 ## Similarity Calculation
 ## See equation 2 and 3 in Nosofsky (2011)
@@ -114,10 +117,11 @@ stsimGCMrs<-function(st) {
     class(training_item) <- "numeric"
     class(test_item) <- "numeric"
     ## absolute distance between feature values (Equation 2)
-    tmp<- sqrt((training_item-test_item)^2)
+    tmp<- abs(training_item-test_item)
     ## feature weighted and r-scaled overall distance (Equation 2)    
     distance<- (sum(wt*tmp^r))^(1/r)
     ## Sensitivity and p scaled exponential similarity (Equation 3)
     similarity<-exp(-c*distance^p)
     return(similarity)
 }
+

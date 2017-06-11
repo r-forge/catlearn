@@ -5,12 +5,19 @@ simulations (now called stsimGCMrs)
 
 This is quite impressive, well done! You obviously know some stuff
 about coding :-)
+--- Thank you very much! :) 
 
 * Code optimization
 
 I notice you use loops quite a lot. Vectorization of code is much
 faster than loops in R. There should be almost nothing in GCM you need
 to use a loop for because GCM is not dynamic. 
+
+--- Halfway done. ('for' loops changed into 'apply' functions, 
+in the internet it is said that they at least partially vectorize...
+and the functions already became faster. 
+I am not yet familiar with vectorization,
+as well as C++.)
 
 Whether you bother switching to vectorization or not depends a bit on
 whether you intend to convert the code to C++ at a later date (Rcpp
@@ -29,6 +36,8 @@ to help understand what each line does, but the big block of text at
 the beginning of your file needs to be an a .Rd file. 
 
 I've hacked one together for you - you'll find it in the man directory.
+
+--- Thanks, already changed it a bit. I stick to it the future.
 
 * Cross compatibility for static models
 
@@ -55,6 +64,8 @@ implementation and we need a way of keeping the code bases distinct
 for now (when it comes to release, we'll need to merge, or pick one,
 or something).
 
+--- Okay. 
+
 ** What arguments should be passed?
 
 You've decided to drop the 'tr' array of models like slpALCOVE and
@@ -65,6 +76,9 @@ I wonder whether, at some point, it might be worth editing then
 ...train functions (e.g. nosof94train) such that there's an option to
 output in this kind of format for key datasets?
 
+--- I will check this, first thought is: definitely possible
+without major changes.
+
 ** What should be returned?
 
 The slp schema only returns those parameters that could have changed
@@ -74,19 +88,28 @@ parameters (just the results).
 
 I have changed this in your code.
 
+--- Alright. As you mentioned this, I also added an output for the summed
+similarities between the test items and the exemplars from each category,
+in case someone wants to focus on similarity judgments.
+
+
 * catlearn format style
 
 Bit tedious this, but it helps in open-source projects if everyone
 uses the same line length, comments style, indentation etc. catlearn
 is tab indented, 80 char max line width, spaces between most operators
 and uses ## for comments that have their own line. For readability,
-only the very simplest expressions should omit {}
+only the very simplest expressions should omit {}                        
+
+--- Can do this :)
 
 * Version control
 
 Don't call functions things like '_draft'. The point of version
 control software (svn, git) is that you use the same names for all
 versions of the code.
+
+--- Check.
 
 * Separation of code and unit tests
 
@@ -106,3 +129,6 @@ your top-level function. The functions this in turns call should be
 hidden. You do this by prepending a period. I've done this in your
 code. This is also important because every non-hidden function
 requires a .Rd file in a R package.
+
+--- I was even unaware that .function makes a function invisible :
+I will stick to this.
