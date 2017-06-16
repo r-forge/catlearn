@@ -13,6 +13,7 @@
 in contributing.
 2017-05-04, Rene Scheleglmilch interested in contributing.
 2017-05-23, Peter Kvam interested in contributing.
+2017-06-14, Peter Kvam and Andy email-discussing possibilities
 
 * Developers joining
 
