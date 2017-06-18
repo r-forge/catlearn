@@ -2,126 +2,78 @@
 ## (Andy Wills made some minor changes)
 
 ## Main function
-
 stsimGCMrs<-function(st) {
-    ## Add weight for last feature dimension
+    ## Add weight for last dimension
     st$weights <- as.numeric(c(st$weights, 1-sum(st$weights)))
     
-    ## Add choice bias for the last category
+    ## Add choice bias for last category
     st$choice_bias <- as.numeric(
         c(st$choice_bias, 1-sum(st$choice_bias)))
-
-    ## Set up memory strength parameters
-    st$is_memory_pars<-list()
-
-    ## start with all equall memory strengths... 
-    for (cat in 1:st$nCats) {
-        st$is_memory_pars[[cat]] <-
-            c(rep(1, ncol(st$training_items[[cat]])))
-    }
-
-    ## then modify...
-
-    ## equal memory boost for all
-    if (is.atomic(st$mp)) {
-        for (cat in 1:st$nCats) {
-            try(st$is_memory_pars[[cat]][st$memory_items[[cat]]] <-
-                    st$mp, silent = TRUE)
-        }
-    }
-
-    ## item-specific memory boost
-    if (!is.atomic(st$mp)) {
-        for (cat in 1:st$nCats) {
-            try(st$is_memory_pars[[cat]][st$memory_items[[cat]]] <-
-                    st$mp[[cat]], silent = TRUE)
-        }
-    }
-
-    ## Pass to calculation function
-    get_p <- .gcm.predictions(sensitivity = st$sensitivity, 
-                         weights = st$weights, 
-                         choice_bias = st$choice_bias, 
-                         gamma = st$gamma, 
-                         is_memory_pars = st$is_memory_pars, 
-                         r_metric = st$r_metric, 
-                         training_items = st$training_items, 
-                         test_items = st$test_items,
-                         p_shape = st$p,
-                         nCats = st$nCats)
+    
+    ## recode memory strength
+    memory<-matrix(1, ncol=nrow(st$training_items))
+    try(memory[which(st$training_items$mem %in% 1)]<-st$mp, silent==TRUE)
+    
+    ## pass to prediction function
+    get_p<-.gcm.predictions(tdf=st$tr, 
+                     ex=st$training_items,
+                     mem=memory,
+                     r_met=st$r_metric,
+                     c=st$sensitivity,
+                     p=st$p,
+                     gamma=st$gamma,
+                     cb=st$choice_bias,
+                     weights=st$weights,
+                     nCats=st$nCats,
+                     nFeat=st$nFeat
+                     )
     return(get_p)
 }
 
-Vectorize(st$training_items[[1]],function(x){ 
-  x*2
-})
-
-
-
-
-## Predictions Function
-## See Equation 1 in Nosofsky (2011)
-
-## Calls for similarity comparisons between test items and exemplars
-## (gcm.similarity), and then calculates overall summed similarity,
-## returns category choice probabilites.
-
-
-.gcm.predictions <- function(sensitivity, weights, choice_bias, gamma,
-                             is_memory_pars, r_metric, p_shape,
-                             training_items, test_items, nCats) {
-  
-  ## ALL RAW TEST-ITEM - EXEMPLAR SIMILARITIES (sims)
-  ## for each category of training items:
-  sims<-lapply(training_items,function(x){ 
+## Prediction function
+.gcm.predictions<-function(tdf, ex,mem,r_met,c,p,gamma,cb,weights, 
+                           nCats, nFeat) {
     
-    ## for each test item:
-    apply(test_items,2, function(y){ 
-      
-      ## get all exemplar similarities for each test item
-      apply(x,2,  
-            FUN = function(x) {
-              .gcm.similarity(
-                c = sensitivity,
-                wt = weights,
-                r = r_metric,
-                p = p_shape,
-                x,
-                y)
-              })
-      })
-  })
-  
-  ## apply memory strength parameters on test item exemplar sims
-  sims<-Map('*',is_memory_pars,sims)
-  
-  ## sum all exemplar similarities for each test-item
-  sim_sums<-t(matrix(unlist(lapply(sims,colSums)), ncol=nCats))
-  
-  ## gamma weighting and choice bias
-  sums<-t(choice_bias*(sim_sums^gamma))
-  
-  # relaitivize summed similarities
-  predProbs<-sums/rowSums(sums)
-  out<-list()
-  out$predictions<-predProbs
-  out$summed_sims<-t(sim_sums)
-  return(out)
-}
-
-
-## Similarity Calculation
-## See equation 2 and 3 in Nosofsky (2011)
-
-.gcm.similarity <- function(c, wt, r, p, training_item, test_item) {
-    class(training_item) <- "numeric"
-    class(test_item) <- "numeric"
-    ## absolute distance between feature values (Equation 2)
-    tmp<- abs(training_item-test_item)
-    ## feature weighted and r-scaled overall distance (Equation 2)    
-    distance<- (sum(wt*tmp^r))^(1/r)
-    ## Sensitivity and p scaled exponential similarity (Equation 3)
-    similarity<-exp(-c*distance^p)
-    return(similarity)
+    ## Go through every trial/item in the tr matrix/dataframe
+    ## and calculate all exemplar similarities weighted by 
+    ## memory strength
+    ## 
+    feat1col<-grep("x1", colnames(tdf))
+    sims<-apply(tdf[,feat1col:(feat1col+nFeat-1)],1, 
+                function(x,r, w, sens, p1, memo, exemplars, nF){
+                    
+                    ## calculates absolute feature differences
+                    ## between current item and all training items
+                    ## and applies metric r
+                    ef1col<-grep("x1", colnames(exemplars))
+                    d1<-abs(t(t(exemplars[,ef1col:(ef1col+nF-1)])-
+                                            (as.vector(x))))^r
+                    
+                    ## calculates corresponding summed weighted 
+                    ## differences and applies metric r
+                    d2<-(rowSums(d1*w))^(1/r)
+                    
+                    ## calculates exponential similarity and
+                    ## applies p, c and memory parameters
+                    d3<- exp(-sens*(d2^p1))*memo
+                },
+                r=r_met, w=weights, p1=p, sens=c, 
+                memo=mem, exemplars=ex, nF=nFeat
+    )
+    
+    ## sums exemplar similarities for each category
+    cat1col<-grep("cat1", colnames(ex))
+    simsums<-t(sims)%*%as.matrix(ex[,cat1col:(cat1col+nCats-1)])
+    
+    ## applies gamma response determinism parameter
+    simsums<-simsums^gamma
+    
+    ## applies category choice bias
+    simsums<-t(cb*t(simsums))
+    
+    ## transforms category similarities to percent choice probability
+    simperx<-simsums/(rowSums(simsums))
+    
+    return(simperx)
 }
 
