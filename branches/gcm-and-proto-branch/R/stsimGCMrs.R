@@ -1,6 +1,7 @@
 ## Author: Rene Schlegelmilch
 ## (Andy Wills made some minor changes)
 
+
 ## Main function
 stsimGCMrs<-function(st) {
     ## Add weight for last dimension
@@ -12,26 +13,27 @@ stsimGCMrs<-function(st) {
     
     ## recode memory strength
     memory<-matrix(1, ncol=nrow(st$training_items))
-    try(memory[which(st$training_items$mem %in% 1)]<-st$mp, silent==TRUE)
+    try(memory[which(st$training_items[,"mem"] %in% 1)]<-
+            st$mp, silent=TRUE)
     
     ## pass to prediction function
     get_p<-.gcm.predictions(tdf=st$tr, 
-                     ex=st$training_items,
-                     mem=memory,
-                     r_met=st$r_metric,
-                     c=st$sensitivity,
-                     p=st$p,
-                     gamma=st$gamma,
-                     cb=st$choice_bias,
-                     weights=st$weights,
-                     nCats=st$nCats,
-                     nFeat=st$nFeat
-                     )
+                            ex=st$training_items,
+                            mem=memory,
+                            r_met=st$r_metric,
+                            c=st$sensitivity,
+                            p=st$p,
+                            gamma=st$gamma,
+                            cb=st$choice_bias,
+                            weights=st$weights,
+                            nCats=st$nCats,
+                            nFeat=st$nFeat
+    )
     return(get_p)
 }
 
 ## Prediction function
-.gcm.predictions<-function(tdf, ex,mem,r_met,c,p,gamma,cb,weights, 
+.gcm.predictions<-function(tdf,ex,mem,r_met,c,p,gamma,cb,weights, 
                            nCats, nFeat) {
     
     ## Go through every trial/item in the tr matrix/dataframe
@@ -42,20 +44,18 @@ stsimGCMrs<-function(st) {
     sims<-apply(tdf[,feat1col:(feat1col+nFeat-1)],1, 
                 function(x,r, w, sens, p1, memo, exemplars, nF){
                     
-                    ## calculates absolute feature differences
+                    ## 1.calculates absolute feature differences
                     ## between current item and all training items
-                    ## and applies metric r
-                    ef1col<-grep("x1", colnames(exemplars))
-                    d1<-abs(t(t(exemplars[,ef1col:(ef1col+nF-1)])-
-                                            (as.vector(x))))^r
-                    
-                    ## calculates corresponding summed weighted 
-                    ## differences and applies metric r
-                    d2<-(rowSums(d1*w))^(1/r)
+                    ## 2. applies metric r
+                    ## 3. calculates corresponding summed weighted
+                    ## differences and 4. applies metric 1/r 
+                    l1<-(colSums(w*(abs(t(exemplars[,
+                        ef1col:(ef1col+nF-1)])-(as.numeric(x)))^r))
+                    )^(1/r)
                     
                     ## calculates exponential similarity and
                     ## applies p, c and memory parameters
-                    d3<- exp(-sens*(d2^p1))*memo
+                    l3<- exp(-sens*(l1^p1))*memo
                 },
                 r=r_met, w=weights, p1=p, sens=c, 
                 memo=mem, exemplars=ex, nF=nFeat
@@ -76,4 +76,5 @@ stsimGCMrs<-function(st) {
     
     return(simperx)
 }
+
 
