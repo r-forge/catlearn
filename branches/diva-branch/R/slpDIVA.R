@@ -177,6 +177,7 @@
     # # # otherwise, set focus weights to NULL
     } else {
         fweights <- NULL
+        ssqerror <- t(apply(ssqerror, 3, sum))
     }
 
     # # # calculate inverse sse
@@ -264,7 +265,7 @@ slpDIVA <- function(st, tr, xtdo = FALSE) {
         # # # complete forward pass
         fp <- .diva.forward_pass(st$in_wts, st$out_wts, current_input,
                            st$continuous)
-
+        
         # # # calculate classification probability
         response <- .diva.response_rule(fp$out_activation, current_target,
                                   st$beta_val)
