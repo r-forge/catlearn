@@ -1,7 +1,6 @@
 ## Author: Rene Schlegelmilch
 ## (Andy Wills made some minor changes)
 
-
 ## Main function
 stsimGCMrs<-function(st) {
     ## Add weight for last dimension

@@ -15,7 +15,7 @@
 }  
   
 \value{
-  A matrix of probabilities for category responses (colums) for each 
+  A matrix of probabilities for category responses (columns) for each 
   stimulus (rows) presented to the model (e.g. test trials). Stimuli 
   and categories are in the same order as presented to the model in 
   \code{st}, see below. 
@@ -79,7 +79,7 @@
   defined (i.e. not scattered, across the range of matrix columns), the 
   output is not affected by optional columns.
   
-  NOTE: The current model can be implemented as prototype model if
+  NOTE: The current model can be implemented as a prototype model if
   the \code{training_items} only carry one row for each category representing
   the values of the corresponding prototypes (e.g. see Minda & Smith, (2011).
   

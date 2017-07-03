@@ -1,13 +1,13 @@
 Notes written to Rene S on code contributed to catlearn for GCM
 simulations (now called stsimGCMrs)
 
-* Overall impressions
+* DONE Overall impressions
 
 This is quite impressive, well done! You obviously know some stuff
 about coding :-)
 --- Thank you very much! :) 
 
-* Code optimization
+* DONE Code optimization
 
 I notice you use loops quite a lot. Vectorization of code is much
 faster than loops in R. There should be almost nothing in GCM you need
@@ -28,17 +28,22 @@ the loops for now. C++ is much faster than even vectorized R code.
 
 thanks. Programming is always fun. :)
 
-The question on the GCM was, whether there is
-a way of getting rid of the last remaining loop/apply
-in the code. The thing it now does is taking one trial
-at a time and calculating distances to all exemplars via matrix operations.
+The question on the GCM was, whether there is a way of getting rid of
+the last remaining loop/apply in the code. The thing it now does is
+taking one trial at a time and calculating distances to all exemplars
+via matrix operations.
+
 Thus, this calculation repeats for each trial.
-It would be nice to make this all in one step,
-which would only work if there is a matrix operator like %*%
-which leaves some more degrees of freedom what to calculate:
+
+It would be nice to make this all in one step, which would only work
+if there is a matrix operator like %*% which leaves some more degrees
+of freedom what to calculate:
+
 i.e.
+
 Assume the first cbind represents two trials (rows) with stimuli;
 and the second cbind four exemplars (4 columns, 3 numeric features each)
+
 t(cbind(c(0,2,1),c(0,3,3)))
 (cbind(c(2,2,2),c(1,1,1), c(3,3,3), c(1,2,3)))
 The %*% operation now separately multiplies each row from
@@ -57,8 +62,17 @@ But I did not find any solution for this.
 
 Maybe you know some alternative?
 
+** Andy's response
 
-* Separation of documentation and code
+I think it is probably possible, but I'm not sure I can easily
+work out how to do it for your code. Your code looks pretty optimized
+for R anway, I'd say. I'd leave it as it is for now, and consider
+re-writing in C++ at a later date if you really need further speed
+increases. For me, when simulations are regularly taking an hour or
+more, and I'm doing a lot of them, that's when I start looking at the
+possibility of C++ optimization.
+
+* DONE Separation of documentation and code
 
 For an R package, documentation of a function occurs in a .Rd file,
 not the source code. Some developers do use roxygen to automatically
@@ -73,7 +87,7 @@ I've hacked one together for you - you'll find it in the man directory.
 
 --- Thanks, already changed it a bit. I stick to it the future.
 
-* Cross compatibility for static models
+* DONE Cross compatibility for static models
 
 Given the slp schema was written with stateful (adaptive) models
 (e.g. ALCOVE) in mind, there's an open question about how best to
@@ -126,8 +140,7 @@ I have changed this in your code.
 similarities between the test items and the exemplars from each category,
 in case someone wants to focus on similarity judgments.
 
-
-* catlearn format style
+* DONE catlearn format style
 
 Bit tedious this, but it helps in open-source projects if everyone
 uses the same line length, comments style, indentation etc. catlearn
@@ -137,7 +150,7 @@ only the very simplest expressions should omit {}
 
 --- Can do this :)
 
-* Version control
+* DONE Version control
 
 Don't call functions things like '_draft'. The point of version
 control software (svn, git) is that you use the same names for all
@@ -145,7 +158,7 @@ versions of the code.
 
 --- Check.
 
-* Separation of code and unit tests
+* DONE Separation of code and unit tests
 
 The code you have under 'examples' have the makings of what we refer
 to in the catlearn package as unit tests. Unit tests run functions and
@@ -156,7 +169,7 @@ I've also used the examples as part of the Rd file. This provides
 another check on the package, as R refuses to compile a package if the
 code in the examples section throws an error.
 
-* Visible and invisible functions
+* DONE Visible and invisible functions
 
 In an R package, the typical user will only expect to be able to access
 your top-level function. The functions this in turns call should be
