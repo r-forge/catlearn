@@ -24,6 +24,40 @@ whether you intend to convert the code to C++ at a later date (Rcpp
 interlinks R and C++ well). If you do, it may be easier to just keep
 the loops for now. C++ is much faster than even vectorized R code.
 
+** Rene further optimization query
+
+thanks. Programming is always fun. :)
+
+The question on the GCM was, whether there is
+a way of getting rid of the last remaining loop/apply
+in the code. The thing it now does is taking one trial
+at a time and calculating distances to all exemplars via matrix operations.
+Thus, this calculation repeats for each trial.
+It would be nice to make this all in one step,
+which would only work if there is a matrix operator like %*%
+which leaves some more degrees of freedom what to calculate:
+i.e.
+Assume the first cbind represents two trials (rows) with stimuli;
+and the second cbind four exemplars (4 columns, 3 numeric features each)
+t(cbind(c(0,2,1),c(0,3,3)))
+(cbind(c(2,2,2),c(1,1,1), c(3,3,3), c(1,2,3)))
+The %*% operation now separately multiplies each row from
+t(cbind(c(0,2,1),c(0,3,3))) with each column from
+(cbind(c(2,2,2),c(1,1,1), c(3,3,3), c(1,2,3)))
+and then makes a sum of it, yielding 2x4 sums:
+     [,1] [,2] [,3] [,4]
+[1,]    6    3    9    7
+[2,]   12    6   18   15
+Now if there was a way doing the same thing
+for summing absolute row-by-column differences between two matrices,
+while including exponents,
+namely the distance metrik calculation,
+this would get rid of the remaining loop.
+But I did not find any solution for this.
+
+Maybe you know some alternative?
+
+
 * Separation of documentation and code
 
 For an R package, documentation of a function occurs in a .Rd file,
@@ -132,3 +166,4 @@ requires a .Rd file in a R package.
 
 --- I was even unaware that .function makes a function invisible :
 I will stick to this.
+
