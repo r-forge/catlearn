@@ -70,10 +70,12 @@ in contributing.
 2017-03-02,Rcpp re-implementation for v.0.5 release?
 2017-05-03,Andy asks "how it's going?"
 2017-06-03,Garrett confirms it's on his summer to-do list
+2017-07-03,Andy asks "how's it going?"
 
 ** Esber-Haselgrove
 
 2017-05-12,Mark Haselgrove interested in contributing his model - happy to share MATLAB code he has - but won't have time until the summer. Guillermo Esber is the main programmer. Contact again around 2017-06-05
+2017-07-03, Andy asks "How's it going?"
 
 ** GCM
 
@@ -89,6 +91,8 @@ in contributing.
 2017-05-05,Rene Schlegelmilch would like to work on a GCM implementation
 2017-05-08,Paul Minda will have something up and running soon
 2017-05-09,Rene S contributes GCM implementation to R-forge
+2017-07-03,Andy reviews updates by Rene S
+2017-07-03,Andy asks Paul Minda "How's it going?"
 
 ** Model-based, model-free learning model
 
@@ -99,7 +103,8 @@ in contributing.
 ** PMEGCM-RT
 2017-03-02,James Adelman and Chris Kent interested in supporting development of this
 2017-05-03,Andy nudges Chris Kent who suggests liaising with James Adelman instead
-2017-06-07,James Adelman sends Andy some C++ source code and Andy commits to making this a version 0.5 model implementation
+2017-06-07,James Adelman sends Andy some C++ source code and Andy commits to making this a version 0.5 model implementation. Andy asks for example of the code being used to make some predictions
+2017-07-03,Andy chases code request
 
 
 ** Prototype model
@@ -108,6 +113,7 @@ in contributing.
 2017-03-02,no progress for v.0.4 release
 2017-03-2,Paul Minda intending to have ready for v.0.5.
 2017-05-03,Andy asks "how it's going?"
+2017-06-03,Andy asks "how's it going?"
 
 ** Rational model
 
@@ -115,6 +121,7 @@ in contributing.
 2017-03-02,no progress for v.0.4 release and no developer
 2017-03-02,any chance of a v.0.5 release?
 2017-05-03,still no developer identified
+2017-07-03,still no developer identified
 
 ** Rescorla-Wagner
 
@@ -137,6 +144,7 @@ in contributing.
 2017-03-02,no progress for v.0.4 release and no developer assigned
 2017-03-02,any chance of a v.0.5 release?
 2017-05-03,still no developer identified
+2017-07-03,Lenard Dome identified as developer for SUSTAIN - hoping to be ready for v.0.5 release
 
 ** Temporal difference model
 
@@ -144,6 +152,7 @@ in contributing.
 2017-03-02,no progress for v.0.4 release and no developer assigned
 2017-03-02,any chance of a v.0.5 release?
 2017-05-03,still no developer identified
+2017-07-03,still no developer identified
 
 * CIRP
 
@@ -152,19 +161,23 @@ in contributing.
 2017-03-02,Chris Kent considering what these might be
 2017-05-03,Chris says he'll do this next week
 2017-05-12,Chris emails Andy to discuss
+2017-07-03,Andy emails Chris to ask "How's it going?"
 
 ** Exemplars vs prototypes CIRP
 
 2017-05-05,Andy Wills has a bunch of CIRP in this area to add for version 0.5
 2017-05-08,Paul Minda would like to add Smith & Minda (1998)
+2017-07-03,Andy emails Paul to ask "How's it going?"
 
 ** Face recognition CIRP
 
 2017-05-03,Andy follows up a conversation he had with Mike Burton at ICPS
+2017-07-03,Andy emails Mike to ask "How's it going?"
 
 ** Inverse base-rate effect / highlighting
 
 2016-09-08,John Kruschke suggested an IBRE/highlighting CIRP.
+2017-07-03,Angus Inkster to add for version 0.5 probably
 
 ** Visual word recognition CIRP
 
@@ -174,6 +187,7 @@ in contributing.
 ** Working memory CIRP
 
 2017-04-24,Stephan Lewandowsky and Klaus Oberauer are working on a list of benchmark phenomena for working memory https://wmbenchmarks.wordpress.com/
+2017-07-03,Andy emails Klaus to suggest cooperation on infrastructure
 
 * Simulation archive
 
@@ -188,6 +202,7 @@ in contributing.
 ** AltSIM schema
 
 2017-05-04,Ann Thorwart considering GPL for ALTsim and Andy discussing possible interoperability schema for catlearn to/form altSIM. Andy to nudge around 22-May
+2017-07-03,Andy emails Anna to ask "How's it going?"
 
 ** CAL-R
 
@@ -197,10 +212,13 @@ Andy and Angus had discussions with the CAL-R team in 2016 but we hit a brick wa
 
 2017-05-08,Andy to be added as collaborator on grt package github page.
 2017-05-08,Andy plans to looks into grt as an inter-operability project with catlearn
+2017-07-03,Andy prods Kaz to update maintainer on CRAN
 
 ** lazyNut schema
 
 2017-03-02,James Adelman to develop code to allow lazyNut simulations to inter-operate with catlearn (Colin Davis is also a contact point for this work, but James is the programmer).
 2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
+2017-07-03,Andy decides he has insufficient time to pursue this for v.0.5 release-will consider again for version 0.6
+
 
 
