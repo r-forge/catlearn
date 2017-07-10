@@ -42,6 +42,7 @@ in contributing.
 
 2016-11-09,atrium-branch,Angus Inkster currently working on an ATRIUM implementation.
 2017-03-02,slated for v.0.5 release
+2017-07-10,Michael Erickson commits to answer Angus's queries by end of July 2017
 
 ** Bush-Mosteller model
 
@@ -93,6 +94,7 @@ in contributing.
 2017-05-09,Rene S contributes GCM implementation to R-forge
 2017-07-03,Andy reviews updates by Rene S
 2017-07-03,Andy asks Paul Minda "How's it going?"
+2017-07-05,Paul Minda says he will email his code to Andy
 
 ** Model-based, model-free learning model
 
