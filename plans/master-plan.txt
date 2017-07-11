@@ -205,6 +205,8 @@ in contributing.
 
 2017-05-04,Ann Thorwart considering GPL for ALTsim and Andy discussing possible interoperability schema for catlearn to/form altSIM. Andy to nudge around 22-May
 2017-07-03,Andy emails Anna to ask "How's it going?"
+2017-07-11,Anna commits to altSIM as a free software project (mainly GPL, but some BSD for code from the Matlab File Exchange).
+
 
 ** CAL-R
 
