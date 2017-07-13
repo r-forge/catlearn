@@ -25,11 +25,8 @@ slp_EXIT<-function(st, tr) {
         
         ## update trial counter 
         x<-x+1
-        
-        ## what is presented?
-        ## matrix of features that are present (1) or absent (0)
-        ## is equal to input activation a_in
-        ## takes the current values in tr[x1,x2...]
+
+        ## Extract input activations for trial
         a_in<-matrix(tr[j,colFeat1:(colFeat1+st$nFeat-1)], 
                            ncol=st$nFeat)
         
@@ -54,7 +51,7 @@ slp_EXIT<-function(st, tr) {
             w_in_out<-matrix(0,ncol=st$nFeat,
                                     nrow=st$nCat)
             
-            ## initialize/reset attention strenght
+            ## initialize/reset attention strength
             ## for Equation (1) alpha_i
             alpha_i<-matrix(c(nPresFeat^(-1/st$eta)),
                             ncol=st$nFeat)
@@ -104,7 +101,6 @@ slp_EXIT<-function(st, tr) {
                 ))
             }
         }
-        
 
         ## calculate current activation of gain nodes g
         ## Equation (4) 

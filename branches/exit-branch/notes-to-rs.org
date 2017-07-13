@@ -1,0 +1,207 @@
+* Andy's random notes on EXIT
+- Weights start at zero
+- 'hard-wired' connections from cue to gain node - this seems to be
+  inherent in Eq. 4.
+- Eq. 5 handles normalization
+- Eq.8 is a bit involved, worth checking the implementation
+  carefully. 
+- The attentional change is iterated 10 times per trial, with
+  activation repropagated on each step. 
+- On each step, negative gains are reset to zero before attention is
+  calculated. Implemented?
+- cue-outcome learning uses single not summed  error term (Eq.9).
+- exemplar -> gain_node learning; not complex, but the key thing here
+  is that one has to keep a record of what the gains where _before_
+  the rapid attentional shift
+- Exponential and city block
+- Exemplar node distance is by cue presence/absence
+* Andy's rough sketch of a trial in EXIT
+1. Propagate activation forward to category nodes.
+2. Calculate the response probabilities.
+
+3. Shift the gain on each cue to reduce error
+4. Propagate activation forward to category nodes.
+
+- Cycle through steps 3-4, ten times. 
+
+5. Change cue -> outcome weights (by Mack75-like Equation 9)
+
+6. Change exemplar -> gain_node weights (by Equation 10)
+
+* Andy's feedback on Rene's code
+So, I've done some code review, not super-detailed, but enough
+possible issues were raised I thought I'd send them to you now and we
+could iterate.
+
+There's some good coding here, but still some things to work on I
+think. You raised three main points you had questions on, I think I
+have covered those below, plus a number of other matters.
+
+Perhaps most centrally, your implementation is not yet stateful,
+i.e. it does not take in as part of st the things you would need to
+continue to run a model from a non-initial state. So, for example,
+slpALCOVE takes in (and returns), the connection weights and the
+attention weights. This is important for things like, for example,
+training a model to a criterial level of accuracy.
+
+Also, there's current no 'ctrl=2' option i.e. the ability to run the
+model without learning? This is quite important for modelling test
+phases.
+
+** The  Rd file
+
+- Does it really not matter whether the absent teaching signal is 0 or
+  -1? It seems to me this code:
+
+        eCat<-which(tr[j,colt1:(colt1+st$nCat-1)] %in% -1)
+
+will break if you use 0.
+
+- It should not be the case that ctrl must equal 1 on the first trial.
+  We want is for the user to have the option to load in weights from
+  st.
+
+- No ctrl = 2?
+
+- I note your first example in the Rd file, you cut some trials
+from nosof94train to ensure no all-cues-absent trials. I guess this is
+probably for a quick-and-dirty test but note that you would not
+simulate nosof94 with EXIT in this way. nosof94train uses dimensional
+coding, so both 0 and 1 mean presence of something. EXIT uses
+presence/absence coding, so the nosof94 experiment would have to be
+represented differently for EXIT (i.e. one feature per cue, so two per
+dimension).
+
+** Intial values of alpha
+You raise a good point about what values alpha take on the first
+trial. It's a good point because although alpha derives from other terms
+in the model, one of those terms is the a_in vector, which needs alpha
+to be computed! 
+
+I think in practice it is not going to make much difference because
+alpha is calculated by the model by the end of trial 1, and trial 1 is
+going to be a guess because weights start at zero. 
+
+However, I like your solution of pulling in an equation from ADIT, but
+I would suggest that, rather than adding eta -- a parameter that is
+never reported for published EXIT simulations, I think -- you use P as
+eta; it seems to serve the same function in EXIT as eta does in
+ADIT. 
+
+So, dont' expose eta to the user, define it from P.  
+
+** No cues present trials (bias cue)?
+
+You also sensibly ask about what happens if all cues are absent.  The
+answer is that this never happens in EXIT because of the bias cue
+(p. 817), which isn't implemented in Kruschke (2001, JMP) 'for
+simplicity'. It will be needed to implement e.g. Kruschke (1996), so
+there's a question of how to best implement in the model. I suggest
+leaving it to the user (i.e. the person who constructs the training
+array) but put a note in the Rd file about this, and a warning that
+the model will behave unpredictably if literally all cues (including
+the bias cue) are absent on a trial.
+
+An additional point on this - the bias cue is lower salience than the
+other cues in the JEP:LMC simulations. So, you'll need a vector of
+saliences per cue as a further input to the function (as per the
+appendix of Kruschke's 2001 JEP:LMC paper). 
+
+** a_ex
+The initialisation of a_ex on x=1 trial seems wrong 
+
+            a_ex<-exp(-st$c*sum(
+                abs(t(t(matrix(0,ncol=st$nFeat))-as.numeric(a_in)))
+            ))
+
+- the first item in the difference term is zero, which implies that no
+  stimulus features are present on that trial, which is incorrect?
+
+** Adding exemplars
+
+The process of adding exemplars as they're needed seems to be a bit
+wrong, as a new exemplar will be added even if the stimulus is
+identical to one presented previously? Pretty sure this is not what's
+intended, as its counter to the examples gaining associative links to
+cue gain over time. 
+
+The way exemplar representations are typically handled in Kruschke's
+work (see e.g. slpALCOVE) is that all exemplars are defined by the
+user as part of st. It doesn't matter that this means, on the first
+few trials, there are representations of exemplars that haven't been
+seen yet, because any exemplar that hasn't been seen yet has zero
+strength exemplar->gain links and so its presence is of no
+consequence (at least, I think so...)
+
+** Negative alpha:
+In your code, you write:
+
+       ## calculate attention strengths alpha_i
+        ## Equation (5) in Kruschke 2001
+        alpha_i<-g/((sum(g^st$P))^(1/st$P))
+        ## negative values are set to zero (see ADIT,
+        ## is this possible here?)
+        alpha_i[alpha_i<0]<-0
+ 
+A negative g is possible, and hence in theory a negative
+alpha. However, Kruschke says negative g's are set to zero
+(p.821). So, we shouldn't encounter a negative g here, but if you
+wanted to be safe, you could reset negative g's to zero here before
+calculating alpha (rather than resetting negative alpha)
+
+** Teacher values
+
+These are defined on page 816. Note that this code:
+
+        teacher<- matrix(0, ncol=st$nCat)
+        teacher[cCat]<- max(1,out_act[cCat])
+        teacher[eCat]<- min(0,out_act[eCat])
+
+implements a humble teacher, which is not what EXIT uses, I
+think. Take another look at p. 816.
+
+** 10 iterations stuff (Equ. 8)
+
+EXIT does this:
+
+"After each small attention change the activation is repropagated to
+the category nodes to generate a new error, and attention is changed a
+small amount again, for 10 iterations".
+
+I don't think your code does this?
+
+Also, EXIT says:
+
+"(On any one of these iterations, if a gain value is driven to a
+negative value, it is simply reset to 0 before the attention values
+are computed.)"
+
+and I don't think your code does that, either?
+
+
+** Learning cue->category weights
+
+You write:
+        
+        ## but adjust only for the correct category
+        w_in_out[cCat,]<-w_in_out[cCat,]+weight_delta
+
+I don't think that's what EXIT does, I think it adjusts for both
+categories. It's just the teaching signal is different for the absent
+category/categories.
+
+** Exemplar->gain weight update
+
+- Yes, I think every exemplar has its weights potentially updated. I
+  say potentially because of course if a_ex is zero, no changes will
+  happen. But in terms of the code, yes, you go through the update
+  process for each exemplar.
+
+* Next steps 
+
+- A good way to test the proper operation of this code is to try and
+  reproduce the EXIT simulation in Table 3 of Kruschke (2001,
+  JEP:LMC). The Kruschke (1996) data set could probably be worked up
+  into a CIRP, and then one adds a train function and a simulation
+  function and attempts to reproduce the results in Table 3 (with the
+  parameters Kruschke defines).

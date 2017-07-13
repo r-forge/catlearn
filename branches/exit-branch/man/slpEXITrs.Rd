@@ -32,13 +32,13 @@
   These columns have to start with \code{x1} ascending with features 
   \code{\dots, x2, x3, \dots} at adjacent columns.
   
-  \code{t1, t2, \dots} - columns for the teaching values indicating
-  the true correct category in the current trial. Each category 
-  needs a single teaching signal in a dummy coded fashion. E.g.,
-  if the first category is the true correct category, then \code{t1}
-  is set to \code{1}, else it is set to \code{-1} or \code{0} (both
-  work). These columns have to start with \code{t1} ascending with 
-  categories \code{\dots, t2, t3, \dots} at adjacent columns.
+  \code{t1, t2, \dots} - columns for the teaching values indicating the
+  category feedback on the current trial. Each category needs a single
+  teaching signal in a dummy coded fashion. E.g., if the first category
+  is the correct category for that trial, then \code{t1} is set to
+  \code{1}, else it is set to \code{-1} or \code{0} (both work). These
+  columns have to start with \code{t1} ascending with categories
+  \code{\dots, t2, t3, \dots} at adjacent columns.
   
   \code{tr} also requires a column \code{ctrl}, which gives control 
   about resetting the complete network of attention weights and 
@@ -78,34 +78,32 @@ st$iterations<-10
 ## the higher eta, the higher the initial weights
 st$eta <- 1
   
-  \code{nFeat} - integer indicating the number of all possible 
-  stimulus features, i.e. the number of  \code{x1, x2, \dots} 
-  columns in \code{tr}.
+  \code{nFeat} - integer indicating the total number of possible
+  stimulus features, i.e. the number of \code{x1, x2, \dots} columns in
+  \code{tr}.
   
-  \code{nCat} - integer indicating the number of all categories,
-  i.e. the number of  \code{t1, t2, \dots} columns in \code{tr}.
+  \code{nCat} - integer indicating the totoal number of possible
+  categories, i.e. the number of \code{t1, t2, \dots} columns in
+  \code{tr}.
   
-  \code{st} requires the following parameters, which are described 
-  in the same order as in Kruschke (2001, p.821). The mentioned
-  equations refer to the formulas in this article:
+  \code{st} also requires the following model parameters, which are
+  described in the same order as in Kruschke (2001, p.821). The
+  mentioned equations refer to the formulae in that article:
   
-  \code{phi} - response scaling - Equation (2)
+  \code{phi} - response scaling constant - Equation (2)
   
-  \code{c} - specificity parameter. Defines the arrowness of 
+  \code{c} - specificity parameter. Defines the narrowness of 
   receptive field in exemplar activation - Equation (3).
   
-  \code{P} - Power of attentional gain from exemplars -
-  Equation (5)
+  \code{P} - Attentional normalization power (i.e. attentional capacity)
+  - Equation (5)
   
-  \code{l_gain} - learning rate for attention strength shifts
-  Equation (8)
+  \code{l_gain} - attentional shift rate - Equation (8)
   
-  \code{l_weight} - learning rate for shifting the connections 
-  (weights) between the feature input to category output nodes 
+  \code{l_weight} - learning rate for feature -> category associations.  
   - Equation (9)
   
-  \code{l_ex} - learning rate for shifting associative connections #
-  (weights) between exemplar activation and gain nodes 
+  \code{l_ex} - learning rate for exemplar_node -> gain_node associations
   - Equation (10)
   
   \code{iterations} - number of iterations of shifting attention strength 
