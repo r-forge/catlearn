@@ -35,6 +35,9 @@ slpDIVA(st, tr, xtdo = FALSE)
   controls the degree of feature focusing (not unlike attention) that
   the model uses to make classification decisions (see: Conaway & Kurtz,
   2014; Kurtz, 2015). \code{beta_val = 0} turns feature focusing off.
+  
+  \code{phi} - Scalar value for the phi parameter. \code{phi} is a
+  real-valued mapping constant, see Kruschke (1992, Eq. 3).
 
   \code{st} must also contain the following information about network
   architecture: 
@@ -60,7 +63,7 @@ slpDIVA(st, tr, xtdo = FALSE)
   control code 1, \code{ctrl = 1}.
 
   \code{out_wts} - A matrix of initial hidden-to-output weights with
-  \code{num_hids + 1} rows, \code{num_feats} columns and with the third
+  \code{num_feats + 1} rows, \code{num_hids} columns and with the third
   dimension being \code{num_cats} in extent. Can be set to \code{NULL}
   when the first line of the \code{tr} matrix includes control code 1,
   \code{ctrl = 1}.
@@ -138,6 +141,9 @@ slpDIVA(st, tr, xtdo = FALSE)
   M. Guarini, M. McShane, & B. Scassellati (Eds.), \emph{Proceedings of
   the Thirty-Sixth Annual Conference of the Cognitive Science Society}
   (pp. 2062-2067). Austin, TX: Cognitive Science Society.
+  
+  Kruschke, J. (1992). ALCOVE: an exemplar-based connectionist model of
+  category learning. \emph{Psychological Review, 99}, 22-44
 
   Kurtz, K.J. (2007). The divergent autoencoder (DIVA) model of category
   learning. \emph{Psychonomic Bulletin & Review, 14}, 560-576.

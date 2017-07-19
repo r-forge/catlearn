@@ -48,6 +48,7 @@
 #' @return List of output unit activation, hidden unit activation, raw
 #'     hidden unit activation and inputs with bias
 #'
+
 .diva.forward_pass <- function(in_wts, out_wts, inputs, continuous) {
     # # # init needed vars
     num_feats <- ncol(out_wts)
@@ -101,14 +102,16 @@
 #' @param wts_center Scalar value for the center of the weights
 #' @return List with input (input to hidden) weights and output
 #'     weights (hidden to output channels)
+
 .diva.get_wts <- function(num_feats, num_hids, num_cats, wts_range,
                     wts_center) {
     # # # set bias
     bias <- 1
-  
+    
+    # # # Default Model behavior
     # # # generate wts between ins and hids
     in_wts <-
-    (matrix(runif((num_feats + bias) * num_hids), ncol = num_hids) - 0.5) * 2 
+        (matrix(runif((num_feats + bias) * num_hids), ncol = num_hids) - 0.5) * 2 
     in_wts <- wts_center + (wts_range * in_wts)
 
     # # # generate wts between hids and outs
@@ -127,6 +130,7 @@
 #' @param inputs Matrix of inputs in format -1 : 1 that need to be
 #'     scaled
 #' @return Matrix of inputs scaled to 0 : 1
+
 .diva.global_scale <- function(inputs) { inputs / 2 + 0.5 }
 
 # .diva.response_rule
@@ -135,9 +139,11 @@
 #' @param out_activation Array of output channel activations
 #' @param target_activation Array of output unit targets
 #' @param beta_val Scalar value for the beta parameter (set in st)
+#' @param phi Scalar value for response mapping constant (set in st)
 #' @return List of classification probability, focusing weights and
 #'     sum squared error
-.diva.response_rule <- function(out_activation, target_activation, beta_val){
+
+.diva.response_rule <- function(out_activation, target_activation, beta_val, phi){
     num_feats <- ncol(out_activation)
     num_cats  <- dim(out_activation)[3]
     num_stims <- nrow(target_activation)
@@ -145,35 +151,53 @@
 
     # # # compute error  
     ssqerror <- array(as.vector(
-    apply(out_activation, 3, function(x) {x - target_activation})),
-    c(num_stims, num_feats, num_cats))
+        apply(out_activation, 3, function(x) {x - target_activation})),
+            c(num_stims, num_feats, num_cats))
     ssqerror <- ssqerror ^ 2
     ssqerror[ssqerror < 1e-7] <- 1e-7
 
-    # # # get list of channel comparisons
-    pairwise_comps <- combn(1:num_cats, 2)
-  
-    # # # get differences for each feature between channels
-    diff_matrix <- abs(apply(pairwise_comps, 2, function(x) {
-        out_activation[,,x[1]] - out_activation[,,x[2]]}))
+    # # # if focusing is on:
+    if (beta_val > 0) {
+        # # # get list of channel comparisons
+        pairwise_comps <- combn(1:num_cats, 2)
+    
+        # # # get differences for each feature between categories
+        diff_matrix <- 
+            abs(apply(pairwise_comps, 2, function(x) {
+                out_activation[,,x[1]] - out_activation[,,x[2]]}))
 
-    # # # reconstruct activation array and get feature diversity means
-    diff_array <-
-        array(diff_matrix, dim = c(num_stims, num_feats, num_cats))
-    feature_diffs <- apply(diff_array, 2, mean)
+        # # # reconstruct activation array and get feature diversity means
+        diff_array <- array(diff_matrix, dim = c(num_stims, num_feats, num_cats))
+        feature_diffs <- apply(diff_array, 2, mean)
 
-    # # # calculate diversities
-    diversities <- exp(beta_val * feature_diffs)
-    diversities[diversities > 1e+7] <- 1e+7
+        # # # calculate diversities
+        diversities <- exp(beta_val * feature_diffs)
+        diversities[diversities > 1e+7] <- 1e+7
 
-    # divide diversities by sum of diversities
-    fweights = diversities / sum(diversities)
+        # # # divide diversities by sum of diversities
+        fweights <- diversities / sum(diversities)
+
+        # # # or set fweights equal
+        } else {
+            fweights <- rep(1/num_feats, num_feats)
+        }
 
     # # # apply focus weights; then get sum for each category
     ssqerror <- t(apply(ssqerror, 3, function(x) sum(x * fweights))) 
+
+    # # # calculate inverse sse
     ssqerror <- 1 / ssqerror
 
-    return(list(ps       = (ssqerror / sum(ssqerror)), 
+    # # # subtract the max error for numerical stability
+    ssqerror <- ssqerror - max(ssqerror)
+
+    # # # apply response mapping and exponentiate
+    ssqerror <- exp(phi * ssqerror)
+
+    # # # set resp probs equal to 1
+    ps <- ssqerror / sum(ssqerror)
+
+    return(list(ps       = ps, 
                 fweights = fweights, 
                 ssqerror = ssqerror))
 }
@@ -185,6 +209,7 @@
 #' 
 #' @param x Matrix of values to be evaluated with sigmoid function
 #' @return Same format of input, evaluated with the sigmoid function
+
 .diva.sigmoid <- function(x) {
     g = 1 / (1 + exp(-x))
     return(g)
@@ -196,6 +221,7 @@
 #' 
 #' @param x Values to be evaluated for the sigmoid gradient
 #' @return Gradient of the sigmoid function for the input
+
 .diva.sigmoid_grad <- function(x) {
     return(g = ((.diva.sigmoid(x)) * (1 - .diva.sigmoid(x))))
 }
@@ -210,6 +236,7 @@
 #'     desired
 #' @return List including a matrix of model classification
 #'     probabilities and list of model's final state
+
 slpDIVA <- function(st, tr, xtdo = FALSE) {
     # # # construct weight matrix history list
     wts_history <- list(initial = list(), final = list())
@@ -246,7 +273,6 @@ slpDIVA <- function(st, tr, xtdo = FALSE) {
                                  st$wts_center)
             st$in_wts  <- wts$in_wts
             st$out_wts <- wts$out_wts
-
             # # # save new weights
             wts_history$initial[[length(wts_history$initial) + 1]] <-
                 list(in_wts = st$in_wts, out_wts = st$out_wts)        
@@ -258,7 +284,7 @@ slpDIVA <- function(st, tr, xtdo = FALSE) {
 
         # # # calculate classification probability
         response <- .diva.response_rule(fp$out_activation, current_target,
-                                  st$beta_val)
+                                  st$beta_val, st$phi)
 
         # # # store classification accuracy
         out[trial_num,] = response$ps

@@ -36,7 +36,8 @@ slpDIVA(st, tr, xtdo = FALSE)
   the model uses to make classification decisions (see: Conaway & Kurtz,
   2014; Kurtz, 2015). \code{beta_val = 0} turns feature focusing off.
   
-  \code{phi} - Scalar value for the phi parameter. \{phi} is a real-valued         mapping constant, see Kruschke (1992, Eq. 3).
+  \code{phi} - Scalar value for the phi parameter. \code{phi} is a
+  real-valued mapping constant, see Kruschke (1992, Eq. 3).
 
   \code{st} must also contain the following information about network
   architecture: 
