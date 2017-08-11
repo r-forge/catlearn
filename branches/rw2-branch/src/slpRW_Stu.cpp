@@ -24,9 +24,10 @@ List slpRWs (List st, NumericMatrix tr,
     for (k = 0; k < initw; ++k) {
       inputs[k] = arow[colskip+k];                        // Subset stimuli activations from current trial
       activ[k] = inputs[k] * wm[k];                       // Current stimuli weights according to activations
-      sumET[i] += activ[k];                               // Record output (uses summed error value even though BM uses a seperable error term)
-      //delta[k] = lr * (lambda[i] - activ[k]);             // Calculate the change in associative strength
-      delta[k] = lr * (lambda[i] - sumET[i]); 
+    }
+    sumET[i] = sum(activ);                               // Record output (uses summed error value even though BM uses a seperable error term)
+    for (k = 0; k < initw; ++k) {
+      delta[k] = lr * (lambda[i] - sumET[i]);                 // Calculate the change in associative strength
     }
     if (i["ctrl"] != 2 ) {                                  // Unless weights are frozen
       for (k = 0; k < initw; ++k) {
