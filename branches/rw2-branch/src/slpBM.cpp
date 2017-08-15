@@ -26,9 +26,9 @@ for (i = 0; i < tr.nrow(); ++i) {
       for (k = 0; k < initw; ++k) {
       inputs[k] = arow[colskip+k];                        // Subset stimuli activations from current trial
       activ[k] = inputs[k] * wm[k];                       // Current stimuli weights according to activations
-      sumET[i] += activ[k];                               // Record output (uses summed error value even though BM uses a seperable error term)
       delta[k] = lr * (lambda[i] - activ[k]);             // Calculate the change in associative strength
       }
+      sumET[i] = sum(activ);                                 // Record output (uses summed error value even though BM uses a seperable error term)
   if (i["ctrl"] != 2 ) {                                  // Unless weights are frozen
     for (k = 0; k < initw; ++k) {
     wm[k] += delta[k] * inputs[k];                        // Update weights
