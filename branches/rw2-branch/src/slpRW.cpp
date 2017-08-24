@@ -1,75 +1,50 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
-
 // [[Rcpp::export]]
-List slpRWcalc(List st, NumericMatrix tr, bool xtdo = false) {
+List slpRWs (List st, NumericMatrix tr,
+            bool xtdo = false) {
+  int i, j, k, nrow = tr.nrow(), ncol = tr.ncol();
+  NumericVector w = as<NumericVector>(st["w"]);             // Initial weights of stimuli
+  int initw = w.size();
+  NumericVector wm; wm = (clone(w));
+  double lr = as<double>(st["lr"]);                         // The product of learning rate and stimuli salience
+  int colskip = as<int>(st["colskip"]);                     // Optional coloumns (e.g block and trial number)
+  NumericVector lambda = tr( _, ncol-1);                    // Subset Asymptote of learning
+  NumericVector inputs(initw), activ(initw), delta(initw);  // Initialise vectors for stimuli activation, activated stimuli's weights, and change in associative strength respectively
+  NumericVector arow, sumET(nrow);                          // Initialise vector for subsetting current trial and for summed error terms
+  NumericMatrix xOUT(nrow, initw);                          // Create matrix for extended output
   
-  List final;
-  NumericVector initw = as<NumericVector>(st["w"]);
-  int lr = as<int>(st["lr"]); //-SS lr is being returned as a zero rather than as it's actual value
-  int colskip = as<int>(st["colskip"]);
-  int i,j, items = tr.nrow(), numw = initw.size();
-  double lambda,suma;
-  NumericVector w = (clone(initw));
-  NumericVector arow,inputs,out(items);
-  NumericMatrix xout(items,numw);
-
-  Rcout << "lr" << lr << std::endl;
-  Rcout << "colskip" << colskip << std::endl;
-  Rcout << "w" << w << std::endl;
-  Rcout << "1-------------------------------"  << std::endl;
-  
-  for(i = 0; i < items; i++) {
-      arow = tr(i,_);
-      if( tr(i,0) == 1 ) {              // Reset network to initial state //-SS this line causes errors; linked to initw issue above
-        w = NumericVector(clone(initw));
+  for (i = 0; i < tr.nrow(); ++i) {
+    arow = tr(i, _);                                        // Extract current trial
+    if (i["ctrl"] == 1)                                     // Reset weights at each participant
+    {
+      wm = st["w"];
+    }
+    for (k = 0; k < initw; ++k) {
+      inputs[k] = arow[colskip+k];                        // Subset stimuli activations from current trial
+      activ[k] = inputs[k] * wm[k];                       // Current stimuli weights according to activations
+    }
+    sumET[i] = sum(activ);                               // Record output (uses summed error value even though BM uses a seperable error term)
+    for (k = 0; k < initw; ++k) {
+      delta[k] = lr * (lambda[i] - sumET[i]);                 // Calculate the change in associative strength
+    }
+    if (i["ctrl"] != 2 ) {                                  // Unless weights are frozen
+      for (k = 0; k < initw; ++k) {
+        wm[k] += delta[k] * inputs[k];                        // Update weights
       }
-      lambda = tr(i,'t');
-      inputs = tr[(colskip + 1), colskip + numw]; //Extract inputs    // Warning due to using these variables being used in a different scope
-      for(j=0;j<inputs.size();j++){
-        inputs(j) = inputs(j) * w(j);
-      }
-      suma = sum(inputs);     //-SS this caused r to crash when comments removed
-      double delta = lr * (lambda - suma);      // Warning due to using these variables being used in a different scope
-      if( tr(i,0)  > 1 ) {              // Unless weights are frozen.
-        for(j=0;j<w.size();j++){
-          w(j) = w(j) + (delta * inputs(j));         // update weights.
-        }
-      }
-      out(i) = suma; // NumericVecor being assigned to List
-      if(xtdo == true){
-        for(j=0;j<numw;j++){
-        xout(i,j) = w(j);
-        }
-      }
+    }
+    if (xtdo) {
+      xOUT(i, _) = wm;                                    // If xtdo true, record updated weights to the row corresponding the current trial
+    }
   }
   
-  Rcout << "2-------------------------------"  << std::endl;
-  
-  //Return appropriate list
-  if(xtdo == true){
-    return Rcpp::List::create(Rcpp::Named("suma") = out,
-                              Rcpp::Named("w") = w,         //-SS this needs to be changed to final weights rather than returning 'st' list
-                              Rcpp::Named("xout") = xout);
-  }else{
-    return Rcpp::List::create(Rcpp::Named("suma") = out,
-                              Rcpp::Named("w") = w);        //-SS this needs to be changed to final weights rather than returning 'st' list
+  if (xtdo) {
+    return Rcpp::List::create(Rcpp::Named("Summed error terms") = sumET,
+                              Rcpp::Named("Extended Output, where rows represent trials and coloumns stimuli weights") = xOUT,
+                              Rcpp::Named("Last state of the model") = wm);
+  } else {
+    return Rcpp::List::create(Rcpp::Named("Summed error terms") = sumET,
+                              Rcpp::Named("The last state of the model") = wm);
   }
 }
-
-
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically 
-// run after the compilation.
-//
-

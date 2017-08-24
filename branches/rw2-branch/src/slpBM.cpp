@@ -15,8 +15,6 @@ NumericVector inputs(initw), activ(initw), delta(initw);  // Initialise vectors 
 NumericVector arow, sumET(nrow);                          // Initialise vector for subsetting current trial and for summed error terms
 NumericMatrix xOUT(nrow, initw);                          // Create matrix for extended output
 
-Rcout << "1-------------------------------"  << std::endl;
-
 for (i = 0; i < tr.nrow(); ++i) {
   arow = tr(i, _);                                        // Extract current trial
   if (i["ctrl"] == 1)                                     // Reset weights at each participant

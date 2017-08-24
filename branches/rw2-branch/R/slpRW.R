@@ -26,9 +26,3 @@ slpRW <- function(st, tr, xtdo = FALSE) {
     }
     ret
 }
-
-
-
-sourceCpp('src/slpBM.cpp')
-
-#slpRWcalc(st,tr)
