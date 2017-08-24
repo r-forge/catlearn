@@ -82,7 +82,7 @@ optional columns plus one.
 \code{x1, x2, \dots} - activation of any number of input elements. There
 must be one column for each input element. Each row is one trial. In
 simple applications, one element is used for each stimulus (e.g. a
-simulation of blocking, A+, AX+, would have two inputs, one for A and
+simulation of blocking (Kamin, 1969), A+, AX+, would have two inputs, one for A and
 one for X). In simple applications, all present elements have an
 activation of 1 and all absence elements have an activation of
 0. However, slpRW supports any real number for activations, e.g. one
@@ -110,10 +110,14 @@ return associative strength for the end of each trial (see Value).
 
 }
 \author{
-Stuart Spicer, Andy Wills
+Stuart Spicer, Lenard Dome, Andy Wills
 
 }
 \references{
+
+Kamin,  L.J., (1969) Predictability,  surprise,  attention  and  conditioning. 
+In Campbell, B.A. & Church, R.M. (eds.), \emph{Punishment and  Aversive  
+Behaviour}. New York: Appleton-Century-Crofts, 1969,  pp.279–296.
 
 Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian
 conditioning: Variations in the effectiveness of reinforcement and
@@ -121,7 +125,7 @@ nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), \emph{Classical
 conditioning II: Current research and theory} (pp. 64-99). New York:
 Appleton-Century-Crofts.
 
-Spicer, S., Jones, P.M., Inkster, A.B., Edmunds, C.E.R. & Wills,
+Spicer, S.G., Jones, P.M., Inkster, A.B., Edmunds, C.E.R. & Wills,
 A.J. (n.d.). Progress in learning theory through distributed
 collaboration: Concepts, tools, and examples. \emph{Manuscript in preparation}.
 

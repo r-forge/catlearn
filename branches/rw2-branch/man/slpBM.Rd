@@ -105,7 +105,7 @@ components (if xtdo = TRUE, xout is also returned):
   
 }
 \author{
-Stuart Spicer, Lenard Dome, Andy Wills
+Lenard Dome, Stuart Spicer, Andy Wills
 
 }
 \references{
