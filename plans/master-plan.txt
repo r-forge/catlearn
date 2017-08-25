@@ -164,6 +164,7 @@ in contributing.
 2017-05-03,Chris says he'll do this next week
 2017-05-12,Chris emails Andy to discuss
 2017-07-03,Andy emails Chris to ask "How's it going?"
+2017-07-17,Peter Kvam mentions he has bow effects and sequential effects data he'd be happy to share as soon as it's published.
 
 ** Exemplars vs prototypes CIRP
 
