@@ -11,31 +11,23 @@ SUSTAIN
 ## Input Parameters
 
 ### TR
-
 **x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub>** - stimulus' dimensions
-
 **stim** - stimulus' number
-
 **cat or feedback?** - classification category; either present (_supervised_, e.g. A, B, C, ...) or not present (_unsupervised_, 0)
-
 **m<sub>1</sub>, m<sub>2</sub>, m<sub>3</sub>** - missing dimensions and category label - _might be able to use value 2 in x<sub>n</sub>_
 
 ### ST
-
 - [x] weights?
 
 ### Output
-
 - [x] mode of cluster with highest activation and which cluster
 - [x] number of clusters recruited with cluster's positions in stimuli space
 - [x] winning H<sub>j</sub> with its H<sub>j</sub><sup>act</sup>
 
 
 ### Code
-
 - [x] ~~**cluster is a three dimensional array**~~
 - [x] ~~dims (v<sub>i</sub>) contain the list of the numbers of possible nominal values for each stimuli dimension, for example~~
-
 
 \[ v_{i} = \left| \begin{array}{ccc}
 \ 3 \ (square, circle, triangle) \\
@@ -54,7 +46,6 @@ SUSTAIN
     - [x] ```solved``` ~~**lambda** not always specified~~ if it is zero, than lambda<sub>i</sub> = 1.0
     - [x] ```solved``` ~~**tau** _threshold_ is not always present~~ set to zero && only use tau if tr["t"] = 0
 
-### Remaining
 
 #### Input Representation
 - [x] `solved` ~~I<sup>pos<sub>ik</sub></sup> can have different lengths within the same stimuli and I don't know how to engineer it in R yet~~
@@ -65,8 +56,12 @@ SUSTAIN
 |---|---|---|---|---|---|---|
 |  0 |  1 | 0 | 0 | 1 | 1 | 0 |
 
+- [x] `solved`~~in an unsupervised learning situation with quired dimension?~~
+
+# Remaining ISSUES
+
 - [ ] recognise missing quired dimensions?
-- [x] in an unsupervised learning situation with quired dimension?
+- [ ] how to handle and what to do with the probabilities of making correct response? how to handle it in unsupervised? **maybe use fac.queried??**
 
 ---
 

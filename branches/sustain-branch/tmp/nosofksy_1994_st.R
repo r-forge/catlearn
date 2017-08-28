@@ -9,12 +9,12 @@
 # of the possible varying lengths of dimensions (NAs).
 
 st <- list(r = 9.01245, 
-             beta = 1.252233,
-             d = 16.924073, 
-             eta = 0.092327,
-             tau = 0.0, 
-             lambda = 1.0,
-             cluster = array(c(0, 1, 0, 1, 1, 0, 0, 1), c(2, 4, 1)),
-             dims = c(2, 2, 2),
-             w = array(0, c(2, 4, 1)),
-             colskip = 2)
+           beta = 1.252233,
+           d = 16.924073, 
+           eta = 0.092327,
+           tau = 0.0, 
+           lambda = 1.0,
+           cluster = array(c(0, 1, 0, 1, 1, 0, 0, 1), c(2, 4, 1)),
+           dims = c(2, 2, 2),
+           w = array(0, c(2, 4, 1)),
+           colskip = 2)

@@ -9,7 +9,7 @@
 
 slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
  # Imports from st
-  ifelse(st$lambda != 1,
+  ifelse(length(st$lambda) != 1,
          lambda <- st$lambda,
          lambda <- rep(st$lambda, length(st$dims)))
   cluster <- st$cluster
