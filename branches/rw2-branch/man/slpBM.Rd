@@ -77,7 +77,7 @@ optional columns plus one.
 \code{x1, x2, \dots} - activation of any number of input elements. There
 must be one column for each input element. Each row is one trial. In
 simple applications, one element is used for each stimulus (e.g. a
-simulation of blocking, A+, AX+, would have two inputs, one for A and
+simulation of blocking (Kamin, 1969), A+, AX+, would have two inputs, one for A and
 one for X). In simple applications, all present elements have an
 activation of 1 and all absence elements have an activation of
 0. However, slpBM supports any real number for activations, e.g. one
@@ -98,7 +98,7 @@ components (if xtdo = TRUE, xout is also returned):
 
   \item{st}{Vector of final associative strengths
   }
-  \item{sum(a*w.m)}{Vector of output activations for each trial
+  \item{suma}{Vector of output activations for each trial
   }
   \item{xout}{Matrix of associative strengths at the end of each trial
   }
@@ -109,6 +109,10 @@ Lenard Dome, Stuart Spicer, Andy Wills
 
 }
 \references{
+
+Kamin,  L.J., (1969) Predictability,  surprise,  attention  and  conditioning. 
+In Campbell, B.A. & Church, R.M. (eds.), \emph{Punishment and  Aversive  
+Behaviour}. New York: Appleton-Century-Crofts, 1969,  pp.279–296.
 
 Bush, R. R., & Mosteller, F. (1951). A mathematical model for
 simple learning. \emph{Psychological Review, 58(5)}, 313-323.
