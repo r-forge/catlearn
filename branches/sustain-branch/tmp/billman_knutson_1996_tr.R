@@ -34,8 +34,6 @@ int2[, 5:7] <- matrix(sample(rep(1:3, 3)), ncol = 3)
 int2 <- int2[sample(nrow(int2)), ]
 tr.billknuts.exp2b <- .conversion(int2)
 
-rm(int2, non2)
-
  # Experiment 3
 
  # Nonintercorrelated
@@ -73,7 +71,6 @@ non3 <- non3[sample(nrow(non3)), ]
 
 tr.billknuts.exp3a <- .conversion(non3)
 
-rm(non3, a3, b3, c3)
  # Intercorrelated
 
 i3 <- c(1, 1, 1, 0, 0, 0, 0,
@@ -85,4 +82,4 @@ i3[, 4:7] <- matrix(sample(rep(1:3, 4)), ncol = 4)
 i3 <- i3[sample(nrow(i3)), ]
 tr.billknuts.exp3b <- .conversion(i3)
 
-rm(i3)
+rm(int2, non2, non3, a3, b3, c3, i3, conversion)

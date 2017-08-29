@@ -7,6 +7,8 @@ SUSTAIN
 - [x] Make st
     - [x] ```solved``` ~~What about stimuli's dimensions? Should it be specified in st for supervised learning? how does it work for unsupervised learning?~~
 - [x] Create training matrix from nosof94train in catlearn
+- [x] Create training matrix from billman and knutson 1996
+- [x] Create st for each tr
 
 ## Input Parameters
 
@@ -58,11 +60,6 @@ SUSTAIN
 
 - [x] `solved`~~in an unsupervised learning situation with quired dimension?~~
 
-# Remaining ISSUES
-
-- [ ] recognise missing quired dimensions?
-- [ ] how to handle and what to do with the probabilities of making correct response? how to handle it in unsupervised? **maybe use fac.queried??**
-
 ---
 
 ### Equations
@@ -107,3 +104,8 @@ SUSTAIN
     - [x] update only winning cluster
 - [x] Equation 14
     - [x] adjust weights of winning cluster
+
+# Remaining ISSUES
+
+- [ ] recognise missing quired dimensions?
+- [ ] how to handle and what to do with the probabilities of making correct response? how to handle it in unsupervised? **maybe use fac.queried??**
