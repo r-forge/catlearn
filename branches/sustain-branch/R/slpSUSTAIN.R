@@ -145,11 +145,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   mean <- mean(mode[1, ])
 
   if (xtdo) {
-    ret <- list("cluster" = cluster, "weights" = w,
-                "xout" = xout, "mode " = mode, "mean" = mean, "lambda" = lambda)
-  } else {
-    ret <- list("cluster" = cluster, "weights" = w,
+    ret <- list("cluster" = cluster, "xout" = xout, 
                 "mode " = mode, "mean" = mean, "lambda" = lambda)
+  } else {
+    ret <- list("cluster" = cluster, "mode " = mode, 
+                "mean" = mean, "lambda" = lambda)
   }
   return(ret)
 }

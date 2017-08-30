@@ -108,4 +108,6 @@ SUSTAIN
 # Remaining ISSUES
 
 - [ ] recognise missing quired dimensions?
-- [ ] how to handle and what to do with the probabilities of making correct response? how to handle it in unsupervised? **maybe use fac.queried??**
+- how to handle and what to do with the probabilities of making correct response? how to handle it in unsupervised? **maybe use fac.queried??**
+    - [ ] use it for error probabilities maybe in xtdo?
+    - [ ] but in case of an unsupervised learning task, how?
