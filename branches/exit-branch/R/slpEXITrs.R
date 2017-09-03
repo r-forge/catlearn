@@ -1,150 +1,131 @@
 ## Author: René Schlegelmilch
-
+    
 slp_EXIT<-function(st, tr) {
     
-    ## number of trials
-    nTrials<- nrow(tr)
-    colFeat1<-grep("x1", colnames(tr))
-    colt1<-grep("t1", colnames(tr))
-    out<-.subfunction(st,tr,nTrials,colFeat1,colt1)
+    out<-.subfunction(st,tr)
     return(out)
    
 }
 
-.subfunction<- function(st, tr,nTrials,colFeat1,colt1){
+.subfunction<- function(st, tr){
+    
+    ## Preparation of processing vars
 
+    ## column indices of the features
+    colFeat1<-grep("x1", colnames(tr))
+
+    ## and the teacher values
+    colt1<-grep("t1", colnames(tr))
+    
     ## set up response probability matrix
-    probs_out<-matrix(0, ncol=st$nCat, nrow=nTrials)
+    probs_out<-matrix(0, ncol=st$nCat, nrow=nrow(tr))
     
-    ## extra trial counter
-    ## needed if "ctrl" initializes/resets learning
-    x<-0
-    
-    ## go through all the trials
-    for(j in 1:nTrials){
+    ## go through all the trials and apply model
+    for(j in 1:nrow(tr)){
         
-        ## update trial counter 
-        x<-x+1
-
-        ## Extract input activations for trial
+        ## first define indicator variables for correct cats
+        ## (in case {tr} does not provide this info, e.g. in 
+        ## test trials without feedback)
+        cCat<-eCat<-c()
+        
+        ## cCat: index(es) of correct cats; eCat: incorrect cats
+        ## ("try", in case there are no cats e.g. during test trials)
+        try(cCat<-which(tr[j,colt1:(colt1+st$nCat-1)] %in% 1),
+            silent==TRUE)
+        try(eCat<-which(tr[j,colt1:(colt1+st$nCat-1)] %in% -1),
+            silent==TRUE)
+        
+        ## teachers signals:
+        ## The EXIT paper simply states:
+        ## t=0 if outcome is absent and t=1 if outcome present.
+        teacher<- matrix(0, ncol=st$nCat)
+        teacher[cCat]<- 1
+        teacher[eCat]<- 0
+        ## humble teacher option?
+        # teacher[cCat]<- max(1,out_act[cCat])
+        # teacher[eCat]<- min(0,out_act[eCat])
+        
+        
+        ## Extract input activations for current trial 
+        ## (i.e. which feature is present?)
         a_in<-matrix(tr[j,colFeat1:(colFeat1+st$nFeat-1)], 
                            ncol=st$nFeat)
         
         ## number of currently presented features
         nPresFeat<-sum(a_in)
         
-        ## if there is no pre existing "knowledge"
-        ## i.e. ctrl column in tr ==1
-        if (tr[j,"ctrl"]==1) {
-            
-            ## if so:
-            ## set the current trial as 'beginning' trial
-            reset_trial<-j
-            
-            ## and reset trial counter
-            x<-1
-            
-            ## then:
-            ## initialize/reset all (learned) nodes/weights
-            ## for the input-to-output weights
-            ## at zero - Equation (1) 
-            w_in_out<-matrix(0,ncol=st$nFeat,
-                                    nrow=st$nCat)
-            
-            ## initialize/reset attention strength
-            ## for Equation (1) alpha_i
-            alpha_i<-matrix(c(nPresFeat^(-1/st$eta)),
-                            ncol=st$nFeat)
-            
-            ## EXIT includes Exemplar node weights (unlike ADIT)
-            ## initialize exemplar-node-to-gain 
-            ## weights at zero 
-            w_exemplars<-matrix(0, ncol=st$nFeat, nrow=1)
-            
-            ## Initialization/reset of
-            ## exemplar activation a_ex in
-            ## Equation (3) 
-            a_ex<-exp(-st$c*sum(
-                abs(t(t(matrix(0,ncol=st$nFeat))-as.numeric(a_in)))
-            ))
-            
-        } else {
-            ## in case this is not the first/or a reset trial:
-            
-            ## update exemplar-node-to-gain weights: 
-            ## take all (adjusted) weights from previous trial
-            ## and add a new row for the current stimulus
-            ##  with zero weights
-            w_exemplars<-matrix(
-                as.vector(rbind(w_exemplars, rep(0, st$nFeat))), 
-                ncol=st$nFeat, nrow=x-1)
-            
-            ## calculate exemplar activation (via distance)
-            ## with minkowski metric Equation (3)
-            ## for every exemplar presented between the current trial
-            ## and the last reset trial.
-            ## (this extra-'if x==2' is required because for the 
-            ## rowSums does not work, if there is only one exemplar)
-            if (x==2) { 
-            a_ex<-exp(-st$c*sum(
-                abs(t(
-                    t(tr[reset_trial:(j-1),
-                           colFeat1:(colFeat1+st$nFeat-1)])-
-                          as.numeric(a_in)))
-            ))
-            } else {
-                a_ex<-exp(-st$c*rowSums(
-                    abs(t(
-                        t(tr[reset_trial:(j-1),
-                             colFeat1:(colFeat1+st$nFeat-1)])-
-                              as.numeric(a_in)))
-                ))
-            }
-        }
-
+        ## calculate exemplar activation a_ex(x)
+        ## with minkowski metric Equation (3)
+        ## for every exemplar x in memory
+        ## note: for the first trials it is assumed,
+        ## that the exemplars are in memory
+        a_ex<-exp(-st$c*rowSums(
+            abs(t(
+                t(st$exemplars)-
+                    as.numeric(a_in)))
+        ))
+        
         ## calculate current activation of gain nodes g
         ## Equation (4) 
+        g<-a_in*exp(colSums(st$w_exemplars*a_ex))
+        
+        ## is this a complete reset trial? (ctrl==1)
+        ## reset exemplar weight and gain nodes
+        if (tr[j,"ctrl"]==1){
+        w_exemplars<-st$exemplars
+        w_exemplars[]<-0
         g<-a_in*exp(colSums(w_exemplars*a_ex))
+        w_in_out<-matrix(0,st$nCat,st$nFeat)
+        }
+        
+        ## user defined initialization?
+        if (tr[j,"ctrl"]==3){
+            w_exemplars<-st$exemplars
+            g<-a_in*exp(colSums(w_exemplars*a_ex))
+            w_in_out<-st$w_in_out
+        }
+        ## negative gains are set to 0
+        g[g<0]<-0
+        
         
         ## calculate attention strengths alpha_i
         ## Equation (5) in Kruschke 2001
         alpha_i<-g/((sum(g^st$P))^(1/st$P))
-        ## negative values are set to zero (see ADIT,
-        ## is this possible here?)
-        alpha_i[alpha_i<0]<-0
         
         ## calculate category activation
         ## Equation (1) 
         out_act<-(a_in*alpha_i)%*%t(w_in_out)
         
-        ## and category probability
-        ## Equation (2) 
+        ## and category probability stored
+        ## ( before learning re-iteration)
         probs<-exp(out_act*st$phi)/sum(exp(out_act*st$phi))
         
-        ## set teacher values:
-        ## which is the correct (c) or erroneous (e) category?
-        ## note (values of -1 for incorrect are actually just
-        ## for convenience, going with the other models)
-        cCat<-which(tr[j,colt1:(colt1+st$nCat-1)] %in% 1)
-        eCat<-which(tr[j,colt1:(colt1+st$nCat-1)] %in% -1)
-        
-        ## is this correct?
-        ## teachers indices follow the t1,t2 order
-        ## and are simply set to right or wrong (1 or 0)
-        ## (or to out_act)
-        teacher<- matrix(0, ncol=st$nCat)
-        teacher[cCat]<- max(1,out_act[cCat])
-        teacher[eCat]<- min(0,out_act[eCat])
-
-        ## store gain init_values for later adjustment in
-        ##  Equation (10)
-        gain_inits<-g
+        ## is this a frozen learning trial?
+        if( tr[j,"ctrl"]!=2) {
         
         ## Gradient of error for attention shift
         ## Equation (8)
         ## iterates multiple times by an arbitrary number...
         ## (could also be only one equation, but for readability)
         for (k in 1:st$iterations) {
+        
+            if (k>1) {
+            ## calculate attention strengths alpha_i
+            ## Equation (5) in Kruschke 2001
+            alpha_i<-g/((sum(g^st$P))^(1/st$P))
+            
+            ## calculate category activation
+            ## Equation (1) 
+            out_act<-(a_in*alpha_i)%*%t(w_in_out)
+
+            }
+
+            ### Update exemplar gains, attention weights 
+            ### and exemplar node weights:::::::::::::::
+            
+            ## store gain init_values for later adjustment in
+            ##  Equation (10)
+            gain_inits<-g
             
             ## first term teacher values
             E1<-(teacher-out_act)
@@ -161,10 +142,12 @@ slp_EXIT<-function(st, tr) {
             
             ## adjust g
             g<-g+gain_delta
+            g[g<0]<-0
         }
         
         ## Gradient of error for weight change
         ## Equation (9)
+        
         weight_delta<-t(st$l_weight*
                       t(t(teacher-out_act)%*%as.numeric(alpha_i))*
                       as.numeric(a_in))[cCat,]
@@ -172,21 +155,17 @@ slp_EXIT<-function(st, tr) {
         ## but adjust only for the correct category
         w_in_out[cCat,]<-w_in_out[cCat,]+weight_delta
         
-        ## Gradient of error for exemplar gain chance
+        ## Gradient of error for exemplar gain change
         ## Equation (10)
         ex_weights_delta<- a_ex%*%(st$l_ex*
                            (g-gain_inits)*gain_inits)
         
-        ## is this correct?
+        
         ## adjusts exemplar-node-to-gain weights for
         ## every exemplar in memory
         w_exemplars<-ex_weights_delta+w_exemplars
-        
-        ## (maybe this is only supposed to happen for
-        ## the current to-be-stored stimulus)
-        ## like this?
-        ## w_exemplars[x,]<-ex_weights_delta+
-        ## w_exemplars[x,]
+        }
+
         
     probs_out[j,]<-probs
     }
@@ -194,6 +173,7 @@ slp_EXIT<-function(st, tr) {
     output<-list()
     output$response_probabilities<-probs_out
     output$E4_exemplar_weights<-w_exemplars
+    output$E1_w_in_out<-w_in_out
     output$E4_gains<-g
     output$E5_attention_strengths<-alpha_i
     return(output)
