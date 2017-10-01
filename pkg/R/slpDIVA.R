@@ -242,7 +242,7 @@ slpDIVA <- function(st, tr, xtdo = FALSE) {
     wts_history <- list(initial = list(), final = list())
  
     # # # convert targets to 0/1 for binomial input data ONLY
-    targets <- tr[,(st$colskip + 1):(st$colskip + st$num_feats)]
+    targets <- tr[,(st$colskip + 1):(st$colskip + st$num_feats), drop = FALSE]
     if (st$continuous == FALSE) targets <- .diva.global_scale(targets)
 
     # # # init size parameter variables
