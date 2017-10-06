@@ -76,4 +76,13 @@ tr.nosofsky.shj6 <- matrix(rep(t(tr.nosofsky.shj6), 32), ncol = 8, byrow = TRUE)
 tr.nosofsky.shj6 <- cbind(rep(0, nrow(tr.nosofsky.shj6)), tr.nosofsky.shj6[sample(nrow(tr.nosofsky.shj6)), ], rep(1, nrow(tr.nosofsky.shj6)))
 colnames(tr.nosofsky.shj6) <- c("ctrl", "x1", "x2", "y1", "y2", "z1", "z2", "c1", "c2", "t")
 
+tr.nosofsky.shj1[1, 1] <- 1
+tr.nosofsky.shj2[1, 1] <- 1
+tr.nosofsky.shj3[1, 1] <- 1
+tr.nosofsky.shj4[1, 1] <- 1
+tr.nosofsky.shj5[1, 1] <- 1
+tr.nosofsky.shj6[1, 1] <- 1
+
+
 rm(cond.1, cond.2, cond.3, cond.4, cond.5, cond.6)
+
