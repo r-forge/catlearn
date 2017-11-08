@@ -72,6 +72,8 @@ NOTE: These changes should be made to the local _development_ copy.
 
    svn commit -m "Added Shin & Nosofsky (1992) data set"
 * Dealing with RCpp development
+Rcpp::compileAttributes()
+** Now not needed?
 https://github.com/RcppCore/Rcpp/issues/636
 Currently (2017-02-22) Rcpp has some problems playing nicely with
 R-devel. This means that packages using Rcpp are refused by CRAN.  The
@@ -105,7 +107,6 @@ This puts a c file to standard output that you then copy to
 src/init.c
 
 4. Rebuild, re-check. Worst case you need to also adapt NAMESPACE.
-
 
 * Writing vignettes in Sweave
 ** Example from the Sweave vignette.
@@ -199,3 +200,19 @@ Andy
 
 - Only keep in the R-forge SVN that which you intend to include in the
   package release. 
+
+* Notes on v.0.5 release
+** slpBM & slpRW
+- Rd files should be ASCII, not UTF-8.
+
+- slpBM.Rd is written in a way that implies you haven't read Bush &
+  Mosteller (1951) that closely. BM51 is not quite the same as RW
+  without the summed error term, for example. I've made some changes
+  to clarify that while you're calling it BM51, what you've actually
+  implemented in RW72 with separable error.
+
+- I've added a unit-test for slpBM to R-forge. Please check you're
+  happy with it.
+
+
+
