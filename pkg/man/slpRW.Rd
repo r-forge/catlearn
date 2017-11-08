@@ -34,11 +34,11 @@ al., 2017). Specifically, it takes a matrix (tr) as an argument, where
 each row represents a single training trial, while each column
 represents the different types of information required by the model,
 such as the elemental representation of the training stimuli, and the
-presence/absence of an outcome. It returns a vector of the output
-activations on each trial (a.k.a. sum of associative strengths of cues
-present on that trial). The slpRW function also returns the final state
-of the model - a vector of associative strengths between each stimulus
-and the outcome representation.
+presence/absence of an outcome. It returns the output activation on each
+trial (a.k.a. sum of associative strengths of cues present on that
+trial), as a vector. The slpRW function also returns the final state of
+the model - a vector of associative strengths between each stimulus and
+the outcome representation.
 
 Argument \code{st} must be a list containing the following items:
 
@@ -117,7 +117,7 @@ Stuart Spicer, Lenard Dome, Andy Wills
 
 Kamin,  L.J., (1969) Predictability,  surprise,  attention  and  conditioning. 
 In Campbell, B.A. & Church, R.M. (eds.), \emph{Punishment and  Aversive  
-Behaviour}. New York: Appleton-Century-Crofts, 1969,  pp.279–296.
+  Behaviour}. New York: Appleton-Century-Crofts, 1969,  pp.279-296.
 
 Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian
 conditioning: Variations in the effectiveness of reinforcement and
@@ -133,12 +133,5 @@ Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster,
 A.B.(2017). Progress in modeling through distributed collaboration:
 Concepts, tools, and category-learning examples. \emph{Psychology of
   Learning and Motivation, 66}, 79-115.
-
-}
-\note{
-
-  Further development of slpRW is planned during 2017, including a
-  substantial increase in speed of execution, and inclusion of
-  beta-outcome-present and beta-outcome-absent learning rates.
 
 }
