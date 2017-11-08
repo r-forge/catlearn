@@ -4,8 +4,8 @@
 2017-02-15,R-forge release for version 0.4
 2017-03-15,CRAN release for version 0.4
 2017-08-31,Code freeze for version 0.5
-2017-09-15,R-forge release for version 0.5
-2017-10-14,CRAN release for version 0.5
+2017-11-15,R-forge release for version 0.5
+2017-11-30,CRAN release for version 0.5
 
 * General expressions of interest 
 
@@ -31,28 +31,37 @@ in contributing.
 2017-02-21,catlearn v.0.4 appears on CRAN
 
 2017-05-05,René Schlegelmilch 
+2017-07,Lenard Dome
 
 * Model implementations
 
 ** Actor-critic
 
 2016-09-02, Ahmed Moustafa suggested an Actor-Critic model implementation, and provided some code, which is now in actor-critic-branch, tmp folder.
+2017-11-08, Yet to allocate developer for actor-critic.
+2017-11-08,v.0.6 release?
 
 ** ATRIUM
 
 2016-11-09,atrium-branch,Angus Inkster currently working on an ATRIUM implementation.
 2017-03-02,slated for v.0.5 release
 2017-07-10,Michael Erickson commits to answer Angus's queries by end of July 2017
+2017-11-08,Despite reminders the required information is not forthcoming from Erickson.
+2017-11-08,Angus Inkster has stepped down as developer of slpATRIUM - no replacement as yet
+2017-11-08,v.0.6 release?
 
 ** Bush-Mosteller model
 
 2016-11-09,rw-brnach,Stuart Spicer will develop a Bush-Mosteller model implementation.
 2017-03-02,slated for v.0.5 release
+2017-08-31,Stuart Spicer and Lenard Dome have a C++ release candidate for v.0.5.
 
 ** COVIS
 
 2016-09-02,angus-branch,Angus Inkster currently working on a COVIS implementation.
 2017-03-02,v. 0.5 is a maintenance/update release?
+2017-11-08,Angus Inkster has stepped down as developer of slpCOVIS
+2017-11-08,covis-branch has had no updates since v.0.4. Release unmodified to v.0.5.
 
 ** Decision-bound / General Recognition Theory
 
@@ -72,11 +81,15 @@ in contributing.
 2017-05-03,Andy asks "how it's going?"
 2017-06-03,Garrett confirms it's on his summer to-do list
 2017-07-03,Andy asks "how's it going?"
+2017-09-29,There have been a number of minor updates to the R-implemented version but not Rcpp version done as yet.
+2017-11-08,Andy classifies this as minor update release candidate for v.0.5
 
 ** Esber-Haselgrove
 
 2017-05-12,Mark Haselgrove interested in contributing his model - happy to share MATLAB code he has - but won't have time until the summer. Guillermo Esber is the main programmer. Contact again around 2017-06-05
 2017-07-03, Andy asks "How's it going?"
+2017-11-08,No code made available as yet
+2017-1108,v.0.6 release?
 
 ** GCM
 
@@ -95,27 +108,33 @@ in contributing.
 2017-07-03,Andy reviews updates by Rene S
 2017-07-03,Andy asks Paul Minda "How's it going?"
 2017-07-05,Paul Minda says he will email his code to Andy
+2017-11-08,No code from Paul Minda's lab has been forthcoming
+2017-11-08,Andy takes decision to make Rene's version the version 0.5 release candidate
 
 ** Model-based, model-free learning model
 
 2017-02,Andy Wills and Tom Sambrook working on this
 2017-03-02,slated for a v.0.5 release
-2017-05-11,Andy Wills adds slpMBMF to R-forge
+2017-05-11,Andy Wills adds slpMBMF to R-forge as a branch
+2017-11-08,slpMBMF is a release candidate for v.0.5.
 
 ** PMEGCM-RT
 2017-03-02,James Adelman and Chris Kent interested in supporting development of this
 2017-05-03,Andy nudges Chris Kent who suggests liaising with James Adelman instead
 2017-06-07,James Adelman sends Andy some C++ source code and Andy commits to making this a version 0.5 model implementation. Andy asks for example of the code being used to make some predictions
 2017-07-03,Andy chases code request
+2017-11-08,Despite a second request (at MathPsy 2017) the requested information has not been provided
+2017-11-08,slated for v.0.6 release
 
-
-** Prototype model
+** Prototype model 
 
 2016-11-20,minda-branch,Paul Minda is reviewing code for a prototype model
 2017-03-02,no progress for v.0.4 release
 2017-03-2,Paul Minda intending to have ready for v.0.5.
 2017-05-03,Andy asks "how it's going?"
 2017-06-03,Andy asks "how's it going?"
+2017-11-08,Andy takes decision that stsimGCM can also serve as a protoype model
+2017-11-08,Model development project terminated.
 
 ** Rational model
 
@@ -124,6 +143,7 @@ in contributing.
 2017-03-02,any chance of a v.0.5 release?
 2017-05-03,still no developer identified
 2017-07-03,still no developer identified
+2017-11-08,still no developer identified
 
 ** Rescorla-Wagner
 
@@ -131,6 +151,8 @@ in contributing.
 2016-11-09,rw-branch,Stuart Spicer will develop a Rescorla-Wagner model implementation.
 2017-03-02,initial release in v.0.4
 2017-03-02,slated for upgrade in v.0.5
+2017-08-31,Stuart and Lenard have converted slpRW to C++
+2017-11-08,slpRW is an update release candidate for v.0.5
 
 ** SAMBA
 
@@ -139,6 +161,7 @@ in contributing.
 2017-05-08,Chris Kent says Scott Brown interested in placing the next (rather than current) version of SAMBA within catlearn
 2017-05-17,Scott Brown says Andrew Heathcote might engage Peter Kvam on this - Andy asked Andrew H whether he could contact Peter K direct
 2017-05-18,Andrew H says new version of SAMBA is a way off but will bear us in mind when it does happen. Andy reads this as being not for version 0.5 
+2017-11-08,v.0.6 release?
 
 ** SUSTAIN
 
@@ -147,6 +170,8 @@ in contributing.
 2017-03-02,any chance of a v.0.5 release?
 2017-05-03,still no developer identified
 2017-07-03,Lenard Dome identified as developer for SUSTAIN - hoping to be ready for v.0.5 release
+2017-08-30,Lenard has made progress on coding this but it wasn't ready by the code freeze
+2017-11-08,v.0.6 release?
 
 ** Temporal difference model
 
@@ -155,6 +180,8 @@ in contributing.
 2017-03-02,any chance of a v.0.5 release?
 2017-05-03,still no developer identified
 2017-07-03,still no developer identified
+2017-11-08,still no developer identified
+2017-11-08,v.0.6 release?
 
 * CIRP
 
@@ -165,32 +192,47 @@ in contributing.
 2017-05-12,Chris emails Andy to discuss
 2017-07-03,Andy emails Chris to ask "How's it going?"
 2017-07-17,Peter Kvam mentions he has bow effects and sequential effects data he'd be happy to share as soon as it's published.
+2017-08-31,Nothing forthcoming by code freeze
+2017-11-08,v.0.6 release?
 
 ** Exemplars vs prototypes CIRP
 
 2017-05-05,Andy Wills has a bunch of CIRP in this area to add for version 0.5
 2017-05-08,Paul Minda would like to add Smith & Minda (1998)
 2017-07-03,Andy emails Paul to ask "How's it going?"
+2017-11-08,Nothing forthcoming from Minda by code freeze
+2017-11-08,v.0.6 release?
 
 ** Face recognition CIRP
 
 2017-05-03,Andy follows up a conversation he had with Mike Burton at ICPS
 2017-07-03,Andy emails Mike to ask "How's it going?"
+2017-08-31,Nothing forthcoming from Mike by code freeze
+2017-11-08,v.0.6 release?
 
 ** Inverse base-rate effect / highlighting
 
 2016-09-08,John Kruschke suggested an IBRE/highlighting CIRP.
 2017-07-03,Angus Inkster to add for version 0.5 probably
+2017-08-31,Nothing forthcoming by code freeze
+2017-11-08,Angus has stepped down as catlearn developer
+2017-11-08,v.0.6 release?
 
 ** Visual word recognition CIRP
 
 2017-03-02,Colin Davis will contribute some once the lazyNut schema is in place.
 2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
+2017-08-31,Nothing forthcoming by code freeze
+2017-10-26,Good meeting between Andy and Colin
+2017-11-08,v.0.6 release?
 
 ** Working memory CIRP
 
 2017-04-24,Stephan Lewandowsky and Klaus Oberauer are working on a list of benchmark phenomena for working memory https://wmbenchmarks.wordpress.com/
 2017-07-03,Andy emails Klaus to suggest cooperation on infrastructure
+2017-08-31,Nothing forthcoming by code freeze
+2017-10-26,Klaus provides review paper and github link for infrastructure cooperation
+2017-11-08,v.0.6 release?
 
 * Simulation archive
 
@@ -199,6 +241,7 @@ in contributing.
 2016-12,Stephanie Stacy (williams.edu) suggested simulation archives might contain the parameter optimization code. I said I would do an example to show how this might work.
 2017-05-03,slated for v.0.5 release.
 2017-05-30,optimization archives on R-forge for all version 0.4 simulation archives (except nosof94bnalcove, which was not optimized by the author anyway, the parameters were taken direct from Nosofsky et al, 1994).
+2017-11-08,will be included in v.0.5.
 
 * Interoperability projects
 
@@ -207,7 +250,9 @@ in contributing.
 2017-05-04,Ann Thorwart considering GPL for ALTsim and Andy discussing possible interoperability schema for catlearn to/form altSIM. Andy to nudge around 22-May
 2017-07-03,Andy emails Anna to ask "How's it going?"
 2017-07-11,Anna commits to altSIM as a free software project (mainly GPL, but some BSD for code from the Matlab File Exchange).
-
+2017-08-31,Anna has sent me the ALTsim code. My initial review of this code suggests that the backend model functions could be reused in catlearn via Octave. The GUI heavily depends on MATLAB-only functionality so is not re-usuable in a free software project. I asked for something I could use to run the backend functions without the GUI.
+2017-11-08,Request not yet answered
+2017-11-08,v.0.6 release?
 
 ** CAL-R
 
@@ -218,12 +263,17 @@ Andy and Angus had discussions with the CAL-R team in 2016 but we hit a brick wa
 2017-05-08,Andy to be added as collaborator on grt package github page.
 2017-05-08,Andy plans to looks into grt as an inter-operability project with catlearn
 2017-07-03,Andy prods Kaz to update maintainer on CRAN
+2017-11-08,Andy is now maintainer of grt package
+2017-11-08,grt interoperability wrapper for v.0.6?
 
 ** lazyNut schema
 
 2017-03-02,James Adelman to develop code to allow lazyNut simulations to inter-operate with catlearn (Colin Davis is also a contact point for this work, but James is the programmer).
 2017-05-04,Andy nudges Colin Davis who says he will respond by 12-May
 2017-07-03,Andy decides he has insufficient time to pursue this for v.0.5 release-will consider again for version 0.6
+2017-11-08,Andy has downloaded the code. There seems to be some enthusiasm for the inter-operability project from Colin, but none from James Adelman (the programmer) who Colin reports as feeling that it's against the spirit of the project to use the backend as a library.
+2017-11-08,lazyNut inter-operability wrapper for v.0.6?
+
 
 
 
