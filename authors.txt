@@ -1,0 +1,20 @@
+The Catlearn Core Team (in alphabetical order) are:
+
+Current members
+===============
+Lenard Dome
+Garrett Honke
+Rene Schegelmilch
+Stuart Spicer
+Andy Wills
+
+Former members
+==============
+Angus Inkster
+
+Defintions
+==========
+Membership of the Core Team is defined by: (a) having contributed to
+the writing of at least one function that appears in the latest
+R-Forge version of catlearn, and (b) currently being the maintainer of
+at least one function.
