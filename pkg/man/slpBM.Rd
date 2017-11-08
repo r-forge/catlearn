@@ -1,11 +1,13 @@
 \name{slpBM}
 \alias{slpBM}
 \title{
-Bush and Mosteller (1951) associative learning model
+Bush & Mosteller (1951) simple associative learning model
 }
 \description{
 
-Bush & Mosteller's (1951) model for simple learning
+  A model often attributed to Bush & Mosteller (1951), more precisely
+  this is the separable error term learning equation discussed by
+  authors such as Mackintosh (1975) and Le Pelley (2004); see Note 1.
 
 }
 \usage{
@@ -29,22 +31,19 @@ al., 2017). Specifically, it takes a matrix (tr) as an argument, where
 each row represents a single training trial, while each column
 represents the different types of information required by the model,
 such as the elemental representation of the training stimuli, and the
-presence or absence of an outcome. It returns a vector of the output
-activations (a.k.a sum of associative strengths of cues present on that
-trial). The slpBM function also returns the final state of the model - 
-a vector of associative strengths between each stimulus and the outcome 
-representation.
+presence or absence of an outcome. It returns the output activation on
+each trial (a.k.a sum of associative strengths of cues present on that
+trial), as a vector. The slpBM function also returns the final state of
+the model - a vector of associative strengths between each stimulus and
+the outcome representation.
 
 Argument \code{st} must be a list containing the following items:
 
-\code{lr} - the learning rate (fixed for a given simulation). In order to
-calculate lr, calculate the product of Bush & Mosteller's parameters alpha
-and beta. For example, if you want alpha = 0.1 and beta = 0.2, set lr =
-0.02. If you want different elements to differ in salience (different
-alpha values) use the input activations (x1, x2, \dots, see below) to
-represent element-specific salience. For example, if alpha_A = 0.4,
-alpha_X = 0.2, and beta = 0.1, then set lr = 0.1, and the activations of
-A and B to 0.4 and 0.2, respectively.
+\code{lr} - the learning rate (fixed for a given simulation), as denoted
+by, for example, \code{theta} in Equation 1 of Mackintosh (1975). If you
+want different elements to differ in salience (different alpha values)
+use the input activations (x1, x2, \dots, see below) to represent
+element-specific salience.
 
 \code{w} - a vector of initial associative strengths. If you are not
 sure what to use here, set all values to zero.
@@ -77,9 +76,9 @@ optional columns plus one.
 \code{x1, x2, \dots} - activation of any number of input elements. There
 must be one column for each input element. Each row is one trial. In
 simple applications, one element is used for each stimulus (e.g. a
-simulation of blocking (Kamin, 1969), A+, AX+, would have two inputs, one for A and
-one for X). In simple applications, all present elements have an
-activation of 1 and all absence elements have an activation of
+simulation of blocking (Kamin, 1969), A+, AX+, would have two inputs,
+one for A and one for X). In simple applications, all present elements
+have an activation of 1 and all absence elements have an activation of
 0. However, slpBM supports any real number for activations, e.g. one
 might use values between 0 and 1 to represent differing cue saliences.
 
@@ -110,12 +109,26 @@ Lenard Dome, Stuart Spicer, Andy Wills
 }
 \references{
 
-Kamin,  L.J., (1969) Predictability,  surprise,  attention  and  conditioning. 
-In Campbell, B.A. & Church, R.M. (eds.), \emph{Punishment and  Aversive  
-Behaviour}. New York: Appleton-Century-Crofts, 1969,  pp.279–296.
-
 Bush, R. R., & Mosteller, F. (1951). A mathematical model for
 simple learning. \emph{Psychological Review, 58(5)}, 313-323.
+  
+Kamin,  L.J. (1969). Predictability,  surprise,  attention  and  conditioning. 
+In Campbell, B.A. & Church, R.M. (eds.), \emph{Punishment and  Aversive  
+Behaviour}. New York: Appleton-Century-Crofts, 1969,  pp.279-296.
+
+Le Pelley, M.E. (2004). The role of associative history in models of
+associative learning: A selective review and a hybrid model,
+\emph{Quarterly Journal of Experimental Psychology, 57B}, 193-243.
+
+Mackintosh, N.J. (1975). A theory of attention: {V}ariations in the
+associability of stimuli with reinforcement, \emph{Psychological Review,
+  82}, 276-298.
+
+Rescorla, R. A., & Wagner, A. R. (1972). A theory of Pavlovian
+conditioning: Variations in the effectiveness of reinforcement and
+nonreinforcement. In A. H. Black & W. F. Prokasy (Eds.), \emph{Classical
+conditioning II: Current research and theory} (pp. 64-99). New York:
+Appleton-Century-Crofts.
 
 Spicer, S., Jones, P.M., Inkster, A.B., Edmunds, C.E.R. & Wills,
 A.J. (n.d.). Progress in learning theory through distributed
@@ -127,10 +140,14 @@ Concepts, tools, and category-learning examples. \emph{Psychology of
 Learning and Motivation, 66}, 79-115.
 
 }
+
 \note{
 
-  Further development of slpBM is planned during 2017, including a
-  substantial increase in speed of execution, and inclusion of
-  beta-outcome-present and beta-outcome-absent learning rates.
-
+  1. Bush & Mosteller's (1951) Equations 2 outputs response probability,
+  not associative strength. Also, it has two learning rate paramters,
+  \code{a} and \code{b}. At least to a first approximation, \code{b}
+  serves a similar function to \code{beta-outcome-absent} in Rescorla &
+  Wagner (1972), and \code{a-b} is similar to
+  \code{beta-outcome-present} in that same model.
+  
 }
