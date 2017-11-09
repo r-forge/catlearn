@@ -2,7 +2,7 @@
 ## (Andy Wills made some minor changes)
 
 ## Main function
-stsimGCMrs<-function(st) {
+stsimGCM<-function(st) {
     ## Add weight for last dimension
     st$weights <- as.numeric(c(st$weights, 1-sum(st$weights)))
     

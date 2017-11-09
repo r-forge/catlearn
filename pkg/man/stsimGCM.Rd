@@ -1,5 +1,5 @@
-\name{stsimGCMrs}
-\alias{stsimGCMrs}
+\name{stsimGCM}
+\alias{stsimGCM}
 \title{
   Generalized Context Model
 }
@@ -8,7 +8,7 @@
   model of categorization.
 }
 \usage{
-  stsimGCMrs(st)
+  stsimGCM(st)
 }
 \arguments{
   \item{st}{List of model parameters}
@@ -274,7 +274,7 @@
     ## columns of the output correspond to category numbers as defined
     ## above rows correspond to the column indices of the test_items
     
-    stsimGCMrs(st)
+    stsimGCM(st)
 
     ## columns of the output correspond to category numbers as defined
     ## above rows correspond to the column indices of the test_items
@@ -296,7 +296,7 @@
                                c(1:4)))))
     ## exemplars in row 1 and 4 will receive a memory strength of 5
     ## get predictions
-    stsimGCMrs(st)
+    stsimGCM(st)
 
     ## Example 3 
     ## Same (settings) as above, except: memory strength is item specific
@@ -307,5 +307,5 @@
 
 
     ## get predictions
-    stsimGCMrs(st)
+    stsimGCM(st)
 }  
