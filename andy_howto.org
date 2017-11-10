@@ -216,3 +216,8 @@ Andy
 
 
 
+** stsimGCM
+- I've selected your version for the mainline code; Paul Minda didn't
+  share any code by the code freeze deadline.
+- I made some formatting changes to the Rd file, shortening a bit,
+  putting some things in notes, and removing direct quotes.
