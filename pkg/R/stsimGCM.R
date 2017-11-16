@@ -15,12 +15,22 @@ stsimGCM<-function(st) {
     try(memory[which(st$training_items[,"mem"] %in% 1)]<-
             st$mp, silent=TRUE)
     
+    ## convenience recoding: sensitivity global
+    if (length(st$sensitivity)==1) {
+        sensi<-st$sensitivity
+    } else {
+    ## sensitivity exemplar specific
+        sensi<-matrix(st$sensitivity, 
+                      ncol=nrow(st$training_items))
+    }
+    
+    
     ## pass to prediction function
     get_p<-.gcm.predictions(tdf=st$tr, 
                             ex=st$training_items,
                             mem=memory,
                             r_met=st$r_metric,
-                            c=st$sensitivity,
+                            c=sensi,
                             p=st$p,
                             gamma=st$gamma,
                             cb=st$choice_bias,

@@ -50,11 +50,11 @@
   columns.
   
   \code{training_items} - all unique exemplars assumed to be stored in 
-  memory; has to be a matrix or dataframe with one row for each exemplar 
-  each (row). The rownames have to start with 1 in ascending order.
+  memory; has to be a matrix or dataframe with one row for each exemplar. 
+  The rownames have to start with 1 in ascending order.
   \code{training_items} requires the following columns:
   
-  \code{x1, x2, \dots} - columns for each dimension carrying 
+  \code{x1, x2, \dots} - columns for each feature dimension carrying 
   the corresponding values (have to be coded as numeric values) for each 
   exemplar (row). Columns have to start with \code{x1} ascending with 
   dimensions \code{\dots, x2, x3, \dots} at adjacent columns.
@@ -105,8 +105,20 @@
   strengths for all other exemplars will be set to 1. See Note 1.
 
   \code{sensitivity} - sensitivity parameter c; can take any value
-  between 0 (no sensitivity at all) and +infinity (towards being
-  sensitive to infinitely small differences). See Note 2. 
+  between 0 (all exemplars are equally similar) and +infinity 
+  (towards being  insensitive to large differences). There are two ways 
+  of specifying \code{sensitivity}, i.e. either \emph{globally} or 
+  \emph{exemplar specific}: When \emph{globally} setting \code{sensitivity} 
+  to a single value, e.g. \code{sensitivity}=3, then the same parameter is 
+  applied to all exemplars. On the other hand, \emph{exemplar specific}
+  sensitivity parameters can be used by defining \code{sensitivity} as
+  a vector of length n, where n is the number of rows in 
+  \code{training_items}. The \code{sensitivity} vector values then represent 
+  the sensitivity parameters for all exemplars in \code{training_items} at 
+  the corresponding row positions. E.g. if there are 3 exemplars (rows) in 
+  \code{training_items}, then setting \code{sensitivity} to \code{c(1,1,3)} 
+  assigns \code{sensitivity} = 1 to the first two exemplars, and 
+  \code{sensitivity} = 3 for the third exemplar. See Note 2. 
 
   \code{weights} - dimensional attention weights. Order corresponds
   to the definitions of \code{x1, x2, \dots} in \code{tr} and 
@@ -136,18 +148,14 @@
   \code{r_metric} - distance metric. Set to 1 (city-block) or 2
   (Euclidean). See Nosofsky (2011), and Note 4, for more details.
 
-  \code{p} - similarity gradient. Set to 1 (exponential) or 2
-(Gaussian). See Nosofsky (2011), and Note 5, for more details. 
+  \code{p} - similarity gradient. Set to 1 (exponential) or 2 (Gaussian). 
+  See Nosofsky (2011), for more details. 
 
 }
 
 \author{ Rene Schlegelmilch, Andy Wills }
 
 \references{
-  
-  Gati, I., & Tversky, A. (1982). Representations of qualitative and 
-  quantitative dimensions. \emph{Journal of Experimental Psychology: 
-  Human Perception and Performance, 8}(2), 325.
   
   Minda, J. P., & Smith, J. D. (2011). Prototype models of 
   categorization: Basic formulation, predictions, and limitations. 
@@ -164,6 +172,10 @@
   Nosofsky, R. M. (2011). The generalized context model: An exemplar
   model of classification. In Pothos, E.M. & Wills, A.J. \emph{Formal
   approaches in categorization}. Cambridge University Press.
+  
+  Rodrigues, P. M., & Murre, J. M. (2007). Rules-plus-exception tasks: 
+  A problem for exemplar models?. \emph{Psychonomic Bulletin & Review, 
+  14}(4), 640-646.
   
   Tversky, A., & Gati, I. (1982). Similarity, separability, and the 
   triangle inequality. \emph{Psychological review, 89}(2), 123.
@@ -244,38 +256,42 @@
 }  
 \note{
 
-  1. If you want to check whether mp's into different directions,
-  i.e. mp<1 and mp>1 are of equal strength, just compare their natural
-  logs, e.g. -log(.5)=log(2), hence different directions (memory loss
-  and memory gain, respectively), but to an equal extent.
+  1. Please note that setting mp = 1 or e.g. mp = 5 globally, will 
+  yield identical response probabilities. Crucially, memory strength 
+  is indifferent from the category choice bias parameter, if (and only
+  if) mp's vary between categories, without varying within categories. 
+  Thus, the memory strength parameter can therefore be interpreted in 
+  terms of an exemplar choice bias (potentially related to categorization 
+  accuracy). In addition, if exemplar specific mp's are assigned during 
+  parameter fitting, one might want to calculate the natural log of the 
+  corresponding estimates, enabling direct comparisons between mp's 
+  indicating different directions, e.g. -log(.5) = log(2), for loss and 
+  gain, respectively, which are equal regarding their extent into different 
+  directions.
 
-  2. Usually high sensitivity makes choices less probabilistic, thus
-  sensitivity c is likely to be correlated with gamma. See Navarro
-  (2007) for a detailed discussion.
+  2. Theoretically, increasing global sensitivity indicates that 
+  categorization mainly relies on the most similar exemplars, usually
+  making choices less probabilistic. Thus sensitivity c is likely to 
+  be correlated with gamma. See Navarro (2007) for a detailed discussion.  
+  However, it is possible to assume exemplar specific sensitivities, or
+  specificity. Then, exemplars with lower sensitivity parameters
+  will have a stronger impact on stimulus similarity and thus 
+  categorization behavior for stimuli. See Rodrigues & Murre 
+  (2007) for a related study. 
 
   3. Setting only the n-1 instead of all n feature weights (or bias
   parameters) eases model fitting procedures, in which the last weight
   always is a linear combination of the n-1 weights.
 
   4. See Tversky & Gati (1982) for further info on r. In brief summary,
-  r > 1, then a large difference on only one feature outweighs small
-  differences on all features. In contrast, if r < 1, then small
-  differences on all features outweigh a large difference on only one
-  features. When r=1 (usually termed City-Block or Manhattan distance)
-  both aspects contribute to an equal extent to the distance. Thus, r >
-  1 comes with the assumption that small differences in all features may
-  be less recognized (or less important), than a large noticable
-  differences on one feature, which may be depend on confusability of
-  the stimuli or on the nature of the given task domain (perceptual or
-  abstract).
+  r=2 (usually termed Euclidean), then a large difference on only one 
+  feature outweighs small differences on all features. In contrast, 
+  if r=1 (usually termed City-Block or Manhattan distance) both aspects 
+  contribute to an equal extent to the distance. Thus, r = 2 comes with 
+  the assumption that small differences in all features may be less 
+  recognized, than a large noticable differences on one feature, which 
+  may be depend on confusability of the stimuli or on the nature of the 
+  given task domain (perceptual or abstract).
 
-  5.  If \code{r_metric} and \code{p} are both set to .1, (given equal
-  attention weights), then the similarity function acts (nearly exactly)
-  like a matching algorithm, i.e. as if the feature values from a
-  current test item are identity-matched onto the features of the
-  exemplar under consideration. This might become important, when there
-  are qualitatively different feature values (i.e. with no 'real'
-  distance scaling, see further, Gati & Tversky, 1982, on qualitative
-  dimensions).
   
   }
