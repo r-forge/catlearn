@@ -202,22 +202,4 @@ Andy
   package release. 
 
 * Notes on v.0.5 release
-** slpBM & slpRW
-- Rd files should be ASCII, not UTF-8.
 
-- slpBM.Rd is written in a way that implies you haven't read Bush &
-  Mosteller (1951) that closely. BM51 is not quite the same as RW
-  without the summed error term, for example. I've made some changes
-  to clarify that while you're calling it BM51, what you've actually
-  implemented in RW72 with separable error.
-
-- I've added a unit-test for slpBM to R-forge. Please check you're
-  happy with it.
-
-
-
-** stsimGCM
-- I've selected your version for the mainline code; Paul Minda didn't
-  share any code by the code freeze deadline.
-- I made some formatting changes to the Rd file, shortening a bit,
-  putting some things in notes, and removing direct quotes.
