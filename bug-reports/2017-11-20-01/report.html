@@ -1,23 +1,42 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-2022-jp">
 <style type="text/css" style="display:none;"><!-- P {margin-top:0;margin-bottom:0;} --></style>
 </head>
 <body dir="ltr">
 <div id="divtagdefaultwrapper" style="font-size:12pt;color:#000000;font-family:Calibri,Helvetica,sans-serif;" dir="ltr">
-<p>Hi Andy,</p>
+Hi Andy,
 <p><br>
 </p>
-<p>I've attached a pair of scripts that reliably crash each model respectively (using the smallest amount of code possible in a one stim design).</p>
+<p>Rather than the standard error message in the console, I got the R Session Aborted window (like below - copied from online):</p>
+<p><img id="301239_rs|3" alt="" title="" style="width: 336px; height: 226.396px;" tabindex="0" width="336" height="226" src="https://s14-eu5.ixquick.com/cgi-bin/serveimage?url=https:%2F%2Flh3.googleusercontent.com%2F-IzfBppQwNQI%2FWAUEsgJwmnI%2FAAAAAAAAAXU%2F9aG6xKFRxY8%2Frstudio-bomb.png%3Fimgmax%3D1600&amp;sp=f439cf9ff9d748f15fdcb0ad0677edba"></p>
 <p><br>
 </p>
-<p>FYI slpBM works fine at 27K trials, but reliably crashes out at 28K. slpRW works fine at 10K trials, but crashes out at a more meagre 11K trials.</p>
+<ul style="margin-bottom: 0px; margin-top: 0px;">
+<li>I was running it in Linux. Distribution is Linux Mint (version is Serena and desktop environment is Cinnamon).</li></ul>
+<br>
+<ul style="margin-bottom: 0px; margin-top: 0px;">
+<li>R version is 3.4.2 (aka Short Summer).&nbsp; R studio version is 1.1.383.</li></ul>
+<br>
+<ul style="margin-bottom: 0px; margin-top: 0px;">
+<li>Catlearn version is latest unstable release (0.4.12). <br>
+</li></ul>
+<br>
+<ul style="margin-bottom: 0px; margin-top: 0px;">
+<li>My laptop is an HP 15 Notebook, with an AMD A8-6410 APU 2000 Mhz processor, and 8GB RAM<br>
+</li></ul>
 <p><br>
 </p>
-<p>I think that is everything you need from me at this stage?</p>
+<p>I have just noticed&nbsp;the version of slpRW in the unstable release is the R version not the C&#43;&#43; version. The testing I did this weekend was definitely against the C&#43;&#43; version (I checked in my console before testing).
+<br>
+</p>
 <p><br>
 </p>
-<p>Cheers,</p>
+<p>I've just checked and the R version of slpRW is still saved in the main Catlearn repo. The error still reliably occurs as before with the C&#43;&#43; version, but not with the R version. slpBM still reliably occurs as before. (FYI I reckon the C&#43;&#43; script must have
+ been sourced into my environment manually and the function defaulted to this rather than the package version).</p>
+<p><br>
+</p>
+<p>Hope that helps!</p>
 <p><br>
 </p>
 <p>Stuart<br>
@@ -25,13 +44,63 @@
 </div>
 <hr style="display:inline-block;width:98%" tabindex="-1">
 <div id="divRplyFwdMsg" dir="ltr"><font face="Calibri, sans-serif" style="font-size:11pt" color="#000000"><b>From:</b> Andy Wills (Professor in Psychology)<br>
-<b>Sent:</b> 17 November 2017 09:12:45<br>
+<b>Sent:</b> 20 November 2017 11:20:14<br>
 <b>To:</b> Stuart Spicer<br>
-<b>Subject:</b> bug report</font>
+<b>Subject:</b> Re: bug report</font>
 <div>&nbsp;</div>
 </div>
 <div class="BodyFragment"><font size="2"><span style="font-size:10pt;">
-<div class="PlainText">Don't forget to send me one :-)<br>
+<div class="PlainText">Hi,<br>
+<br>
+It's a good start, but 'crashes out' is too vague. What actually<br>
+happens? Include a copy of whatever error message occurs. If there is<br>
+no error message, describe more precisely what the problem is.<br>
+<br>
+I ran the RW script and it produced no error message for me, either as<br>
+written, or with 110k trials. So, I'm gonna need a bunch more<br>
+information about the environment you were running in (Linux? Which<br>
+distro and version? Which R version? Which catlearn version? How much<br>
+memory does you machine have? And so forth...). Also, please double<br>
+check that you get the error reliably.<br>
+<br>
+The BM script did throw an error, but I'd like to know what error you<br>
+got, so I can be sure I'm seeing the same thing as you.<br>
+<br>
+Best<br>
+<br>
+Andy<br>
+<br>
+<br>
+On Sun, Nov 19, 2017 at 12:53:51PM &#43;0000, Stuart Spicer wrote:<br>
+&gt; Hi Andy,<br>
+&gt; <br>
+&gt; <br>
+&gt; I've attached a pair of scripts that reliably crash each model respectively<br>
+&gt; (using the smallest amount of code possible in a one stim design).<br>
+&gt; <br>
+&gt; <br>
+&gt; FYI slpBM works fine at 27K trials, but reliably crashes out at 28K. slpRW<br>
+&gt; works fine at 10K trials, but crashes out at a more meagre 11K trials.<br>
+&gt; <br>
+&gt; <br>
+&gt; I think that is everything you need from me at this stage?<br>
+&gt; <br>
+&gt; <br>
+&gt; Cheers,<br>
+&gt; <br>
+&gt; <br>
+&gt; Stuart<br>
+&gt; <br>
+&gt; ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br>
+&gt; From: Andy Wills (Professor in Psychology)<br>
+&gt; Sent: 17 November 2017 09:12:45<br>
+&gt; To: Stuart Spicer<br>
+&gt; Subject: bug report<br>
+&gt;&nbsp; <br>
+&gt; Don't forget to send me one :-)<br>
+<br>
+<br>
+<br>
 </div>
 </span></font></div>
 </body>
