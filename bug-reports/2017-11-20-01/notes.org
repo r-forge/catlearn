@@ -1,0 +1,55 @@
+Status: CLOSED, bug fixed.
+* Step 1
+Well, the code uses a lot of 'int' variables, which have limited
+range. Probably best to start by changing those to 'long'.
+* Step 2
+Nope, still has the error. Let's try removing all the internals other
+than variable defs and returns, to see if it's an RCpp issue.
+* Step 3
+Runs fine as the step 2 shell, so let's add bits back in a bit at a
+time.
+* Step 4
+So, it crashes even if it's just doing the reset weights bit.
+Looking at the rest weights bit:
+
+if (i['ctrl'] == 1)
+
+i is a single number, not a vector. I'm amazed this even works. If
+fact, does it? ...Changes sstimRW.R to check... no, it doesn't. Your
+reset to zero function is broken. That almost certainly means your
+freeze weights code is broken, too,
+
+Oh, and it looks like the way you've written the code means that the R
+variavble st$w is updated as learning proceeds, which you really don't
+want. 
+* Step 4a
+The last of these issues comes down to Rcpp just not being very good
+at taking lists as input. If you take something from a list and then
+use it to set another variable, it gets confused. For example,
+something like: 
+
+wm = initw
+
+, which you would think would be the equivalent of
+
+ wm <- initw 
+
+actually does
+
+wm -> initw
+
+If you want to do wm <- initw where initw has come from a List passed
+by Rcpp to a C++ function, you have to use:
+
+wm = clone(initw);
+
+* Step 5
+
+Looking at the code more closely, there's quite a lot of unnecessary
+copying the context of the tr matrix into vectors. Finding a bug in
+this sort of thing is hard, so I simplified it.
+
+* Step 6
+Now, the reported bug no longer occurs. And a bunch of other things
+have been fixed too. slpRW and slpBM still pass their unit tests.
+

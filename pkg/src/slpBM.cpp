@@ -1,52 +1,68 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// [[Rcpp::export]]
-List slpBM (List st, NumericMatrix tr,
-            bool xtdo = false) {
-int i, j, k, nrow = tr.nrow(), ncol = tr.ncol();
-NumericVector w = as<NumericVector>(st["w"]); // Set initial weights.
-int initw = w.size();
-NumericVector wm; wm = (clone(w));
-double lr = as<double>(st["lr"]);       // Learning rate (alpha*beta).
-int colskip = as<int>(st["colskip"]);   // Number of optional columns to skip.
-NumericVector lambda = tr( _, ncol-1);  // Subset asymptote of learning.
-NumericVector inputs(initw), activ(initw), delta(initw); // Initialise vectors for
-                                                         // main loop.
-NumericVector arow, sumET(nrow);        // Initialise vector for subsetting current
-                                        // trial and for summed error terms.
-NumericMatrix xOUT(nrow, initw);        // Create matrix for extended output.
+List slpBM (List st, NumericMatrix tr, bool xtdo = false) {
+  // Some basic variables
+  long i, j, k;
+  long nrow = tr.nrow(), ncol = tr.ncol();
 
-for (i = 0; i < tr.nrow(); ++i) {
-  arow = tr(i, _);                      // Extract current trial.
-  if (i["ctrl"] == 1)                   // Reset weights if new participant.
-  {
-    wm = st["w"];
-  }
-      for (k = 0; k < initw; ++k) {
-      inputs[k] = arow[colskip+k];      // Subset stimuli activations at current trial.
-      activ[k] = inputs[k] * wm[k];     // Generate current stimuli weights.
-      delta[k] = lr * (lambda[i] - activ[k]); // Calc change in associative strength.
+  // Extract stuff from the 'st' list.
+
+  // Learning rate
+  double lr = as<double>(st["lr"]);
+  // colskip
+  long colskip = as<long>(st["colskip"]);
+  // Initial weights
+  NumericVector initw = as<NumericVector>(st["w"]); 
+  
+  // Initialise variables for simulation
+  long nw = initw.size();
+  NumericVector wm(nw); 
+  NumericVector inputs(nw);
+  NumericVector activ(nw);
+  NumericVector delta(nw);  
+  NumericVector sumET(nrow);
+  NumericMatrix xOUT(nrow, nw);
+
+  // Set weights to initial weights
+  wm = clone(initw); 
+
+  // Run simulation
+  for (i = 0; i < nrow; ++i) {
+    
+    if ( tr(i, 0)  == 1)                   // Reset weights if new participant.
+    {
+      wm = clone(initw);
+    }
+
+    for (k = 0; k < nw; ++k) {
+      inputs[k] = tr(i, colskip+k);        // Subset stimuli activations at current trial.
+      activ[k] = inputs[k] * wm[k];       // Generate current stimuli weights.
+    }
+    
+    sumET[i] = sum(activ);                // Record output 
+    
+    for (k = 0; k < nw; ++k) {
+      delta[k] = lr * (tr(i, ncol-1) - activ[k]); // Calc change in associative strength.
+    }
+    
+    if ( tr(i,0) != 2 ) {                // Unless weights are frozen...
+      for (k = 0; k < nw; ++k) {
+        wm[k] += delta[k] * inputs[k];    // ...update weights.
       }
-      sumET[i] = sum(activ);            // Record output (as summed term although BM
-                                        // calculates delta from seperable term).
-  if (i["ctrl"] != 2 ) {                // Unless weights are frozen...
-    for (k = 0; k < initw; ++k) {
-    wm[k] += delta[k] * inputs[k];      // ...update weights.
+    }
+    if (xtdo) {
+      xOUT(i, _) = wm;                    // If xtdo = true, record updated weights to
+                                          // relevant row (i.e. trial).
     }
   }
-  if (xtdo) {
-      xOUT(i, _) = wm;                   // If xtdo = true, record updated weights to
-                                         // relevant row (i.e. trial).
-  }
-}
 
-if (xtdo) {
-  return Rcpp::List::create(Rcpp::Named("suma") = sumET,
-                            Rcpp::Named("xout") = xOUT,
-                            Rcpp::Named("st") = wm);
-} else {
-  return Rcpp::List::create(Rcpp::Named("suma") = sumET,
-                            Rcpp::Named("st") = wm);
-}
+  if (xtdo) {
+    return Rcpp::List::create(Rcpp::Named("suma") = sumET,
+                              Rcpp::Named("xout") = xOUT,
+                              Rcpp::Named("w") = wm);
+  } else {
+    return Rcpp::List::create(Rcpp::Named("suma") = sumET,
+                              Rcpp::Named("w") = wm);
+  }
 }
