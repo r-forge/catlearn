@@ -1,8 +1,8 @@
 Package: catlearn
 Type: Package
 Title: Formal Psychological Models of Categorization and Learning
-Version: 0.4.13
-Date: 2017-11-20
+Version: 0.4.14
+Date: 2017-11-28
 Author: Catlearn Core Team
 Maintainer: Andy Wills <andy@willslab.co.uk>
 Description: Formal psychological models of categorization and learning, independently-replicated data sets against which to test them, and simulation archives.
