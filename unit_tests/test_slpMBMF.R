@@ -1,6 +1,6 @@
 ## Unit test for slpMBMF
 test.slpMBMF <- function() {
-    load('test_slpMBMF.RData')
+    load('data/test_slpMBMF.RData')
 
     st <- list(
         alpha = .3,

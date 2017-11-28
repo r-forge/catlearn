@@ -1,5 +1,5 @@
 test.slpCOVIS <- function() {
-    load("test_slpcovis.RData")
+    load("data/test_slpcovis.RData")
     set.seed(7)
     out <- slpCOVIS(st,tr,crx = TRUE,respt = FALSE,rgive = TRUE,
                     xtdo = FALSE)
