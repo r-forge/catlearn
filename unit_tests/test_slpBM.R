@@ -1,19 +1,32 @@
 # Unit test for slpBM
-# Redundancy effect trained to near asymptote
+## Redundancy effect trained on two participants, with 8 weights
+## frozen test trials
 test.slpBM <- function() {
-    st <- list(lr = 0.01, w = rep(0, 5), colskip = 1) # Initial state
-
-    train <- matrix(c(1, 0, 0, 0, 0, 1,           # Train array
-                      1, 0, 0, 1, 0, 1,           
-                      0, 1, 0, 0, 1, 1,
-                      0, 0, 1, 0, 1, 0), 
-                    nrow = 4, ncol = 6, byrow = TRUE,
-                    dimnames = list(c(),
-                        c("A", "B", "C", "X", "Y", "t")))
-    train <- do.call(rbind, replicate(1000,train,simplify = FALSE)) 
-    ctrl <- 0
-    train <- cbind(ctrl,train)
-    out <- slpBM(st,train)
-    corr <- c(1.0000000, 0.9996873, 0.0000000, 0.9998201, 0.4809313)
-    sum((out$st-corr)^2) < 1e-14  # Return TRUE or FALSE
+    load('data/test_slpBM.RData')
+    st.copy <- st
+    tr.copy <- tr
+    out <- slpBM(st,tr)
+    ## Compare output with known stored output
+    out.match <- !sum((out$suma - cor.out)^2)
+    ## Check the code hasn't changed the arguments
+    ## (This is sometimes an issue with Rcpp)
+    lr.match <- st.copy$lr == st$lr
+    w.match <- !sum(!(st.copy$w == st$w))
+    colskip.match <- st.copy$colskip == st$colskip
+    tr.match <- !sum((tr.copy - tr)^2)
+    passes <- sum(out.match + lr.match + w.match + colskip.match +
+                  tr.match)
+    if(passes == 5) {
+        ret <- TRUE
+    } else {
+        ret <- FALSE
+    }
+    ret
 }
+
+## Generating code
+## (st and tr were taken from slpRW)
+## rm(list=ls())
+## library(catlearn)
+## cor.out <- out$suma
+## save(cor.out,st,tr,file='data/test_slpBM.RData')
