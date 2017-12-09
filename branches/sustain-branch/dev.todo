@@ -1,0 +1,31 @@
+##########
+TODO
+##########
+
+[ ] looking at writing functions for cluster activations
+
+- output refinement
+[ ] include probability of making the right response for nominal values
+[ ] include output activation for queried dimensions ot all of it in unsup
+[x] everything that changes
+[ ] 
+
+- supervised bug
+[x] wrong cluster activations
+[x] updating clusters?
+[ ] type3 problem is not doing that well
+    instead of the first two dimension, lambda leans toward
+    the second and third dimension, so it recruits seven clusters
+    instead of six, but it might be right
+
+- frozen learning
+[x] 'ctrl' coloumn 0, 1, 2
+    > 0 = training trial
+    > 1 = reset state
+    > 2 = freeze learning
+[ ] xout[i] = 99 if ctrl = 2
+
+- documentation
+[?] whatnot
+[ ] ctrl coloumn update
+[ ] values update
