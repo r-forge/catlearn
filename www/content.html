@@ -1,8 +1,8 @@
 <p><IMG SRC="catlearn-logo.png" ALT="catlearn logo">
 
 <p>Catlearn is a <b>framework and archive</b> for <b>distributed
-    collaboration</b> in formal modeling in psychology</b>.  It
-    provides an archival record of:
+    collaboration</b> in formal modeling of categorization and
+    learning in psychology</b>.  It provides an archival record of:
 
 <ol>
 <li>Canonical Independently Replicated Phenomena (i.e. key datasets),
@@ -24,14 +24,6 @@ It supplements, rather than supplants, journal article publication.
       tutorial</a>.
 </ul>
 
-<h1>Come to our next event!</h1>
-
-<p><b>A Practical Introduction to Distributed Collaboration for Formal
-  Modeling</b> (half-day workshop)
-<br>22nd July 2017.
-<br>50th Annual Meeting of the Society for Mathematical Psychology,
-University of Warwick, UK.
-
   <h1>Mailing list</h1>
   Join the 
   <a href="https://lists.r-forge.r-project.org/mailman/listinfo/catlearn-package">
@@ -44,14 +36,54 @@ University of Warwick, UK.
 please consider contributing content (models, datasets, simulations)
 to this project.
 
-<p>The latest stable version of catlearn (v. 0.4) contains the
-following:
+<p>The latest stable version of catlearn (v. 0.5) contains the
+following (<b>bold</b> indicates new to version
+  0.5, <i>italics</i> indicates major update):
 
-<ul>
-<li>6 archived simulations
-<li>4 model implementations (ALCOVE, COVIS, DIVA, Rescorla-Wagner)
-<li>3 input representations
-<li>3 CIRP (i.e. datasets)
+  <ul>
+    
+    <li><u>Models</u>:</li>
+    <ol>
+      <li>ALCOVE</li>
+      <li><b>Bush-Mosteller</b></li>
+      <li>COVIS</li>
+      <li><b>GCM</b></li>
+      <li>DIVA</li>
+      <li><b>MBMF</b> (model-based, model-free
+	hybrid)</li>
+      <li><i>Rescorla-Wagner</i></li>
+    </ol>
+    
+
+    <li><u>Archived simulations</u>: Reproducible simulations
+    of ALCOVE and proto-ALCOVE against the datasets (CIRP) in this
+    archive.</li>
+
+    <li><b>Archived optimizations</b>: Reproducible records of the
+    optimization procedure by which the parameters of the archived
+    simulations were derived.</li>
+
+    <li><u>Input representations</u>: Reusable functions to
+    generate model input representations for the datasets (CIRP) in
+    this archive.</li>
+
+    <li><u>CIRP</u> (i.e. datasets for independently replicated
+	phenomena)</li>
+    <ol>
+      <li>nosof88 (stimulus frequency)</li>
+      <li>nosof94 (Type I-VI problems)</li>
+      <li>shin92 (category size)</li>
+    </ol>
+  
+
+    <li><u>OAT</u> (i.e. automated tests of model output against
+      CIRP)</li>
+
+    <li><u>Support functions</u>:</li>
+    <ol>
+      <li><b>act2probat</b> (convert output model activation to a
+	predicted rating).</li>
+    </ol>
 </ul>
 
 <h1>Installation</h1>
@@ -65,7 +97,7 @@ following:
 
   <li>Install catlearn:
   <ul> 
-     <li><b>Stable version (v. 0.4) </b> (choose this if unsure): From
+     <li><b>Stable version (v. 0.5) </b> (choose this if unsure): From
      within R, type: <p>install.packages('catlearn')
      <li><i>Unstable version</i> (latest features): From within R,
      type: <p>install.packages('catlearn',
@@ -114,6 +146,12 @@ at <a href = "https://www.plymouth.ac.uk/">Plymouth University</a>
 
 
 <h2>Previous talks and workshops</h2>
+
+<p><b>A Practical Introduction to Distributed Collaboration for Formal
+    Modeling</b>
+  <br><i>Andy Wills and Charlotte Edmunds</i>, 22nd July 2017.
+  <br>50th Annual Meeting of the Society for Mathematical Psychology,
+  University of Warwick, UK.
 
 <p><b>Progress in learning theory through distributed
     collaboration</b> 
