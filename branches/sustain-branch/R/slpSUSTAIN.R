@@ -17,7 +17,7 @@
   return(mu)
 }
 
-cluster.activation <- function(lambda, r, beta, mu.neg, mu.pos){
+cluster.activation <- function(lambda, e, r, beta, mu.neg, mu.pos){
 
 }
 
@@ -33,7 +33,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
  #' fac.na Places of nominal values in cluster's position in a vector
  #' Used to exclude category label for supervised learning when needed
  #' Does not affect unsupervised learning
- #' factor quired Places of quired dimensions
+ #' factor queried Places of quired dimensions
   fac.dims <- rep(seq_along(st$dims), st$dims)
   fac.na <- seq(sum(st$dims))
   fac.queried <- seq(sum(st$dims) + 1,
@@ -52,7 +52,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   for (i in 1:nrow(tr)) {
  # Setting up current trial
  #' trial Import current trial
- #' if Update parameters in case of a new participant or any other reasons
+ #' if Update parameters in case of a new participant or any case ctrl==1
  #' input Set up stimulus representation
  # browser()
     trial <- tr[i, ]
@@ -104,7 +104,6 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
        ifelse(length(unique(C.out[fac.queried])) == 1,
               t.queried <- which(target[fac.queried] == 1),
               t.queried <- which.max(C.out[fac.queried]))
-      #browser()
     }
  # Equation 10
     if (target[fac.queried][t.queried] < 1 || H.act[which.max(H.act)] < st$tau) {
@@ -121,28 +120,9 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
       H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act
       H.out[which(H.act < max(H.act))] <- 0
       }
-#      }
-#       else {
- # Equation 11
-#      if (H.act[which.max(H.act)] < st$tau) {
-#        cluster <- rbind(cluster,
-#                         as.vector(trial[st$colskip:(length(trial)-1)]))
-#        w <-  rbind(w, rep(0, length(st$w)))
-#        mu <- rbind(mu, vector(mode = "numeric",
-#                               length = length(st$dims)))
-#        mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
-#        mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-#        H.nom <- sweep(e ^ (mu.product.neg), MARGIN = 2,
-#                       lambda ^ st$r, `*`)
-#        H.act <- apply(H.nom, MARGIN = 1, sum) / sum(lambda ^ st$r)
-#        H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act
-#        H.out[which(H.act < max(H.act))] <- 0
-#      }
-#    }
 
- # Store Output Information
+ # Store number of the winning cluster
    win <- which.max(H.act)
-   cout.o <- rbind(cout.o, C.out[fac.queried])
 
  # Update
  #' Only update the winning cluster

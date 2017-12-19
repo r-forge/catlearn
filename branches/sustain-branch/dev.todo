@@ -6,7 +6,7 @@ TODO
 
 - output refinement
 [ ] include probability of making the right response for nominal values
-[ ] include output activation for queried dimensions ot all of it in unsup
+[x] include output activation for queried dimensions ot all of it in unsup
 [x] everything that changes
 [ ] 
 
@@ -27,5 +27,7 @@ TODO
 
 - documentation
 [?] whatnot
-[ ] ctrl coloumn update
+[x] ctrl coloumn update
 [ ] values update
+[ ] hyphens are processed as question marks in ASCII
+[ ] weights description
