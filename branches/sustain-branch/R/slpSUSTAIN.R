@@ -17,7 +17,7 @@
   return(mu)
 }
 
-cluster.activation <- function(lambda, e, r, beta, mu.neg, mu.pos){
+.cluster.activation <- function(lambda, e, r, beta, mu.neg, mu.pos){
 
 }
 
@@ -29,11 +29,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   w <-st$w
 
  # Setting up factors for later
- #' fac.dims To deal with padded input representation
- #' fac.na Places of nominal values in cluster's position in a vector
- #' Used to exclude category label for supervised learning when needed
- #' Does not affect unsupervised learning
- #' factor queried Places of quired dimensions
+ # fac.dims To deal with padded input representation
+ # fac.na Places of nominal values in cluster's position in a vector
+ # Used to exclude category label for supervised learning when needed
+ # Does not affect unsupervised learning
+ # factor queried Places of quired dimensions
   fac.dims <- rep(seq_along(st$dims), st$dims)
   fac.na <- seq(sum(st$dims))
   fac.queried <- seq(sum(st$dims) + 1,
@@ -51,9 +51,9 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
   for (i in 1:nrow(tr)) {
  # Setting up current trial
- #' trial Import current trial
- #' if Update parameters in case of a new participant or any case ctrl==1
- #' input Set up stimulus representation
+ # trial Import current trial
+ # if Update parameters in case of a new participant or any case ctrl==1
+ # input Set up stimulus representation
  # browser()
     trial <- tr[i, ]
     if (trial['ctrl'] == 1) {
@@ -69,10 +69,10 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     mu <- .calc.distances(input, cluster, fac.dims, fac.na)
 
  # The activations of clusters
- #' H.nom Set up the nominator without the sums
- #' H.act Calculate the activation for each cluster
- #' H.out Output activations after cluster competition
- #' C.out Activations of output units of the quired dimension
+ # H.nom Set up the nominator without the sums
+ # H.act Calculate the activation for each cluster
+ # H.out Output activations after cluster competition
+ # C.out Activations of output units of the quired dimension
     mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
     mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
     H.nom <- sweep(e ^ (mu.product.neg), MARGIN = 2, lambda ^ st$r, `*`)
@@ -89,17 +89,17 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     target[target == 0] <- pmin(C.out[which(target == 0)], 0)
 
  # Cluster recruitment
- #' supervised: trial == 1, unsupervised: trial == 0 (else in function)
- #' If queried target is smaller than one with max(C.out) for supervised or
- #' cluster's activation is below threshold for unsupervised
+ # supervised: trial == 1, unsupervised: trial == 0 (else in function)
+ # If queried target is smaller than one with max(C.out) for supervised or
+ # cluster s activation is below threshold for unsupervised
 
  # Recruiting process
- #' For both conditions (supervised or unsupervised learning)
- #' Recruit new cluster centered on the misclassified input pattern
- #' Add new cluster's weights and set them to zero
- #' Add new stim's distance (which is zero on all dimensions)
- #' Recompute activations of the clusters (including the recruited cluster)
- #' with clusters competition
+ # For both conditions (supervised or unsupervised learning)
+ # Recruit new cluster is centered on the misclassified input pattern
+ # Add new clusters weights and set them to zero
+ # Add new stim s distance (which is zero on all dimensions)
+ # Recompute activations of the clusters (including the recruited cluster)
+ # with clusters competition
     if (trial["t"] == 1) {
        ifelse(length(unique(C.out[fac.queried])) == 1,
               t.queried <- which(target[fac.queried] == 1),
@@ -125,11 +125,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
    win <- which.max(H.act)
 
  # Update
- #' Only update the winning cluster
- #' Lambdas are updated by the winning cluster
- #' Adjust the winning cluster's weights
- #' xout The ID of the winning cluster is also stored (extended output).
- #' xout is not conditional, because it is used to calculate the frequencies
+ # Only update the winning cluster
+ # Lambdas are updated by the winning cluster
+ # Adjust the winning cluster's weights
+ # xout The ID of the winning cluster is also stored (extended output).
+ # xout is not conditional, because it is used to calculate the frequencies
  # Equation 12
  if (trial['ctrl'] != 2) {
    cluster[win, ][fac.na] <-
@@ -140,12 +140,12 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
      (1 - mu.product.pos[win, ]))
  # Equation 14 - one-layer delta learning rule (Widrow & Hoff, 1960)
     w[win, ] <- w[win, ] + (st$eta * (target - C.out) * H.out[win])
-    xout[i] <- win
-    que[i] <- which(target[fac.queried]==1)
+    xout[i] <- win # todo: in case ctr = 2, it is gonna skip those and put NAs in, you dont want that
+    prob.o <- rbind(prob.o, prob.r)
     }
+    prob.xout <- cbind(prob.o, xout)
   }
   # browser()
-  prob.xout <- cbind(prob.o, que, xout)
   mode <- rbind(c(1:nrow(cluster)),
                 matrix(table(xout), nrow = 1))
   mean <- mean(mode[1, ])
