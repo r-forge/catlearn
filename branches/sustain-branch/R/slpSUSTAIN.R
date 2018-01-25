@@ -46,6 +46,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   # Arrays for xout, and to store Euler's number (for readability)
   e <- exp(1)
   xout <- NULL
+  activations <- NULL
   prob.o <- NULL
   cout.o <- NULL
 
@@ -81,7 +82,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
     H.out[which(H.act < max(H.act))] <- 0
     C.out <- w[which.max(H.act), ] * H.out[which.max(H.act)]  # Equation 7
-    prob.r <-  .prob.response(C.out[fac.queried], st$d)  ## Equation 8
+    if (trial["t"] == 1){
+      prob.r <-  .prob.response(C.out[fac.queried], st$d)  ## Equation 8
+    } else {
+      prob.r <-  .prob.response(C.out, st$d) # Equation 8
+    }
 
  # Equation 9 - Kruschke's (1992) humble teacher
     target <- as.vector(trial[st$colskip:(length(trial)-1)])
@@ -104,9 +109,9 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
        ifelse(length(unique(C.out[fac.queried])) == 1,
               t.queried <- which(target[fac.queried] == 1),
               t.queried <- which.max(C.out[fac.queried]))
-    }
+
  # Equation 10
-    if (target[fac.queried][t.queried] < 1 || H.act[which.max(H.act)] < st$tau) {
+    if (target[fac.queried][t.queried] < 1) {
       cluster <- rbind(cluster,
                        as.vector(trial[st$colskip:(length(trial)-1)]))
       w <-  rbind(w, rep(0, length(st$w)))
@@ -119,7 +124,24 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
       H.act <- apply(H.nom, MARGIN = 1, sum) / sum(lambda ^ st$r)
       H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act
       H.out[which(H.act < max(H.act))] <- 0
-      }
+    }
+    } else {
+      if (H.act[which.max(H.act)] < st$tau) {
+        cluster <- rbind(cluster,
+                         as.vector(trial[st$colskip:(length(trial)-1)]))
+        w <-  rbind(w, rep(0, length(st$w)))
+        mu <- rbind(mu, vector(mode = "numeric",
+                               length = length(st$dims)))
+        mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
+        mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
+        H.nom <- sweep(e ^ (mu.product.neg), MARGIN = 2,
+                       lambda ^ st$r, `*`)
+        H.act <- apply(H.nom, MARGIN = 1, sum) / sum(lambda ^ st$r)
+        H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act
+        H.out[which(H.act < max(H.act))] <- 0
+    }
+    }
+
 
  # Store number of the winning cluster
    win <- which.max(H.act)
@@ -140,24 +162,30 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
      (1 - mu.product.pos[win, ]))
  # Equation 14 - one-layer delta learning rule (Widrow & Hoff, 1960)
     w[win, ] <- w[win, ] + (st$eta * (target - C.out) * H.out[win])
-    xout[i] <- win # todo: in case ctr = 2, it is gonna skip those and put NAs in, you dont want that
+    xout[i] <- win
+    activations[i] <- H.out[win]
     prob.o <- rbind(prob.o, prob.r)
     }
-    prob.xout <- cbind(prob.o, xout)
   }
+  rownames(prob.o) <- 1:nrow(prob.o)
   # browser()
   mode <- rbind(c(1:nrow(cluster)),
                 matrix(table(xout), nrow = 1))
   mean <- mean(mode[1, ])
-
+  
   if (xtdo) {
-    ret <- list("prob" = prob.xout, "xout" = xout,
+    extdo <- cbind(prob.o, xout, activations)
+    rownames(extdo) <- 1:nrow(extdo)
+  }
+  
+  if (xtdo) {
+    ret <- list("xtdo" = extdo, "mean" = mean,
                 "mode " = mode, "lambda" = lambda,
                 "cluster" = cluster, "weights" = w)
   } else {
-    ret <- list("lambda" = lambda, "weight" = w,
-                "cluster" = cluster,
-                "mode " = mode, "mean" = mean)
+    ret <- list("probs" = prob.o, "lambda" = lambda,
+                "weights" = w, "cluster" = cluster,
+                "mode " = mode)
   }
   return(ret)
 }

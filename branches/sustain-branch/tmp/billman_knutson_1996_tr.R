@@ -24,7 +24,7 @@ non2 <- matrix(c(1, 2, 3, 1, 2, 3, rep(0, 15)),
 non2 <- matrix(rep(t(non2), 4*27), ncol = 7, byrow = TRUE)
 non2[, 3:7] <- matrix(sample(rep(1:3, 5)), ncol = 5)
 non2 <- non2[sample(nrow(non2)), ]
-tr.billknuts.exp2a <- .conversion(non2)
+bk2a <- .conversion(non2)
 
  # Intercorrelated
 int2 <- matrix(c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, rep(0, 9)),
@@ -32,7 +32,7 @@ int2 <- matrix(c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, rep(0, 9)),
 int2 <- matrix(rep(t(int2), 4*27), ncol = 7, byrow = TRUE)
 int2[, 5:7] <- matrix(sample(rep(1:3, 3)), ncol = 3)
 int2 <- int2[sample(nrow(int2)), ]
-tr.billknuts.exp2b <- .conversion(int2)
+bk2b <- .conversion(int2)
 
  # Experiment 3
 
@@ -69,7 +69,7 @@ non3 <- matrix(rep(c(a3, b3, c3), 12), ncol = 7, byrow = TRUE)
 non3[, 7] <- sample(rep(1:3, nrow(non3)/3))
 non3 <- non3[sample(nrow(non3)), ]
 
-tr.billknuts.exp3a <- .conversion(non3)
+bk3a <- .conversion(non3)
 
  # Intercorrelated
 
@@ -80,6 +80,6 @@ i3 <- c(1, 1, 1, 0, 0, 0, 0,
 i3 <- matrix(rep(i3, 4*27), ncol = 7, byrow = TRUE)
 i3[, 4:7] <- matrix(sample(rep(1:3, 4)), ncol = 4)
 i3 <- i3[sample(nrow(i3)), ]
-tr.billknuts.exp3b <- .conversion(i3)
+bk3b <- .conversion(i3)
 
 rm(int2, non2, non3, a3, b3, c3, i3)

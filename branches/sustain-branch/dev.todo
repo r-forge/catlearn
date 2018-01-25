@@ -5,10 +5,9 @@ TODO
 [ ] looking at writing functions for cluster activations
 
 - output refinement
-[ ] include probability of making the right response for nominal values
+[x] include probability of making the right response for nominal values
 [x] include output activation for queried dimensions ot all of it in unsup
 [x] everything that changes
-[ ] 
 
 - supervised bug
 [x] wrong cluster activations
@@ -17,6 +16,9 @@ TODO
     instead of the first two dimension, lambda leans toward
     the second and third dimension, so it recruits seven clusters
     instead of six, but it might be right
+
+- unsupervised adjustments:
+[x] probabilities
 
 - frozen learning
 [x] 'ctrl' coloumn 0, 1, 2
@@ -28,6 +30,6 @@ TODO
 - documentation
 [?] whatnot
 [x] ctrl coloumn update
-[ ] values update
-[ ] hyphens are processed as question marks in ASCII
-[ ] weights description
+[x] values update
+[x] hyphens are processed as question marks in ASCII
+[x] weights description
