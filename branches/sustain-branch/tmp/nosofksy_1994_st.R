@@ -11,4 +11,4 @@ st <- list(r = 9.01245,
            lambda = 1.0,
            dims = c(2, 2, 2),
            w = matrix(rep(0, 8), nrow = 1),
-           colskip = 2)
+           colskip = 3)

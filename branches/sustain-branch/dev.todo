@@ -2,7 +2,7 @@
 TODO
 ##########
 
-[ ] looking at writing functions for cluster activations
+[x] looking at writing functions for cluster activations
 
 - output refinement
 [x] include probability of making the right response for nominal values

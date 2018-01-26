@@ -26,7 +26,7 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
 Returns a list with the following items if xtdo = FALSE,
 and \code{xtdo} instead of \code{probs} if xtdo = TRUE:
 
-\item{lambda }{The amount of attentions paid for each dimensions..}
+\item{lambda }{The amount of attentions paid for each dimensions.}
 
 \item{weights }{Connection weights.}
 
@@ -36,7 +36,7 @@ and \code{xtdo} instead of \code{probs} if xtdo = TRUE:
 
 \item{probs }{Matrix of response probabilities from the outputs from Equation 8, where row number equals trial number and coloumn equals to the nominal space of the quired dimension. In case of an unsupervised learning, it is still included, but it is calculated for all the dimensions (as there is no quired dimension).}
 
-\item{xtdo }{A matrix that includes the outputs of Equation 8 from \code{probs}, and additionally includes the number of the winning clusters and its output activation after cluster competition in Equation 6.}
+\item{xtdo }{A matrix that includes the outputs of Equation 8 from \code{probs}, and additionally includes the number of the winning clusters and its output activation after cluster competition in Equation 6. The last coloumn contains the recognition scores for the current stimulus from A6 in Appendix of Love and Gureckis (2007), this measure represents model's overall familiarity with the stimuli.}
 
 }
 
@@ -78,6 +78,10 @@ Argument \code{tr} must be a matrix, where each row is one trial presented to th
 
 \references{
 %% ~put references to the literature/web site here ~
+  Love, Bradley C., and Todd M. Gureckis. “Models in Search of a Brain.” 
+  Cognitive, \emph{Affective, & Behavioral Neuroscience} 7(2), 
+  90–108.
+
   Love, B. C., Medin, D. L., & Gureckis, T. M. (2004). SUSTAIN: a 
   network model of category learning. \emph{Psychological Review}, 111(2),
   309-332.
@@ -85,7 +89,6 @@ Argument \code{tr} must be a matrix, where each row is one trial presented to th
   McDonnell, J. V., & Gureckis, T. M. (2011). Adaptive clustering models of 
   categorization. In A. J. Wills & E. M. Pothos (Eds.), \emph{Formal Approaches in 
   Categorization}, pp. 220-252.
-
 
   Wills, A.J., O'Connell, G., Edmunds, C.E.R., & Inkster,
   A.B.(2017). Progress in modeling through distributed collaboration:

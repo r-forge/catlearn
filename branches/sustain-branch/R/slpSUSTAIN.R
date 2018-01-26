@@ -17,7 +17,21 @@
   return(mu)
 }
 
+ # nom - Set up the nominator without the sums
+ # act - Calculate the activation for each cluster
+ # out - Output activations after cluster competition
+ # rec - Recognition score from A6 equation in Appendix in Love and Gureckis (2007)
 .cluster.activation <- function(lambda, e, r, beta, mu.neg, mu.pos){
+  nom <- sweep(e ^ (mu.neg), MARGIN = 2,
+                 lambda ^ r, `*`)
+  act <- apply(nom, MARGIN = 1, sum) / sum(lambda ^ r) # Equation 5
+  out <- (act ^ beta / sum(act^st$beta)) * act # Equation 6
+  rec <- sum(out) # Equation A6
+  out[which(act < max(act))] <- 0 # For all other non-winning cluster = 0
+  ret <- list("act" = act,
+              "out" = out,
+              "rec" = rec)
+  return(ret)
 
 }
 
@@ -48,14 +62,14 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   xout <- NULL
   activations <- NULL
   prob.o <- NULL
-  cout.o <- NULL
+  #cout.o <- NULL
+  rec <- NULL
 
   for (i in 1:nrow(tr)) {
  # Setting up current trial
  # trial Import current trial
  # if Update parameters in case of a new participant or any case ctrl==1
  # input Set up stimulus representation
- # browser()
     trial <- tr[i, ]
     if (trial['ctrl'] == 1) {
     cluster <- matrix(as.vector(trial[st$colskip:(length(trial)-1)]),
@@ -66,26 +80,20 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
            lambda <- rep(st$lambda, length(st$dims)))
     }
     input <- as.vector(trial[st$colskip:(st$colskip + sum(st$dims) - 1)])
- # Calculate distances of stimulus from each cluster's position
+ # Equation 4 - Calculate distances of stimulus from each cluster's position
     mu <- .calc.distances(input, cluster, fac.dims, fac.na)
 
- # The activations of clusters
- # H.nom Set up the nominator without the sums
- # H.act Calculate the activation for each cluster
- # H.out Output activations after cluster competition
+ # c.act - The activations of clusters and recognition scores
  # C.out Activations of output units of the quired dimension
     mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
     mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-    H.nom <- sweep(e ^ (mu.product.neg), MARGIN = 2, lambda ^ st$r, `*`)
-    H.act <- apply(H.nom, MARGIN = 1, sum) / sum(lambda ^ st$r)  # Equation 5
-    H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act  # Equation 6
-
-    H.out[which(H.act < max(H.act))] <- 0
-    C.out <- w[which.max(H.act), ] * H.out[which.max(H.act)]  # Equation 7
+    c.act <- .cluster.activation(lambda, e, st$r, st$beta,
+                                 mu.product.neg, mu.product.pos)
+    C.out <- w[which.max(c.act$act), ] * c.act$out[which.max(c.act$act)]  # Equation 7
     if (trial["t"] == 1){
-      prob.r <-  .prob.response(C.out[fac.queried], st$d)  ## Equation 8
+      prob.r <-  .prob.response(C.out[fac.queried], st$d)  ## Equation 8 for supervised
     } else {
-      prob.r <-  .prob.response(C.out, st$d) # Equation 8
+      prob.r <-  .prob.response(C.out, st$d) # Equation 8 for unsupervised
     }
 
  # Equation 9 - Kruschke's (1992) humble teacher
@@ -100,7 +108,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
  # Recruiting process
  # For both conditions (supervised or unsupervised learning)
- # Recruit new cluster is centered on the misclassified input pattern
+ # Recruited new clusters are centered on the misclassified input pattern
  # Add new clusters weights and set them to zero
  # Add new stim s distance (which is zero on all dimensions)
  # Recompute activations of the clusters (including the recruited cluster)
@@ -119,11 +127,8 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
                              length = length(st$dims)))
       mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
       mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-      H.nom <- sweep(e ^ (mu.product.neg), MARGIN = 2,
-                     lambda ^ st$r, `*`)
-      H.act <- apply(H.nom, MARGIN = 1, sum) / sum(lambda ^ st$r)
-      H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act
-      H.out[which(H.act < max(H.act))] <- 0
+      c.act <- .cluster.activation(lambda, e, st$r, st$beta, 
+                                   mu.product.neg, mu.product.pos)
     }
     } else {
       if (H.act[which.max(H.act)] < st$tau) {
@@ -134,17 +139,14 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
                                length = length(st$dims)))
         mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
         mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-        H.nom <- sweep(e ^ (mu.product.neg), MARGIN = 2,
-                       lambda ^ st$r, `*`)
-        H.act <- apply(H.nom, MARGIN = 1, sum) / sum(lambda ^ st$r)
-        H.out <- (H.act ^ st$beta / sum(H.act^st$beta)) * H.act
-        H.out[which(H.act < max(H.act))] <- 0
+        c.act <- .cluster.activation(lambda, e, st$r, st$beta, 
+                                     mu.product.neg, mu.product.pos)
     }
     }
 
 
  # Store number of the winning cluster
-   win <- which.max(H.act)
+   win <- which.max(c.act$act)
 
  # Update
  # Only update the winning cluster
@@ -161,20 +163,22 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
      lambda + (st$eta * e ^ (mu.product.neg[win, ]) *
      (1 - mu.product.pos[win, ]))
  # Equation 14 - one-layer delta learning rule (Widrow & Hoff, 1960)
-    w[win, ] <- w[win, ] + (st$eta * (target - C.out) * H.out[win])
+    w[win, ] <- w[win, ] + (st$eta * (target - C.out) * c.act$out[win])
+ # Record additional information about the trial
     xout[i] <- win
-    activations[i] <- H.out[win]
+    activations[i] <- c.act$out[win]
     prob.o <- rbind(prob.o, prob.r)
+    rec[i] <- c.act$rec
     }
   }
   rownames(prob.o) <- 1:nrow(prob.o)
-  # browser()
   mode <- rbind(c(1:nrow(cluster)),
                 matrix(table(xout), nrow = 1))
   mean <- mean(mode[1, ])
   
   if (xtdo) {
-    extdo <- cbind(prob.o, xout, activations)
+    extdo <- cbind("probabilities" = prob.o, "winning cluster" = xout, 
+                   activations, "recognition score" = rec)
     rownames(extdo) <- 1:nrow(extdo)
   }
   
