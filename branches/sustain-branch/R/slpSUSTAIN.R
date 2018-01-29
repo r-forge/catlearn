@@ -7,6 +7,7 @@
   return(prob)
 }
 
+ # calculating stimulus distances from clusters position
 .calc.distances <- function(input, cluster, fac.dims, fac.na) {
   mu <- matrix(0, nrow = nrow(cluster),
                ncol = length(unique(fac.dims)))
@@ -28,10 +29,10 @@
   out <- (act ^ beta / sum(act^st$beta)) * act # Equation 6
   rec <- sum(out) # Equation A6
   out[which(act < max(act))] <- 0 # For all other non-winning cluster = 0
-  ret <- list("act" = act,
+  clus <- list("act" = act,
               "out" = out,
               "rec" = rec)
-  return(ret)
+  return(clus)
 
 }
 
@@ -127,7 +128,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
                              length = length(st$dims)))
       mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
       mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-      c.act <- .cluster.activation(lambda, e, st$r, st$beta, 
+      c.act <- .cluster.activation(lambda, e, st$r, st$beta,
                                    mu.product.neg, mu.product.pos)
     }
     } else {
@@ -139,7 +140,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
                                length = length(st$dims)))
         mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
         mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-        c.act <- .cluster.activation(lambda, e, st$r, st$beta, 
+        c.act <- .cluster.activation(lambda, e, st$r, st$beta,
                                      mu.product.neg, mu.product.pos)
     }
     }
@@ -175,13 +176,13 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   mode <- rbind(c(1:nrow(cluster)),
                 matrix(table(xout), nrow = 1))
   mean <- mean(mode[1, ])
-  
+
   if (xtdo) {
-    extdo <- cbind("probabilities" = prob.o, "winning cluster" = xout, 
+    extdo <- cbind("probabilities" = prob.o, "winning cluster" = xout,
                    activations, "recognition score" = rec)
     rownames(extdo) <- 1:nrow(extdo)
   }
-  
+
   if (xtdo) {
     ret <- list("xtdo" = extdo, "mean" = mean,
                 "mode " = mode, "lambda" = lambda,
