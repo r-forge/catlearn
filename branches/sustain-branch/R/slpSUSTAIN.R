@@ -26,7 +26,7 @@
   nom <- sweep(e ^ (mu.neg), MARGIN = 2,
                  lambda ^ r, `*`)
   act <- apply(nom, MARGIN = 1, sum) / sum(lambda ^ r) # Equation 5
-  out <- (act ^ beta / sum(act^st$beta)) * act # Equation 6
+  out <- (act ^ beta / sum(act^beta)) * act # Equation 6
   rec <- sum(out) # Equation A6
   out[which(act < max(act))] <- 0 # For all other non-winning cluster = 0
   clus <- list("act" = act,
@@ -132,7 +132,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
                                    mu.product.neg, mu.product.pos)
     }
     } else {
-      if (H.act[which.max(H.act)] < st$tau) {
+      if (H.act[which.max(c.act$H.act)] < st$tau) {
         cluster <- rbind(cluster,
                          as.vector(trial[st$colskip:(length(trial)-1)]))
         w <-  rbind(w, rep(0, length(st$w)))
@@ -165,12 +165,12 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
      (1 - mu.product.pos[win, ]))
  # Equation 14 - one-layer delta learning rule (Widrow & Hoff, 1960)
     w[win, ] <- w[win, ] + (st$eta * (target - C.out) * c.act$out[win])
+     }
  # Record additional information about the trial
-    xout[i] <- win
-    activations[i] <- c.act$out[win]
-    prob.o <- rbind(prob.o, prob.r)
-    rec[i] <- c.act$rec
-    }
+        xout[i] <- win
+        activations[i] <- c.act$out[win]
+        prob.o <- rbind(prob.o, prob.r)
+        rec[i] <- c.act$rec
   }
   rownames(prob.o) <- 1:nrow(prob.o)
   mode <- rbind(c(1:nrow(cluster)),
