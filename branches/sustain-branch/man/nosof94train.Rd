@@ -3,16 +3,14 @@
 \title{
 
   Input representation of nosof94 for models input-compatible with
-  slpALCOVE.
+  slpALCOVE or slpSUSTAIN
   
 }
 \description{
   
   Create randomized training blocks for CIRP \code{nosof94}, in a format
-  suitable for the \code{slpALCOVE} model, and other models that use the
-  same input representation format. The stimulus co-ordinates are
-  assumed, and use the same binary representation as the abstract
-  category structure.
+  suitable for the \code{slpALCOVE} or \code{slpSUSTAIN} models, and
+  other models that use the same input representation format. 
 
 }
 \usage{
@@ -37,8 +35,8 @@ missing = 'geo')
   \item{seed}{Sets the random seet.}
 
   \item{missing}{If set to 'geo', output missing dimension flags (see
-  below)}
-
+  below). If set to 'pad', use the padded stimulus representation format
+  or slpSUSTAIN.}
   
 }  
   
@@ -62,9 +60,16 @@ trial) for all other trials.
 \code{stim} - stimulus number (arbitrary, but consistent across
               different values of \code{problem})
 
-\code{x1, x2, x3} - input representation
+\code{x1, x2, \dots} - input representation. Where \code{missing='geo'},
+x1, x2, and x3 are returned, each set at 1 or 0. This is the binary
+dimensional representation required by models such as slpALCOVE, where
+e.g. x2 is the value on the second dimension. Where
+\code{missing='pad'}, x1, x2, y1, y2, z1, z2, are returned. This is the
+padded represenation required by models such as slpSUSTAIN; e.g. y1 and
+y2 represent the two possible values on dimension 2, so if y1 is black,
+y2 is white, and the stimulus is white, then [y1, y2] = [0, 1].
 
-\code{t1, t2} - teaching signal (1 = category present, absval = category
+\code{t1, t2} - Category label (1 = category present, absval = category
 absent)
 
 \code{m1, m2, m3} - Missing dimension flags (always set to zero in this

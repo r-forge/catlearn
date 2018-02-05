@@ -90,13 +90,24 @@ nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
     makelist <- cbind(ctrl,makelist)
     biglist <- rbind(biglist,makelist)
 }
-  # Drop missing values if not geo representation
+  ## Drop missing values if not geo representation
   if(missing != 'geo') biglist <- biglist[,1:9]
-  # If the value for category absence is not -1
-  # change the list to reflect this
+  ## If the value for category absence is not -1
+  ## change the list to reflect this
   if(absval != -1) {
     biglist[biglist[,'t1'] == -1,'t1'] <- absval
     biglist[biglist[,'t2'] == -1,'t2'] <- absval
+  }
+  ## Change to padded coding? (e.g. SUSTAIN)
+  if(missing == 'pad') {
+      padlist <- cbind(biglist[,1:3],
+                       biglist[, 'x1'], 1 - biglist[, 'x1'],
+                       biglist[, 'x2'], 1 - biglist[, 'x2'],
+                       biglist[, 'x3'], 1 - biglist[, 'x3'],
+                       biglist[, 't1'], biglist[, 't2'])
+      colnames(padlist) <- c('ctrl', 'cond', 'blk', 'x1', 'x2', 'y1', 'y2',
+                             'z1', 'z2', 't1', 't2')
+      biglist <- padlist
   }
   return(biglist)
 }
