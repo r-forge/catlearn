@@ -16,7 +16,7 @@
 \usage{
 
 nosof94train(cond = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624,
-missing = 'geo')
+missing = 'geo', blk1 = 'accurate')
 
 }
 \arguments{
@@ -37,6 +37,10 @@ missing = 'geo')
   \item{missing}{If set to 'geo', output missing dimension flags (see
   below). If set to 'pad', use the padded stimulus representation format
   or slpSUSTAIN.}
+
+  \item{blk1}{If set to 'accurate', faithfully reproduce the
+  randomization of block 1 (see below). If set to 'standard', randomize
+  block 1 in the same way as all other blocks.}
   
 }  
   
@@ -77,7 +81,9 @@ experiment, indicating all input dimensions are present on all
 trials). Only produced if \code{missing = 'geo'}.
 
 In Nosofsky et al. (1994), block 1 was randomized differently to later
-blocks. This feature is retained in this implementation.
+blocks. By default, this feature is retained in this implementation; if
+you wish to randomize block 1 in the same way as all other blocks (as is
+done in some simulations of these data), set \code{blk1='standard'}.
 
 Although the trial ordering is random, a random seed is used, so
 multiple calls of this function with the same parameters should produce

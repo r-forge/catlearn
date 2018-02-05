@@ -1,5 +1,5 @@
 nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
-                         seed = 7624, missing = 'geo') {
+                         seed = 7624, missing = 'geo', blk1 = 'accurate') {
   set.seed(seed)
   shj61 <- array(0,dim=c(8,9,6))
   colnames(shj61) <- c('stim','x1','x2','x3','t1','t2','m1','m2','m3') 
@@ -73,7 +73,8 @@ nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
   for(subj in 1:subjs) {
     makelist <- NULL
     for(blk in 1:blocks) { # Load trials for one block
-        if(blk == 1) { # Block 1 is randomized differently
+        ## Block 1 is randomized differently
+        if(blk == 1 & blk1 == 'accurate') { 
             blocka <- shj61[,,cond]
             blocka <- blocka[sample(nrow(blocka)),]
             blockb <- shj61[,,cond]
@@ -100,13 +101,13 @@ nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
   }
   ## Change to padded coding? (e.g. SUSTAIN)
   if(missing == 'pad') {
-      padlist <- cbind(biglist[,1:3],
+      padlist <- cbind(biglist[,1:4],
                        biglist[, 'x1'], 1 - biglist[, 'x1'],
                        biglist[, 'x2'], 1 - biglist[, 'x2'],
                        biglist[, 'x3'], 1 - biglist[, 'x3'],
                        biglist[, 't1'], biglist[, 't2'])
-      colnames(padlist) <- c('ctrl', 'cond', 'blk', 'x1', 'x2', 'y1', 'y2',
-                             'z1', 'z2', 't1', 't2')
+      colnames(padlist) <- c('ctrl', 'cond', 'blk', 'stim', 'x1', 'x2', 'y1',
+                             'y2', 'z1', 'z2', 't1', 't2')
       biglist <- padlist
   }
   return(biglist)
