@@ -16,7 +16,7 @@
 \usage{
 
 nosof94train(cond = 1, blocks = 16, absval = -1, subjs = 1, seed = 7624,
-missing = 'geo', blk1 = 'accurate')
+missing = 'geo', blkstyle = 'accurate')
 
 }
 \arguments{
@@ -38,9 +38,10 @@ missing = 'geo', blk1 = 'accurate')
   below). If set to 'pad', use the padded stimulus representation format
   or slpSUSTAIN.}
 
-  \item{blk1}{If set to 'accurate', faithfully reproduce the
-  randomization of block 1 (see below). If set to 'standard', randomize
-  block 1 in the same way as all other blocks.}
+  \item{blkstyle}{If set to 'accurate', reproduce the randomization of
+    this experiment, as described in Nosofsky et al. (1994). If set to
+    'eights', generate blocks of eight trials, as per
+    \code{sustain_python}}
   
 }  
   
@@ -81,9 +82,11 @@ experiment, indicating all input dimensions are present on all
 trials). Only produced if \code{missing = 'geo'}.
 
 In Nosofsky et al. (1994), block 1 was randomized differently to later
-blocks. By default, this feature is retained in this implementation; if
-you wish to randomize block 1 in the same way as all other blocks (as is
-done in some simulations of these data), set \code{blk1='standard'}.
+blocks. This feature is retained in this implementation.
+
+In the Gureckis (2016) simulation of these data, eight-trial
+blocks are used; set \code{blkstyle = 'eights'} to reproduce this
+feature of this simulation.
 
 Although the trial ordering is random, a random seed is used, so
 multiple calls of this function with the same parameters should produce
@@ -108,12 +111,14 @@ Wills & O'Connell (n.d.).
   learning: A replication and extension of Shepaard, Hovland, and
   Jenkins (1961). \emph{Memory and Cognition, 22}, 352--369
 
-  Shepard, R.N., Hocland, C.I., & Jenkins, H.M. (1961). learning and
+  Shepard, R.N., Hovland, C.I., & Jenkins, H.M. (1961). learning and
   memorization of classifications. \emph{Psychological Monographs, 75},
   Whole No. 517.
 
-   Wills, A.J. & O'Connell (n.d.). Averaging
- abstractions. \emph{Manuscript in preparation}.
+  Gureckis, T. (2016). https://github.com/NYUCCL/sustain_python
+
+  Wills, A.J. & O'Connell (n.d.). Averaging
+   abstractions. \emph{Manuscript in preparation}.
 
 }
 \seealso{
