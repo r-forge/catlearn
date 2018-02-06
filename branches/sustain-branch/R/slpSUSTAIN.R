@@ -132,7 +132,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
                                    mu.product.neg, mu.product.pos)
     }
     } else {
-      if (H.act[which.max(c.act$H.act)] < st$tau) {
+      if (c.act$act[which.max(c.act$act)] < st$tau) {
         cluster <- rbind(cluster,
                          as.vector(trial[st$colskip:(length(trial)-1)]))
         w <-  rbind(w, rep(0, length(st$w)))
