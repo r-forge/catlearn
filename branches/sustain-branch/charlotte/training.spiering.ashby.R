@@ -39,7 +39,9 @@ spiering.ashby.2 <- matrix(c(0.074, 25.36, 0, 1,
 spiering.ashby <- rbind(spiering.ashby.1,
                         spiering.ashby.2)
 
-spiering.ashby[, 2] <- spiering.ashby[, 2]/1000
+#spiering.ashby[, 2] <- spiering.ashby[, 2]/1000
+#spiering.ashby[, 2] <- spiering.ashby[, 2]/max(spiering.ashby[, 2])
+
 diff <- rep(1:3, 6)[order(rep(1:3, 6))]
 
 tr <- cbind(rep(0, nrow(spiering.ashby)), rep(t(diff), 2),

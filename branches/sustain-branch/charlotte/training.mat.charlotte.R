@@ -45,7 +45,7 @@ norm.pos <- matrix(c(25.00000, 158.14889, 1, 0,
                      285.00000, 151.82222, 0, 1,
                      316.47368, 183.54222, 0, 1), ncol = 4, byrow = TRUE)
 
-norm.pos[, 1:2] <- norm.pos[, 1:2]/1000
+for (i in 1:2){norm.pos[, i] <- norm.pos[, i]/max(norm.pos[, i])}
 
 # Create a training matrix for SUSTAIN
 # Just to test if it is working
@@ -97,7 +97,7 @@ norm.neg <- matrix(c(183.43522, 25.00000, 1, 0,
                      189.75646, 285.22301, 0, 1,
                      158.06365, 316.72369, 0, 1), ncol = 4, byrow = TRUE)
 
-norm.neg[, 1:2] <- norm.neg[, 1:2]/1000
+for (i in 1:2){norm.neg[, i] <- norm.neg[, i]/max(norm.neg[, i])}
 
 trneg <- cbind(rep(0, nrow(norm.neg)), rep(t(diff), 2),
                norm.neg,
@@ -144,7 +144,8 @@ uni.length <- matrix(c(77.00452, 59.25582, 1, 0,
                        265.32591, 238.62996, 0, 1,
                        265.15174, 283.31464, 0, 1), ncol = 4, byrow = TRUE)
 
-uni.length[, 1:2] <- uni.length[, 1:2]/1000
+for (i in 1:2){uni.length[, i] <- uni.length[, i]/max(uni.length[, i])}
+
 trlength <- cbind(rep(0, nrow(uni.length)), rep(t(diff), 2),
                   uni.length,
                   rep(1, nrow(uni.length)))
@@ -191,7 +192,8 @@ uni.ori <- matrix(c(282.34418, 77.12452, 1, 0,
                     58.28536, 265.27174, 0, 1), ncol = 4, byrow = TRUE)
 
 
-uni.ori[, 1:2] <- uni.ori[, 1:2]/1000
+for (i in 1:2){uni.ori[, i] <- uni.ori[, i]/max(uni.ori[, i])}
+
 trori <- cbind(rep(0, nrow(uni.ori)), rep(t(diff), 2),
                uni.ori,
                rep(1, nrow(uni.ori)))
