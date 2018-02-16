@@ -203,3 +203,5 @@ colnames(trori) <- c("ctrl", "diff", "x", "y", "c1", "c2", "t")
 trori[1, 1] <- 1
 
 rm(uni.ori, uni.length, norm.pos, norm.neg, diff)
+
+training.charlotte <- list(trpos, trneg, trori, trlength)
