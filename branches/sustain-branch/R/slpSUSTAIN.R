@@ -28,7 +28,7 @@
   act <- apply(nom, MARGIN = 1, sum) / sum(lambda ^ r) # Equation 5
   out <- (act ^ beta / sum(act^beta)) * act # Equation 6
   rec <- sum(out) # Equation A6
-  out[which(act < max(act))] <- 0 # For all other non-winning cluster = 0
+  out[which(act < max(act))] <- 0 # For all other non-winning clusters = 0
   clus <- list("act" = act,
               "out" = out,
               "rec" = rec)
@@ -38,9 +38,7 @@
 
 slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
  # Imports from st
-  ifelse(length(st$lambda) != 1,
-         lambda <- st$lambda,
-         lambda <- rep(st$lambda, length(st$dims)))
+  lambda <- st$lambda
   w <-st$w
 
  # Setting up factors for later
@@ -63,7 +61,6 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
   xout <- NULL
   activations <- NULL
   prob.o <- NULL
-  #cout.o <- NULL
   rec <- NULL
 
   for (i in 1:nrow(tr)) {
@@ -76,14 +73,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     cluster <- matrix(as.vector(trial[st$colskip:(length(trial)-1)]),
                       nrow = 1)
     w <- st$w
-    ifelse(length(st$lambda) != 1,
-           lambda <- st$lambda,
-           lambda <- rep(st$lambda, length(st$dims)))
+    lambda <- st$lambda
     }
     input <- as.vector(trial[st$colskip:(st$colskip + sum(st$dims) - 1)])
  # Equation 4 - Calculate distances of stimulus from each cluster's position
     mu <- .calc.distances(input, cluster, fac.dims, fac.na)
-
  # c.act - The activations of clusters and recognition scores
  # C.out Activations of output units of the quired dimension
     mu.product.neg <- sweep(mu, MARGIN = 2, -lambda, `*`)
@@ -111,7 +105,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
  # For both conditions (supervised or unsupervised learning)
  # Recruited new clusters are centered on the misclassified input pattern
  # Add new clusters weights and set them to zero
- # Add new stim s distance (which is zero on all dimensions)
+ # Add new stimulus' distance (which is zero on all dimensions)
  # Recompute activations of the clusters (including the recruited cluster)
  # with clusters competition
     if (trial["t"] == 1) {
@@ -172,14 +166,20 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         prob.o <- rbind(prob.o, prob.r)
         rec[i] <- c.act$rec
   }
+
+ # Organise output
   rownames(prob.o) <- 1:nrow(prob.o)
   mode <- rbind(c(1:nrow(cluster)),
                 matrix(table(xout), nrow = 1))
   mean <- mean(mode[1, ])
+ # add coloumns' names for clusters
+  #colnames(cluster) <- colnames(trial[st$colskip:(length(trial)-1)])
+  #colnames(w) <- colnames(tr[st$colskip:(length(trial)-1)])
+  #colnames(prob.o) <- colnames()
 
   if (xtdo) {
-    extdo <- cbind("probabilities" = prob.o, "winning cluster" = xout,
-                   activations, "recognition score" = rec)
+    extdo <- cbind("probabilities" = prob.o, "winning" = xout,
+                   "activation" = activations, "recognition score" = rec)
     rownames(extdo) <- 1:nrow(extdo)
   }
 

@@ -11,4 +11,7 @@ st <- list(r = 9.01245,
            lambda = 1.0,
            dims = c(2, 2, 2),
            w = matrix(rep(0, 8), nrow = 1),
-           colskip = 3)
+           colskip = 5)
+
+# colskip = 3 for nosofsky_1994_tr.R in tmp/
+# colskip = 5 fopr nosof94train()

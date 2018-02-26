@@ -97,7 +97,9 @@ norm.neg <- matrix(c(183.43522, 25.00000, 1, 0,
                      189.75646, 285.22301, 0, 1,
                      158.06365, 316.72369, 0, 1), ncol = 4, byrow = TRUE)
 
-for (i in 1:2){norm.neg[, i] <- norm.neg[, i]/max(norm.neg[, i])}
+for (i in 1:2){
+  norm.neg[, i] <- norm.neg[, i]/max(norm.neg[, i])
+  }
 
 trneg <- cbind(rep(0, nrow(norm.neg)), rep(t(diff), 2),
                norm.neg,
@@ -202,6 +204,6 @@ trori <- trori[sample(nrow(trori)), ]
 colnames(trori) <- c("ctrl", "diff", "x", "y", "c1", "c2", "t")
 trori[1, 1] <- 1
 
-rm(uni.ori, uni.length, norm.pos, norm.neg, diff)
-
 training.charlotte <- list(trpos, trneg, trori, trlength)
+rm(uni.ori, uni.length, norm.pos, norm.neg, diff,
+   trneg, trpos, trlength, trori)
