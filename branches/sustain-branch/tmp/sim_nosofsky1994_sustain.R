@@ -15,7 +15,17 @@ st <- list(r = 9.01245,
            w = matrix(rep(0, 8), nrow = 1),
            colskip = 3)
 
+## Run simulation
 for (cond in 1:6) {
   output[[cond]] <- slpSUSTAIN(st, nosof94sustain.ready(cond))
   print(output[[cond]], zero.print = ".")
 }
+
+## Some toy code below from AW to check out some stuff
+tr <- nosof94sustain.ready(1)
+out <- slpSUSTAIN(st, nosof94sustain.ready(1))
+st$dims <- c(2,2,3)
+st$r <- 2
+lambda <- c(1,2,1)
+input <- c(1,0,1,0,0,1,0)
+cluster <- matrix(c(.5,.3,.5,.7,.9,.5,.1,.5,.6,.2,.1,.6,.3,.2),nrow=2)

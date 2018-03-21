@@ -1,0 +1,81 @@
+* Code formatting (including .Rd)
+
+In catlearn, we try to keep to the GNU standard of max. 79 character column
+width. This ensures readibility in the widest range of environments. I've fixed
+this as I've gone along. How easy this is to achieve depends a bit on your text
+editor. It's easy with Emacs, which is not surprising as Emacs is GNU. But I
+imagine it's possible in most text editors.
+
+
+* Rd file
+
+I appreciate these are not quite finished, but I'm afraid I needed to read them
+anyway in order to be able to make  sense of the code.
+
+I tidied up the phrasing a little bit as I went along. There were quite a few
+bits where I felt the user would want more information - I've inserted some
+comments to indicate what and where.
+
+* slpSUSTAIN
+
+- Does colskip operate differently to all other slp modules?
+
+- Better not use 't' for supervised/unsupervised, as in all other slp* models,
+  t indicates category membership. More generally, we probably want to use ctrl
+  rather than another column for this.
+
+- slpSUSTAIN is not stateful. Specficially, it does not take in the 'cluster'
+  matrix as part of 'st'. Also, 'w' in 'st' is a vector, while for slpSUSTAIN
+  to be stateful, 'w' would have to be a matrix (one row for each cluster). I
+  couldn't really see the point of having a 'w' vector in st - what would be
+  the meaning of non-zero values in this vector, given they are not associated
+  with any particular cluster?
+
+- Avoid passing things to functions that they don't use e.g. mu.pos in
+  .cluster.activation
+
+
+- Also try to avoid passing things to functions that the functions can easily
+  calculate for themselves e.g. 'e', 'fac.na', which I've now fixed. Avoiding
+  this makes the code more modular and hence easier to maintain.
+
+- The function exp(x) is a better choice that defining e <- exp(1) and then
+  doing e^x (i.e. pretty sure it runs faster). I've fixed this.
+
+* sim_nosofsky1994_sustain.R
+
+You seem to randomize across blocks. Nosofsky et al. (1994) randomized within
+blocks, as did Love et al. (2004, see p. 319). 
+
+There's a certain amount of 're-inventing the wheel' here -- the pre-existing
+catlearn function nosof94train gets you nearly all the way there anyway. 
+
+I've extended nosof94train to cope with SUSTAIN coding. 
+
+Note that nosof94train by default, represents the training slightly more
+accurately than does sustain_py, which might potentially be a source of
+differences. I've added an option to nosof94train so that it can replicate this
+'feature' of the sustain_py simulation.
+
+In 'st', you define lambda = 1. I think this needs to be lambda = c(1,1,1),
+otherwise your .cluster.activation function gives activations that exceed 1,
+which is not permitted under SUSTAIN.
+
+
+* Your simulation of Nosofsky et al. (1994) with SUSTAIN
+
+In Love et al. (2004):
+
+"The procedure used to simulate SUSTAIN mimicked the procedure used to collect
+data from the human participants (i.e., random presentation of items in blocks,
+the same learning criterion, feedback on every trial, etc.)"
+
+So, this is criterion-based traning - which your code doesn't do, but
+sustain_python does. It's probably not a massive deal, but if there are
+differences between implementations, this might explain that.
+
+Another thing concerns the randomization across the first 16 trials, which in
+Shepard/Nosofsky is not the same as the rest of the experiment (but is in
+sustain_python). Again, perhaps not a massive deal, but something that might
+explain differences?
+
