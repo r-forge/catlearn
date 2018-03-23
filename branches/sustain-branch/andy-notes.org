@@ -34,13 +34,21 @@ comments to indicate what and where.
 - Avoid passing things to functions that they don't use e.g. mu.pos in
   .cluster.activation
 
-
 - Also try to avoid passing things to functions that the functions can easily
   calculate for themselves e.g. 'e', 'fac.na', which I've now fixed. Avoiding
   this makes the code more modular and hence easier to maintain.
 
 - The function exp(x) is a better choice that defining e <- exp(1) and then
   doing e^x (i.e. pretty sure it runs faster). I've fixed this.
+
+- I'm not sure I really understand the point of calculting probs for all
+  nominal values of all dimensions in unsupervised learning
+
+- Similarly I'm not sure I understand why we have a weight matrix that has more
+  columns than the number of nominal values on the queried dimension.
+
+- I think the Eq. 14 implementation is wrong -- it updates all weights, but the
+  paper says to update weights to queried dimension only. 
 
 * sim_nosofsky1994_sustain.R
 

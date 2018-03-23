@@ -10,7 +10,7 @@ st <- list(r = 9.01245,
            d = 16.924073,
            eta = 0.092327,
            tau = 0.0,
-           lambda = 1.0,
+           lambda = c(1, 1, 1), ## AW: was lambda = 1
            dims = c(2, 2, 2),
            w = matrix(rep(0, 8), nrow = 1),
            colskip = 3)
@@ -23,9 +23,11 @@ for (cond in 1:6) {
 
 ## Some toy code below from AW to check out some stuff
 tr <- nosof94sustain.ready(1)
-out <- slpSUSTAIN(st, nosof94sustain.ready(1))
-st$dims <- c(2,2,3)
+##out <- slpSUSTAIN(st, nosof94sustain.ready(1))
+##
 st$r <- 2
+st$d <- 2
+st$eta <- .1
 lambda <- c(1,2,1)
-input <- c(1,0,1,0,0,1,0)
-cluster <- matrix(c(.5,.3,.5,.7,.9,.5,.1,.5,.6,.2,.1,.6,.3,.2),nrow=2)
+cluster <- matrix(c(.5,.3,.5,.7,.9,.5,.1,.5,.6,.2,.4,.8,1,0,0,1),nrow=2)
+w <- matrix(c(rep(0,12),.2,.1,.3,.4),nrow=2)

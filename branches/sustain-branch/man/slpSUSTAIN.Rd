@@ -139,9 +139,10 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   \code{ctrl} - A vector of control codes. The control codes are
   processed prior to the trial and prior to updating cluster's position,
   lambdas and weights (Love et al., 2004, Equ.  12, 13 and 14,
-  respectively). The available values are: 1 = reset network (i.e. set
-  everything passed in \code{st} back to the values in \code{st}); 0 =
-  normal trial, 2 = freeze learning.
+  respectively). The available values are: 0 = normal trial; 1 = reset
+  network (i.e. revert \code{w} and \code{lambda} back to the values
+  passed in \code{st}, and set \code{cluster} to a single cluster
+  centered on the current trial's stimulus); 2 = freeze learning.
 
   \code{opt1, opt2, \dots} - optional columns, which may have any names
   you wish, and you may have as many as you like, but they must be
