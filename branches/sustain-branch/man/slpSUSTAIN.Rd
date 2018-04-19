@@ -32,9 +32,6 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   dimensions (as there is no queried dimension for unsupervised
   learning).}
 
-  %AW: There were two seperate entries for 'probs' - I have combined
-  %them.
-
   \item{lambda}{Vector of the receptive field tunings for each stimulus
   dimension, after the final trial. The order of dimensions corresponds
   to the order they are presented in \code{tr}, see below.}
@@ -45,11 +42,6 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
     columns correspond to the columns on the input representation
     presented (see \code{tr} description, below).
 
-    % AW: I removed the following, as it's more tutorial than terse
-    % documentation... "Officially, SUSTAIN uses only the weights of the
-    % queried dimensions, but the function outputs connection weights
-    % for each nominal value".
-
   \item{clusters}{Matrix of recruited clusters, with their positions in
     stimulus space. Each row is a separate cluster, reported in order of
     recruitment. The columns correspond to the columns on the input
@@ -57,13 +49,6 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
 
   \item{mode}{How many times each cluster was selected as the winning
     cluster.}
-
-  % AW: Probably drop this from standard output?  Standard output
-  % generally only outputs the predictions of the model, plus the
-  % aspects of the model's state that have changed during the
-  % simulation. Number of times each cluster wins doesn't seem to fit
-  % either of these. If anyone wants this information, they can derive
-  % if from the extended output, right?
 
   If \code{xtdo = TRUE}, \code{xtdo} is returned instead of
   \code{probs}:
@@ -101,9 +86,6 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   can accomodate both supervised and unsupervised learning within the
   same simulation, using the \code{t} column in \code{tr} (see
   below).
-
-  % AW: Note, update the above statement once youv'e switched to using
-  % 'ctrl' for this functionality.
   
   \code{lambda} - Vector containing the initial receptive field tuning
   value for each stimulus dimension; the order corresponds to the order
@@ -111,14 +93,8 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   dimensions, where all receptive fields are equally tuned, lambda = [1,
   1, 1].
 
-  % AW: But your sim_nosofsky1994_sustain.R code uses the form 'lambda =
-  % 1.0' --- this doesn't seem to be covered by this documentation?
-
   \code{w} - A vector of initial connection weights for each nominal
   value (including the dimension of category membership).
-
-  % AW: This doesn't make much sense to me - see comments in
-  % andy-comments.org about slpSUSTAIN not being stateful.
 
   \code{dims} - Vector containing the length of each dimension
   (excluding category dimension, see \code{tr}, below), i.e the number
@@ -128,9 +104,6 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   \code{colskip} - Number of optional coloumns skipped in \code{tr},
   PLUS ONE. If there are no optional columns, set colskip to 2, so R
   will start right after the \code{ctrl} by the 2nd coloumn of tr.
-  
-  % AW: This seems to operate differently to all other slp modules? @in
-  % the process of fixing it.
 
   Argument \code{tr} must be a matrix, where each row is one trial
   presented to the model. Columns are always presented in the order

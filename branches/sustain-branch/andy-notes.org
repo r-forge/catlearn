@@ -1,13 +1,37 @@
-* Code formatting (including .Rd)
-
+* DONE Code formatting (including .Rd)
 In catlearn, we try to keep to the GNU standard of max. 79 character column
 width. This ensures readibility in the widest range of environments. I've fixed
 this as I've gone along. How easy this is to achieve depends a bit on your text
 editor. It's easy with Emacs, which is not surprising as Emacs is GNU. But I
 imagine it's possible in most text editors.
+* DONE Programming style
+- Avoid passing things to functions that they don't use e.g. mu.pos in
+  .cluster.activation. I've fixed this.
 
+- Also try to avoid passing things to functions that the functions can easily
+  calculate for themselves e.g. 'e', 'fac.na', which I've now fixed. Avoiding
+  this makes the code more modular and hence easier to maintain. I've fixed this.
 
-* Rd file
+- The function exp(x) is a better choice that defining e <- exp(1) and then
+  doing e^x (i.e. pretty sure it runs faster). I've fixed this.
+
+- Try to avoid code repetition, it makes the code harder to debug and
+  maintain (this was mainly an issue in the cluster recruitment
+  section, and I fixed it).
+
+- Avoid querying column names (e.g. which (colnames(tr) == "t") )
+  because this functionality is not easily available within a later C++
+  implementation.
+
+-  c.act$act[which.max(c.act$act)] is equiv. to max(c.act$act), so I
+   replaced with this simpler form for clarity
+
+- Where possible, pre-define arrays to the size you know they will
+  become (this makes the code run faster). This is tricky for things
+  like cluster and w, because the model is dynamic, but can be easily
+  done for e.g. xout stuff. I have fixed this where it was easy to do so.
+
+* DONE Rd file
 
 I appreciate these are not quite finished, but I'm afraid I needed to read them
 anyway in order to be able to make  sense of the code.
@@ -16,39 +40,70 @@ I tidied up the phrasing a little bit as I went along. There were quite a few
 bits where I felt the user would want more information - I've inserted some
 comments to indicate what and where.
 
-* slpSUSTAIN
+* DONE slpSUSTAIN error in code
+- The Eq.10 - in your code, if all units have the same activation,
+  this breaks the tie by going for the unit corresponding to the
+  correct answer (which will therefore not result in a new cluster
+  being formed). This seems different to the following:
 
-- Does colskip operate differently to all other slp modules?
+  "the output unit representing the correct nominal value must be the
+  most activated of all the output units forming the queried stimulus
+  dimension" (Love et al., 2004, p. 315)
 
-- Better not use 't' for supervised/unsupervised, as in all other slp* models,
-  t indicates category membership. More generally, we probably want to use ctrl
-  rather than another column for this.
+I think you have this because of the edge case where the system has
+been reset, but you can more easily detect that with ctrl.
 
-- slpSUSTAIN is not stateful. Specficially, it does not take in the 'cluster'
-  matrix as part of 'st'. Also, 'w' in 'st' is a vector, while for slpSUSTAIN
-  to be stateful, 'w' would have to be a matrix (one row for each cluster). I
-  couldn't really see the point of having a 'w' vector in st - what would be
-  the meaning of non-zero values in this vector, given they are not associated
-  with any particular cluster?
 
-- Avoid passing things to functions that they don't use e.g. mu.pos in
-  .cluster.activation
+- The Eq. 14 implementation is wrong -- it updates all weights, but the
+  paper says to update weights to queried dimension only. I've fixed this.
 
-- Also try to avoid passing things to functions that the functions can easily
-  calculate for themselves e.g. 'e', 'fac.na', which I've now fixed. Avoiding
-  this makes the code more modular and hence easier to maintain.
+* TODO slpSUSTAIN requested changes
+** TODO Fix colskip
+- Colskip operates differently to all other slp modules.
+** TODO Fix t in tr
+- Better not use 't' for supervised/unsupervised. This is because, in
+  all other slp* models, t indicates category membership. More
+  generally, we probably want to use ctrl rather than another column
+  for this:
 
-- The function exp(x) is a better choice that defining e <- exp(1) and then
-  doing e^x (i.e. pretty sure it runs faster). I've fixed this.
+  ctrl = 0 - supervised learning
+  ctrl = 1 - reset network
+  ctrl = 2 - freeze learning
+  ctrl = 3 - unsupervised learning
+** TODO Make it stateful
+- slpSUSTAIN is not stateful. Specficially, it does not take in the
+  'cluster' matrix as part of 'st'. Also, 'w' in 'st' is a vector,
+  while for slpSUSTAIN to be stateful, 'w' would have to be a matrix
+  (one row for each cluster). I couldn't really see the point of
+  having a 'w' vector in st - what would be the meaning of non-zero
+  values in this vector, given they are not associated with any
+  particular cluster?
 
-- I'm not sure I really understand the point of calculting probs for all
-  nominal values of all dimensions in unsupervised learning
+** DONE Drop 'mode' etc. from  output. 
+In catlearn (like UNIX more generally) we try to keep commands doing
+one thing well. This modularity makes it much easier to maintain and
+debug code. So, things like 'mode', which are essentially analysis of
+the model output, shouldn't be in the same command (slpSUSTAIN) as
+actually running the model.
 
-- Similarly I'm not sure I understand why we have a weight matrix that has more
+
+
+** TODO Queried dimension chooseable
+- The queried dimension is always the last one. It would be better if
+  the user could choose which dimensions to query.
+
+* DONE slpSUSTAIN queries
+
+- I'm not sure I understand why we have a weight matrix that has more
   columns than the number of nominal values on the queried dimension.
 
-- I think the Eq. 14 implementation is wrong -- it updates all weights, but the
-  paper says to update weights to queried dimension only. 
+- I couldn't see any point where the follow code would be used, so I
+  dropped it:
+
+    if(length(fac.queried) == 0){
+        fac.queried <- fac.na
+    }
+
 
 * sim_nosofsky1994_sustain.R
 
@@ -68,7 +123,6 @@ differences. I've added an option to nosof94train so that it can replicate this
 In 'st', you define lambda = 1. I think this needs to be lambda = c(1,1,1),
 otherwise your .cluster.activation function gives activations that exceed 1,
 which is not permitted under SUSTAIN.
-
 
 * Your simulation of Nosofsky et al. (1994) with SUSTAIN
 

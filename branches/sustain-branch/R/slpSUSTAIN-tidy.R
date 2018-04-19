@@ -24,6 +24,10 @@
 ## act - Activation of each cluster (Eq. 5)
 ## out - Activations after cluster competition (Eq. 6)
 ## rec - Recognition score from A6 equation in Appendix in Love and Gureckis (2007)
+
+## mu.lambda - Product of mu and lambda, calculated within function
+## but also needed in later calculation, so returned.
+
 ## AW: OK, 2018-03-21
 .cluster.activation <- function(lambda, r, beta, mu) {
     mu.lambda <- sweep(mu, MARGIN = 2, -lambda, `*`)
@@ -40,6 +44,11 @@
 }
 
 slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
+    ## Internally, colskip is implemented slightly differently in slp
+    ## SUSTAIN to other slp functions. To avoid this potentially
+    ## confusing difference, the following line is needed
+    colskip <- st$colskip + 1
+    
     ## Imports from st
     lambda <- st$lambda
     w <-st$w
@@ -59,19 +68,15 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     
     ## fac.queried: The positions of the queried dimension values in the
     ## stimulus input
-    fac.queried <- seq(sum(st$dims) + 1,
-                       which(colnames(tr) == "t") - st$colskip)
-    ## AW: Not sure what the purpose of the following code is?
-    if(length(fac.queried) == 0){
-        fac.queried <- fac.na
-    }
-
+    
+    fac.queried <- seq(sum(st$dims) + 1, ncol(tr) - colskip)
+    
     ## Setting up environment
     ## Arrays for xout
-    xout <- NULL
-    activations <- NULL
+    xout <- rep(0, nrow(tr))
+    activations <- rep(0,nrow(tr))
     prob.o <- NULL
-    rec <- NULL
+    rec <- rep(0,nrow(tr))
 
     for (i in 1:nrow(tr)) {
 
@@ -81,13 +86,13 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         trial <- tr[i, ]
 
         ## input - Set up stimulus representation
-        input <- as.vector(trial[st$colskip:(st$colskip + sum(st$dims) - 1)])
+        input <- as.vector(trial[colskip:(colskip + sum(st$dims) - 1)])
         
         ## Reset network if requested to do so.
         if (trial['ctrl'] == 1) {
             ## Revert to a single cluster centered on the current trial's
             ## stimulus
-            cluster <- matrix(as.vector(trial[st$colskip:(length(trial)-1)]),
+            cluster <- matrix(as.vector(trial[colskip:(length(trial)-1)]),
                               nrow = 1)
             w <- st$w
             lambda <- st$lambda
@@ -96,12 +101,6 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         ## Equation 4 - Calculate distances of stimulus from each cluster's
         ## position
         mu <- .calc.distances(input, cluster, fac.dims)
-        
-        ## mu.product.pos <- sweep(mu, MARGIN = 2, lambda, `*`)
-        
-        ## AW: This seems like a quicker and more transparent way to get the
-        ## same outcome?
-        ## mu.product.pos <- -mu.product.neg
 
         ## c.act - The activations of clusters and recognition scores        
         c.act <- .cluster.activation(lambda, st$r, st$beta, mu)
@@ -113,8 +112,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         ## Response probabilites (Eq.8) - calculated across queried dimension
         ## for supervised learning and across all dimensions for unsupervised
         ## learning.
-        ## AW: supervised - OK, 2018-03-23
-        ## AW: unsupervised - not sure why you'd calculate this?, 2018-03-23
+        ## AW: OK, 2018-03-23
         if (trial["t"] == 1){
             prob.r <-  .prob.response(C.out[fac.queried], st$d)
         } else {
@@ -123,68 +121,55 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
         ## Kruschke's (1992) humble teacher (Eq. 9)
         ## AW: OK, 2018-03-23
-        target <- as.vector(trial[st$colskip:(length(trial)-1)])
+        target <- as.vector(trial[colskip:(length(trial)-1)])
         target[target == 1] <- pmax(C.out[which(target == 1)], 1)
         target[target == 0] <- pmin(C.out[which(target == 0)], 0)
 
-
         ## Cluster recruitment in supervised learning
-        ## AW: 2018-03-23: OK, except where noted. Also, quite a lot of code
-        ## repetition, I've refactored to reduce this.
-
+        ## AW: 2018-03-23: OK
         new.cluster <- FALSE
 
         ## Rules for new cluster under supervised learning
-        if (trial["t"] == 1) { 
-            
-            ifelse(
-                length(unique(C.out[fac.queried])) == 1,
-                t.queried <- which(target[fac.queried] == 1),
-                t.queried <- which.max(C.out[fac.queried])
-            )
 
-            ## AW NOTE: If all units have the same activation, this breaks the
-            ## tie by going for the unit corresponding to the correct answer
-            ## (which will therefore NOT result in a new cluster being
-            ## formed). This seems different to the following:
+        ##(If network has been reset, we should not create a new
+        ## cluster, as that has already been done).
+        
+        if (trial["t"] == 1 & trial["ctrl"] != 1) {
 
-            ## "the output unit representing the correct nominal value must be
-            ## the most activated of all the output units forming the queried
-            ## stimulus dimension" (Love et al., 2004, p. 315)/
+            ## t.queried - the index of the unit in the queried
+            ## dimension that has the highest activation.
 
-            ## t.queried - the index of the unit in the queried dimension that
-            ## has the highest activation.
-            
-            ## t.queried <- which.max(C.out[fac.queried])
-            
-            ## If the unit with the highest activation has a target value of
-            ## less than one, then the model has made an error and recruits a
-            ## new cluster (Eq. 10)...
-
+            t.queried <- which.max(C.out[fac.queried])
+ 
+            ## If the highest-activated unit has a target value of
+            ## less than one, the model has made an error and recruits
+            ## a new cluster.
             if (target[fac.queried][t.queried] < 1) new.cluster <- TRUE
 
-            ## If all the units have the same activation, then the
-            ## model has made an error.
-            ## if (length(unique(C.out[fac.queried])) == 1) new.cluster <- TRUE
+            ## An edge case is if there is a tie between the most and
+            ## second most active unit. Here, we should create a new
+            ## cluster.
+
+            in.order <- C.out[fac.queried][order(C.out[fac.queried])]
+            if(in.order[1] == in.order[2]) new.cluster <- TRUE
             
         }
 
-        ## Cluster recruitment in unsupervised learning
-            
-        ## AW:c.act$act[which.max(c.act$act)] is equiv. to max(c.act$act), so
-        ## replaced with this simpler for for clarity
+        ### Cluster recruitment in unsupervised learning
+        ## AW: OK, 2018-04-19    
+       
+        if (trial["t"] != 1 & max(c.act$act) < st$tau) new.cluster <- TRUE
 
-        if (trial["t"] != 1 & max(c.act$act < st$tau)) new.cluster <- TRUE
-
-        ## Adding a new cluster if appropriate.
+        ### Adding a new cluster if appropriate.
+        ## AW: OK, 2018-04-19
         
         if(new.cluster == TRUE) {
             ## Create new cluster centered on current stimulus
 
             cluster <- rbind(cluster,
-                             as.vector(trial[st$colskip:(length(trial)-1)]))
+                             as.vector(trial[colskip:(length(trial)-1)]))
 
-            ## The new cluster gets a set of weight to the queried
+            ## The new cluster gets a set of weights to the queried
             ## dimension, intialized at zero
 
             w <-  rbind(w, rep(0, length(st$w)))
@@ -199,12 +184,6 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
             ## clusters
             c.act <- .cluster.activation(lambda, st$r, st$beta, mu)
         }
-
-        ### Lenard's notes ########
-        ## xout The ID of the winning cluster is also stored (extended output).
-        ## xout is not conditional, because it is used to calculate the
-        ## frequencies
-        ####
 
         ## UPDATES
         win <- which.max(c.act$act)
@@ -226,47 +205,43 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
             ## Equation 14 - one-layer delta learning rule (Widrow & Hoff, 1960)
             ## AW: Corrected, 2018-03-23
-            ## Lenard's equation:
-            ## w[win, ] <- w[win, ] + (st$eta * (target - C.out) * c.act$out[win])
-            ## I think the above is wrong, both Love et al. (2004) &
-            ## Love+Gureckis (2007) say it's only the queried dimension's
-            ## weights that get updated. I think the following does that.
             w[win, fac.queried] <- w[win, fac.queried] +
                 (st$eta * (target[fac.queried] - C.out[fac.queried]) *
                  c.act$out[win])
-     }
+        }
 
         ## Record additional information about the trial
-        xout[i] <- win
-        activations[i] <- c.act$out[win]
-        prob.o <- rbind(prob.o, prob.r)
-        rec[i] <- c.act$rec
+        ## AW: 2018-04-19, OK
+        xout[i] <- win ## Identity of winning cluster
+        activations[i] <- c.act$out[win] ## Activation of winning cluster
+        prob.o <- rbind(prob.o, prob.r) ## Response probabilities
+        rec[i] <- c.act$rec ## Recognition score
     }
 
     ## Organise output
-    rownames(prob.o) <- 1:nrow(prob.o)
-    mode <- rbind(c(1:nrow(cluster)), matrix(table(xout), nrow = 1))   
-    mean <- mean(mode[1, ])
-    ## add coloumns' names for clusters
-    ## colnames(cluster) <- colnames(trial[st$colskip:(length(trial)-1)])
-    ##colnames(w) <- colnames(tr[st$colskip:(length(trial)-1)])
-    ## colnames(prob.o) <- colnames()
+    ## AW: 2018-04-19, OK
+    rownames(prob.o) <- NULL
 
     if (xtdo) {
         extdo <- cbind("probabilities" = prob.o, "winning" = xout,
                        "activation" = activations,
                        "recognition score" = rec)        
-        rownames(extdo) <- 1:nrow(extdo)
     }
 
     if (xtdo) {
-        ret <- list("xtdo" = extdo, "mean" = mean,
-                "mode " = mode, "lambda" = lambda,
+        ret <- list("xtdo" = extdo, "lambda" = lambda,
                 "cluster" = cluster, "weights" = w)
     } else {
         ret <- list("probs" = prob.o, "lambda" = lambda,
-                "weights" = w, "cluster" = cluster,
-                "mode " = mode)
+                "weights" = w, "cluster" = cluster)
     }
     return(ret)
 }
+
+
+
+        ### Lenard's notes ########
+        ## xout The ID of the winning cluster is also stored (extended output).
+        ## xout is not conditional, because it is used to calculate the
+        ## frequencies
+        ####

@@ -36,7 +36,7 @@ missing = 'geo', blkstyle = 'accurate')
 
   \item{missing}{If set to 'geo', output missing dimension flags (see
   below). If set to 'pad', use the padded stimulus representation format
-  or slpSUSTAIN.}
+  of slpSUSTAIN.}
 
   \item{blkstyle}{If set to 'accurate', reproduce the randomization of
     this experiment, as described in Nosofsky et al. (1994). If set to
