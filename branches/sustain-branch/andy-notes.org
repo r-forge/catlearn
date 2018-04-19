@@ -1,3 +1,7 @@
+OVERALL NOTE: I've been using the '-tidy' addition to the filenames
+for all this, so I don't screw with any code that might be dependent
+on Lenard's original version.
+
 * DONE Code formatting (including .Rd)
 In catlearn, we try to keep to the GNU standard of max. 79 character column
 width. This ensures readibility in the widest range of environments. I've fixed
@@ -58,19 +62,14 @@ been reset, but you can more easily detect that with ctrl.
   paper says to update weights to queried dimension only. I've fixed this.
 
 * TODO slpSUSTAIN requested changes
-** TODO Fix colskip
+** DONE Fix colskip
 - Colskip operates differently to all other slp modules.
-** TODO Fix t in tr
+** DONE Fix t in tr
 - Better not use 't' for supervised/unsupervised. This is because, in
   all other slp* models, t indicates category membership. More
   generally, we probably want to use ctrl rather than another column
-  for this:
-
-  ctrl = 0 - supervised learning
-  ctrl = 1 - reset network
-  ctrl = 2 - freeze learning
-  ctrl = 3 - unsupervised learning
-** TODO Make it stateful
+  for this.
+** DONE Make it stateful
 - slpSUSTAIN is not stateful. Specficially, it does not take in the
   'cluster' matrix as part of 'st'. Also, 'w' in 'st' is a vector,
   while for slpSUSTAIN to be stateful, 'w' would have to be a matrix
@@ -86,58 +85,54 @@ debug code. So, things like 'mode', which are essentially analysis of
 the model output, shouldn't be in the same command (slpSUSTAIN) as
 actually running the model.
 
-
-
 ** TODO Queried dimension chooseable
-- The queried dimension is always the last one. It would be better if
-  the user could choose which dimensions to query.
+- The queried dimension is always the last one. The user should be
+  able to choose which dimension to query.
 
-* DONE slpSUSTAIN queries
-
-- I'm not sure I understand why we have a weight matrix that has more
-  columns than the number of nominal values on the queried dimension.
-
-- I couldn't see any point where the follow code would be used, so I
+* TODO slpSUSTAIN queries
+- I couldn't see any point where the following code would be used, so I
   dropped it:
 
     if(length(fac.queried) == 0){
         fac.queried <- fac.na
     }
 
-
-* sim_nosofsky1994_sustain.R
-
-You seem to randomize across blocks. Nosofsky et al. (1994) randomized within
-blocks, as did Love et al. (2004, see p. 319). 
-
-There's a certain amount of 're-inventing the wheel' here -- the pre-existing
-catlearn function nosof94train gets you nearly all the way there anyway. 
-
-I've extended nosof94train to cope with SUSTAIN coding. 
-
-Note that nosof94train by default, represents the training slightly more
-accurately than does sustain_py, which might potentially be a source of
-differences. I've added an option to nosof94train so that it can replicate this
-'feature' of the sustain_py simulation.
-
-In 'st', you define lambda = 1. I think this needs to be lambda = c(1,1,1),
+* TODO Simulation Nosofsky et al. (1994)
+** DONE Fix randomization
+You seem to randomize across blocks. Nosofsky et al. (1994) randomized
+within blocks, as did Love et al. (2004, see p. 319). There's also a
+certain amount of 're-inventing the wheel' here -- the pre-existing
+catlearn function nosof94train gets you nearly all the way there
+anyway. I've fixed both by updating nosof94train to cope with SUSTAIN
+coding and using that.Note that nosof94train by default, represents
+the training slightly more accurately than does sustain_py, which
+might potentially be a source of differences. I've added an option to
+nosof94train so that it can replicate this 'feature' of the sustain_py
+simulation.
+** DONE Fix initial lambda
+In 'st', you defined lambda = 1. I think this needs to be lambda = c(1,1,1),
 otherwise your .cluster.activation function gives activations that exceed 1,
-which is not permitted under SUSTAIN.
+which is not permitted under SUSTAIN. I've fixed this.
 
-* Your simulation of Nosofsky et al. (1994) with SUSTAIN
+** NOTE: Difference between their simulation and ours
 
-In Love et al. (2004):
+sustain-python implements the criterion-based early finish of the
+experiment (and assumes P(correct response) is 1 after the criterion
+is passed, which is what Nosofsky et al. did in their experiment,
+too). 
 
-"The procedure used to simulate SUSTAIN mimicked the procedure used to collect
-data from the human participants (i.e., random presentation of items in blocks,
-the same learning criterion, feedback on every trial, etc.)"
+There is no good way to do this without cause problems for parameter
+optimization -- because it introduces a random factor (which means
+that, even with the same st and tr, two runs of the model will not
+give the same answers). 
 
-So, this is criterion-based traning - which your code doesn't do, but
-sustain_python does. It's probably not a massive deal, but if there are
+It's probably not a massive deal, as the probabilities set to 1 would
+be close to 1 anyway, but it might mean we don't get exactly the
+results as them...
+
+if there are
 differences between implementations, this might explain that.
 
-Another thing concerns the randomization across the first 16 trials, which in
-Shepard/Nosofsky is not the same as the rest of the experiment (but is in
-sustain_python). Again, perhaps not a massive deal, but something that might
-explain differences?
+DON'T try and fix this inside slpSUSTAIN. The easiest solution is to
+turn the response probability on each trial 
 

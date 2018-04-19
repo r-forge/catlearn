@@ -49,9 +49,28 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     ## confusing difference, the following line is needed
     colskip <- st$colskip + 1
     
+    ## If cluster is NA, set up a single cluster centered on the
+    ## first training stimulus. (The length == 1 thing is to avoid a
+    ## tedious warning message).
+
+    if(length(st$cluster) == 1) {
+        if(is.na(st$cluster)) {
+            st$cluster <- matrix(as.vector(tr[1, colskip:(ncol(tr))]),
+                                 nrow = 1)
+        }
+    }
+
+    ## If w is NA, set up zero weights to a single cluster
+    if(length(st$w) == 1) {
+        if(is.na(st$w)) {
+            st$w <- matrix(rep(0, ncol(st$cluster)), nrow = 1)
+        }
+    }
+    
     ## Imports from st
     lambda <- st$lambda
     w <-st$w
+    cluster <- st$cluster
 
     ## Setting up factors for later
     
@@ -69,7 +88,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     ## fac.queried: The positions of the queried dimension values in the
     ## stimulus input
     
-    fac.queried <- seq(sum(st$dims) + 1, ncol(tr) - colskip)
+    fac.queried <- seq(sum(st$dims) + 1, ncol(tr) - colskip + 1)
     
     ## Setting up environment
     ## Arrays for xout
@@ -89,13 +108,12 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         input <- as.vector(trial[colskip:(colskip + sum(st$dims) - 1)])
         
         ## Reset network if requested to do so.
-        if (trial['ctrl'] == 1) {
+        if (trial['ctrl'] %in% c(1, 4)) {
             ## Revert to a single cluster centered on the current trial's
             ## stimulus
-            cluster <- matrix(as.vector(trial[colskip:(length(trial)-1)]),
-                              nrow = 1)
             w <- st$w
             lambda <- st$lambda
+            cluster <- st$cluster
         }
         
         ## Equation 4 - Calculate distances of stimulus from each cluster's
@@ -113,7 +131,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         ## for supervised learning and across all dimensions for unsupervised
         ## learning.
         ## AW: OK, 2018-03-23
-        if (trial["t"] == 1){
+        if (trial["ctrl"] %in% c(0,1,2)){
             prob.r <-  .prob.response(C.out[fac.queried], st$d)
         } else {
             prob.r <-  .prob.response(C.out, st$d)
@@ -121,20 +139,20 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
         ## Kruschke's (1992) humble teacher (Eq. 9)
         ## AW: OK, 2018-03-23
-        target <- as.vector(trial[colskip:(length(trial)-1)])
+        target <- as.vector(trial[colskip:(length(trial))])
         target[target == 1] <- pmax(C.out[which(target == 1)], 1)
         target[target == 0] <- pmin(C.out[which(target == 0)], 0)
 
         ## Cluster recruitment in supervised learning
+
+        ## (If the network has been reset this trial , we should not
+        ## create a new cluster, as that has already been done).
         ## AW: 2018-03-23: OK
         new.cluster <- FALSE
 
         ## Rules for new cluster under supervised learning
 
-        ##(If network has been reset, we should not create a new
-        ## cluster, as that has already been done).
-        
-        if (trial["t"] == 1 & trial["ctrl"] != 1) {
+        if (trial["ctrl"] == 0) {
 
             ## t.queried - the index of the unit in the queried
             ## dimension that has the highest activation.
@@ -158,7 +176,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         ### Cluster recruitment in unsupervised learning
         ## AW: OK, 2018-04-19    
        
-        if (trial["t"] != 1 & max(c.act$act) < st$tau) new.cluster <- TRUE
+        if (trial["ctrl"] == 3 & max(c.act$act) < st$tau) new.cluster <- TRUE
 
         ### Adding a new cluster if appropriate.
         ## AW: OK, 2018-04-19
@@ -167,7 +185,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
             ## Create new cluster centered on current stimulus
 
             cluster <- rbind(cluster,
-                             as.vector(trial[colskip:(length(trial)-1)]))
+                             as.vector(trial[colskip:(length(trial))]))
 
             ## The new cluster gets a set of weights to the queried
             ## dimension, intialized at zero
@@ -187,7 +205,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
         ## UPDATES
         win <- which.max(c.act$act)
-        if (trial['ctrl'] != 2) {
+        if (trial['ctrl'] %in% c(0, 1, 3, 4)) {
             ## Update position of winning cluster (Equ. 12)
             ## AW: OK, 2018-03-23
             cluster[win, fac.na] <-
@@ -230,18 +248,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
 
     if (xtdo) {
         ret <- list("xtdo" = extdo, "lambda" = lambda,
-                "cluster" = cluster, "weights" = w)
+                "cluster" = cluster, "w" = w)
     } else {
         ret <- list("probs" = prob.o, "lambda" = lambda,
-                "weights" = w, "cluster" = cluster)
+                "w" = w, "cluster" = cluster)
     }
     return(ret)
 }
 
-
-
-        ### Lenard's notes ########
-        ## xout The ID of the winning cluster is also stored (extended output).
-        ## xout is not conditional, because it is used to calculate the
-        ## frequencies
-        ####

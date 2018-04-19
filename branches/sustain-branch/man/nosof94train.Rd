@@ -32,11 +32,11 @@ missing = 'geo', blkstyle = 'accurate')
 
   \item{subjs}{Number of simulated subjects to be run.}
 
-  \item{seed}{Sets the random seet.}
+  \item{seed}{Sets the random seed.}
 
   \item{missing}{If set to 'geo', output missing dimension flags (see
   below). If set to 'pad', use the padded stimulus representation format
-  of slpSUSTAIN.}
+  of slpSUSTAIN. If set to 'pad', set \code{absval} to zero.}
 
   \item{blkstyle}{If set to 'accurate', reproduce the randomization of
     this experiment, as described in Nosofsky et al. (1994). If set to

@@ -119,11 +119,9 @@ nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
                        biglist[, 'x1'], 1 - biglist[, 'x1'],
                        biglist[, 'x2'], 1 - biglist[, 'x2'],
                        biglist[, 'x3'], 1 - biglist[, 'x3'],
-                       biglist[, 't1'], biglist[, 't2'],
-                       rep(1, nrow(biglist))) # last vector is for indicating supervised learning
-      padlist[, 11:12][padlist[, 11:12] == -1] <- 0 # change -1 to 0 (binary representation in SUSTAIN)
+                       biglist[, 't1'], biglist[, 't2']) 
       colnames(padlist) <- c('ctrl', 'cond', 'blk', 'stim', 'x1', 'x2', 'y1',
-                             'y2', 'z1', 'z2', 't1', 't2', 't')
+                             'y2', 'z1', 'z2', 't1', 't2')
       biglist <- padlist
   }
   return(biglist)
