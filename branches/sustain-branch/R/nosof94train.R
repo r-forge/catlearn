@@ -72,32 +72,20 @@ nosof94train <- function(cond = 1,blocks = 16, absval = -1, subjs = 1,
   biglist <- NULL
   for(subj in 1:subjs) {
       makelist <- NULL
-      ## Do it properly (default behaviour)
-      if(blkstyle == "accurate") {
-          for(blk in 1:blocks) { # Load trials for one block
-              ## Block 1 is randomized differently
-              if(blk == 1) { 
-                  blocka <- shj61[,,cond]
-                  blocka <- blocka[sample(nrow(blocka)),]
-                  blockb <- shj61[,,cond]
-                  blockb <- blockb[sample(nrow(blockb)),]
-                  block <- rbind(blocka,blockb)
-              } else {
-                  block <- rbind(shj61[,,cond],shj61[,,cond]) 
-                  block <- block[sample(nrow(block)),]
-              }
-              block <- cbind(cond,blk,block)
-              makelist <- rbind(makelist,block)
-          }
-      }
-      ## Do 8-trial blocks (as per sustain_python code)
-      if(blkstyle == "eights") {
-          for(blk in 1:blocks) { # Load trials for one block
-              block <- shj61[,,cond]
+      for(blk in 1:blocks) { 
+          ## Block 1 is randomized differently
+          if(blk == 1 | blkstyle == "eights") { 
+              blocka <- shj61[,,cond]
+              blocka <- blocka[sample(nrow(blocka)),]
+              blockb <- shj61[,,cond]
+              blockb <- blockb[sample(nrow(blockb)),]
+              block <- rbind(blocka,blockb)
+          } else {
+              block <- rbind(shj61[,,cond],shj61[,,cond]) 
               block <- block[sample(nrow(block)),]
-              block <- cbind(cond,blk,block)
-              makelist <- rbind(makelist,block)
           }
+          block <- cbind(cond,blk,block)
+          makelist <- rbind(makelist,block)
       }
       ## Add network reset for first trial
       ctrl <- c(1,rep(0,nrow(makelist)-1))

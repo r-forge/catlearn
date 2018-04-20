@@ -9,8 +9,7 @@
 
 ## Calculating stimulus distance from a cluster (Eq. 4)
 ## AW: OK, 2018-03-21
-.calc.distances <- function(input, cluster, fac.dims) {
-    fac.na <- seq(sum(st$dims))
+.calc.distances <- function(input, cluster, fac.dims, fac.na) {
     mu <- matrix(0, nrow = nrow(cluster),
                  ncol = length(unique(fac.dims)))
     for (k in 1:nrow(cluster)) {
@@ -118,7 +117,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
         
         ## Equation 4 - Calculate distances of stimulus from each cluster's
         ## position
-        mu <- .calc.distances(input, cluster, fac.dims)
+        mu <- .calc.distances(input, cluster, fac.dims, fac.na)
 
         ## c.act - The activations of clusters and recognition scores        
         c.act <- .cluster.activation(lambda, st$r, st$beta, mu)
