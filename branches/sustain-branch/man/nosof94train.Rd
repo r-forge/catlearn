@@ -62,8 +62,10 @@ trial) for all other trials.
 
 \code{blk} - training block
 
-\code{stim} - stimulus number (arbitrary, but consistent across
-              different values of \code{problem})
+\code{stim} - Stimulus number, ranging from 1 to 8. The numbering scheme
+ is the same as in Nosofsky et al. (1994, Figure 1), under
+the mapping of dim_1_left = 0, dim_1_right = 1, dim_2_front = 0,
+dim_2_back = 1, dim_3_bottom = 0, dim_3_top = 1. 
 
 \code{x1, x2, \dots} - input representation. Where \code{missing='geo'},
 x1, x2, and x3 are returned, each set at 1 or 0. This is the binary

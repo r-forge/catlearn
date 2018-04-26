@@ -136,3 +136,5 @@ differences between implementations, this might explain that.
 DON'T try and fix this inside slpSUSTAIN. The easiest solution is to
 turn the response probability on each trial 
 
+** NOTE: How good can block 1 be?
+
