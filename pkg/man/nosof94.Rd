@@ -86,7 +86,7 @@
   (1961). \emph{Journal of Experimental Psychology: Learning, Memory &
     Cognition, 39}, 552-572.
 
-  Shepard, R.N., Hocland, C.I., & Jenkins, H.M. (1961). learning and
+  Shepard, R.N., Hovland, C.I., & Jenkins, H.M. (1961). learning and
   memorization of classifications. \emph{Psychological Monographs, 75},
   Whole No. 517.
 
