@@ -7,25 +7,28 @@
   Kruschke's (2001) model extension of ADIT (Kruschke, 1996a)
 }
 \usage{
-  slpEXITrs(st,tr)
+  slpEXITrs(st,tr,xtdo)
 }
 \arguments{
   \item{st}{List of model parameters}
   \item{tr}{R-by-C matrix of training items}
+  \item{tr}{if \code{TRUE} extended output is returned}
 }  
 
 \value{
-  Returns a matrix where each row is a trial, as presented to the
-  model, and the columns are the response probabilities for 
-  each category. It also returns the final state of the network.
-  Which partially is given by parameter presets to the model 
-  (for details see below). The final state of the network includes: 
-  input-to-category weights, i.e. the modified \code{w_in_out}, 
-  the modified \code{w_exemplars} associative weights between 
-  exemplar nodes and attention gain nodes, the final attention gains,
-  the final attention strengths. Each output is indexed corresponding
-  to the formula as it appears in, E5_attention_strengths denotes
-  attention strengths as defined in equation 5 in Kruschke (2011).
+  The reduced output returns a matrix where each row is a trial, 
+  as presented to the model, and the columns are the response 
+  probabilities for each category. If the extended output is 
+  enabled, the state of the network in each learning trial 
+  is also returned.The state of the network includes: a list 
+  of the input-to-category weights in each trial, i.e. the
+  modified \code{w_in_out}. It also includes a list of the 
+  modified \code{w_exemplars} associative weights between exemplar 
+  nodes and attention gain nodes. It also includes matrices
+  containing of the the attention gains, attention strengths,
+  and the bias-to-category weights. The trials are indexed on
+  the top layer of the output-lists, or by the rows of the
+  matrices.
 }
 
 \details{
@@ -58,7 +61,10 @@
   new trials without teaching signals). 
   If \code{ctrl} is set to \code{3} the network parameters for
   \code{w_in_out} and \code{w_exemplars} are reset to the custom pre-
-  defined settings (see below).
+  defined settings via \code{w_io_init} and \code{ex_weights_init} 
+  (see below).
+  
+  \code{tr} ## should there be missing dimension flags as in ALCOVE?
   
   \code{tr} may have any number of additional columns with any desired 
   name and position, e.g. for readability. As long as the feature columns 
@@ -70,7 +76,9 @@
   Argument \code{st} must be a list containing the following required
   items: \code{nFeat}, \code{nCat}, \code{phi}, \code{c}, 
   \code{P}, \code{l_gain}, \code{l_weight}, \code{l_ex},
-  \code{iterations}, and \code{eta}
+  \code{iterations}, \code{eta}, and \code{eta}. Arguments 
+  \code{w_io_init} and \code{ex_weights_init} are optional 
+  in case of custom initialization using \code{ctrl} set to \code{3}. 
 
   \code{nFeat} - integer indicating the total number of possible
   stimulus features, i.e. the number of \code{x1, x2, \dots} columns in
@@ -87,9 +95,9 @@
   \code{phi} - response scaling constant - Equation (2)
   
   \code{c} - specificity parameter. Defines the narrowness of 
-  receptive field in exemplar activation - Equation (3).
+  receptive field in exemplar node activation - Equation (3).
   
-  \code{P} - Attentional normalization power (i.e. attentional capacity)
+  \code{P} - Attentional normalization power (attentional capacity)
   - Equation (5). If \code{P} equals \code{1} then the attention weights
   will satisfy the constraint that attention strength for currently 
   present features will sum to one. The sum of attention strengths
@@ -107,27 +115,36 @@
   in Equation (8) for each trial. Kruschke (2001, p.820) sets this to the 
   arbitrary value of 10, which produces a larger attention shift in each
   trial.
+  
+  \code{beta} and \code{eta} - bias attention parameters as introduced 
+  for ADIT (Kruschke, 1996a, Equation 10, p.18).
  
   \code{w_in_out} - matrix with \code{nFeat} columns and \code{nCat} rows,
   defining the input-to-category association weights, i.e. how much each
   feature is associated to a category (see Equation 1). The \code{nFeat} 
   columns follow the same order as \code{x1, x2, \dots} in \code{tr}, 
-  and likewise, the \code{nCat} collumns follow the order of 
-  \code{t1, t2, \dots}. If \code{ctrl} in \code{tr} is set to 3 this 
-  matrix will be used, e.g. for intializating or resetting the network 
-  in the given trial. If \code{ctrl} in \code{tr} is set to 1 a 
-  corresponding matrix with 0 entries will be used, e.g. for intilization 
-  or reset, however a definition of \code{w_in_out} is required.
+  and likewise, the \code{nCat} rows follow the order of  
+  \code{t1, t2, \dots}. If \code{ctrl} in \code{tr} is set to \code{1} 
+  (initialization- or reset-trial) while defining \code{w_in_out}<-NULL, 
+  a default matrix with 0 entries will be used for intilization. 
+  Alternatively, if \code{ctrl} in \code{tr} is set to \code{1} 
+  while providing custom starting values for \code{w_in_out}, the 
+  user-defined matrix \code{w_in_out} will be used  in that trial. 
+  The function also provides the option to define a second matrix for 
+  re-initialization, for being able to re-initialize the network at a 
+  different state. This can be done b setting \code{ctrl} in \code{tr} 
+  to \code{3}. In the corresponding trial the node weights are 
+  reset corresponding to the matrix \code{w_io_init} which then has to be 
+  defined according to the description above. If \code{tr} is 
+  never set to \code{3}, then a definition of \code{w_io_init} is not
+  required.
 
   \code{exemplars} - matrix with \code{nFeat} columns and n rows, where
   n is the number of exemplars, such that each row represents a single
-  exemplar in memory, and their corresponding feature values. It is
-  assumed that all exemplars are present in memory from the very first
-  learning trial, however their impact on the output activation depends
-  on the exemplar-node-to-gain weights \code{w_exemplars}, which are used
-  in Equation 4. The \code{nFeat} columns follow the same order as 
-  \code{x1, x2, \dots} in \code{tr}. The n-rows follow the same order 
-  as in the \code{w_exemplars} matrix defined below.
+  exemplar in memory, and their corresponding feature values. 
+  The \code{nFeat} columns follow the same order as \code{x1, x2, \dots} 
+  in \code{tr}. The n-rows follow the same order as in the 
+  \code{w_exemplars} matrix defined below.
   
   \code{w_exemplars} - matrix which is structurally equivalent to 
   \code{exemplars}. However, the matrix represents the associative weight
@@ -149,55 +166,3 @@
   812-863.
 
 }
-
-\examples{
-
-     ### Normal learning
-     ### with frozen sequence and reset afterwards 
-
-    ## still quick and dirty check (will be modified)
-    tr<-nosof94train()
-    ## exclude all trials with all absent features
-    tr<-tr[!(tr[,5]==0 & tr[,6]==0 & tr[,7]==0),]    
-    
-    ## resetting at trial 1 and 100 
-    ## with frozen learning period from 30 to 100
-    tr[c(1),1]<-1  
-    tr[30:100,1]<-2
-    
-    ## Network:
-    ## Fast attention learning network, 
-    ## slow exemplar learning 
-    st<-list(nFeat=3, 
-             nCat=2, 
-             phi=2, 
-             c=1, 
-             P=1,
-             l_gain=1, 
-             l_weight=.1,
-             l_ex=.1, 
-             iterations=10, 
-             eta=1)
-    
-    ## set up some exemplars 
-    st$exemplars<-tr[1:4,
-              colFeat1:(colFeat1+st$nFeat-1)]
-    ## initialize exemplar associative weights at 0
-    st$w_exemplars<-st$exemplars
-    st$w_exemplars[]<-0
-    ## initialize feature category weights at 0
-    st$w_in_out<-matrix(0,st$nCat,st$nFeat)
-    
-    ## and run:
-    slp_EXIT(st,tr)
-
-    ## see how predicted choice probabilities converge towards the teaching
-    ## signl
-    convergence<-as.data.frame(cbind(slp_EXIT(st,tr)$response_probabilities, 
-                                     tr[,c("x1", "x2", "x3", "t1", "t2")]))
-
-    convergence[convergence[,6]== -1,]<-0
-    ## G-square over trials when response probability is compared to the 
-    ## teaching signal category 1
-    plot(-2*log(dbinom(convergence[,6],1,convergence[,1])), type="l", main="Fast Learning")
-
