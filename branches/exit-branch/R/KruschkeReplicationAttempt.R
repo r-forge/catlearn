@@ -1,111 +1,135 @@
 #rm(list=ls())
 #library(catlearn)
-## Kruschke & Blair 2000 ## Experiment 1
-## create sequence of trials tr as reported
-## note x10 is the bias cue 
-if (T) {
-ncolumns<-16
-train1<-as.data.frame(matrix(0,ncol=ncolumns,nrow=2))
-colnames(train1)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9", "t1","t2","t3","t4","t5","t6","stim")
-train1[,c("t1","t2","t3","t4","t5","t6")]<--1
-train1[1,c("x1","t1")]<-1;      train1[1,c("stim")]<-"A"
-train1[2,c("x4","t3")]<-1;      train1[2,c("stim")]<-"D"
 
-train2<-as.data.frame(matrix(0,ncol=ncolumns,nrow=3))
-colnames(train2)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9", "t1","t2","t3","t4","t5","t6","stim")
-train2[,c("t1","t2","t3","t4","t5","t6")]<--1
-train2[1,c("x1","x2","t1")]<-1; train2[1,c("stim")]<-"AB"
-train2[2,c("x4","t3")]<-1;      train2[2,c("stim")]<-"D"
-train2[3,c("x8","x9","t6")]<-1; train2[3,c("stim")]<-"HI"
 
-block1<-as.data.frame(matrix(0,ncol=ncolumns,nrow=11))
-colnames(block1)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9", "t1","t2","t3","t4","t5","t6","stim")
-block1[,c("t1","t2","t3","t4","t5","t6")]<--1
-block1[1,c("x1","x2")]<-1; block1[1,c("stim")]<-"AB"
-block1[2,c("x4")]<-1;      block1[2,c("stim")]<-"D"
-block1[3,c("x8","x9")]<-1; block1[3,c("stim")]<-"HI"
-block1[4,c("x2","x8")]<-1; block1[4,c("stim")]<-"BH"
-block1[5,c("x2","x9")]<-1; block1[5,c("stim")]<-"BI"
-block1[6,c("x2","x4")]<-1; block1[6,c("stim")]<-"BD"
-block1[7,c("x1","x4")]<-1; block1[7,c("stim")]<-"AD"
-block1[8,c("x1","x8")]<-1; block1[8,c("stim")]<-"AH"
-block1[9,c("x1","x9")]<-1; block1[9,c("stim")]<-"AI"
-block1[10,c("x4","x8")]<-1; block1[10,c("stim")]<-"DH"
-block1[11,c("x4","x9")]<-1; block1[11,c("stim")]<-"DI"
-
-train3<-as.data.frame(matrix(0,ncol=ncolumns,nrow=6))
-colnames(train3)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9", "t1","t2","t3","t4","t5","t6","stim")
-train3[,c("t1","t2","t3","t4","t5","t6")]<--1
-train3[1,c("x1","t1")]<-1;      train3[1,c("stim")]<-"A"
-train3[2,c("x4","t3")]<-1;      train3[2,c("stim")]<-"D"
-train3[3,c("x7","t5")]<-1;      train3[3,c("stim")]<-"G"
-train3[4,c("x1","x2","x3","t2")]<-1;      train3[4,c("stim")]<-"ABC"
-train3[5,c("x4","x5","x6","t4")]<-1;      train3[5,c("stim")]<-"DEF"
-train3[6,c("x7","x8","x9","t6")]<-1;      train3[6,c("stim")]<-"GHI"
-
-block2<-as.data.frame(matrix(0,ncol=ncolumns,nrow=20))
-colnames(block2)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9", "t1","t2","t3","t4","t5","t6","stim")
-block2[,c("t1","t2","t3","t4","t5","t6")]<--1
-block2[1,c("x1")]<-1;               block2[1,c("stim")]<-"A"
-block2[2,c("x1","x2","x3")]<-1;     block2[2,c("stim")]<-"ABC"
-block2[3,c("x4")]<-1;               block2[3,c("stim")]<-"D"
-block2[4,c("x4","x5","x6")]<-1;     block2[4,c("stim")]<-"DEF"
-block2[5,c("x7")]<-1;               block2[5,c("stim")]<-"G"
-block2[6,c("x7","x8","x9")]<-1;     block2[6,c("stim")]<-"GHI"
-block2[7,c("x2","x5")]<-1;          block2[7,c("stim")]<-"BE"
-block2[8,c("x2","x6")]<-1;          block2[8,c("stim")]<-"BF"
-block2[9,c("x3","x5")]<-1;          block2[9,c("stim")]<-"CE"
-block2[10,c("x3","x6")]<-1;         block2[10,c("stim")]<-"CF"
-block2[11,c("x2","x8")]<-1;         block2[11,c("stim")]<-"BH"
-block2[12,c("x2","x9")]<-1;         block2[12,c("stim")]<-"BI"
-block2[13,c("x3","x8")]<-1;         block2[13,c("stim")]<-"CH"
-block2[14,c("x3","x9")]<-1;         block2[14,c("stim")]<-"CI"
-block2[15,c("x1","x2")]<-1;         block2[15,c("stim")]<-"AB"
-block2[16,c("x1","x3")]<-1;         block2[16,c("stim")]<-"AC"
-block2[17,c("x4","x5")]<-1;         block2[17,c("stim")]<-"DE"
-block2[18,c("x4","x6")]<-1;         block2[18,c("stim")]<-"DF"
-block2[19,c("x7","x8")]<-1;         block2[19,c("stim")]<-"GH"
-block2[20,c("x7","x9")]<-1;         block2[20,c("stim")]<-"GI"
-
-## number of trials overall
-ntrials<-20*2+20*3+1*11+15*6+1*20
-
-block_index<-c(rep("training1",20*2),rep("training2",20*3),rep("blocking",1*11),rep("training3",15*6),rep("attenuation",1*20))
-## set up all training trials
-tr<-as.data.frame(matrix(0,ncol=ncolumns+2,nrow=ntrials))
-colnames(tr)<-c("ctrl", "x1","x2","x3","x4","x5","x6","x7","x8","x9", "t1","t2","t3","t4","t5","t6","stim", "block")
-tr$block<-block_index
-##train1
-tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=20*2))
-for (i in 1:20)  tmp[(1:2)+(i-1)*2,]<-train1[sample(1:2,2),]
-tr[tr$block=="training1",2:(ncolumns+1)]<-tmp
-##train2
-tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=20*3))
-for (i in 1:20)  tmp[(1:3)+(i-1)*3,]<-train2[sample(1:3,3),]
-tr[tr$block=="training2",2:(ncolumns+1)]<-tmp
-##test1 (blocking)
-tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=1*11))
-for (i in 1:1)  tmp[(1:11)+(i-1)*11,]<-block1[sample(1:11,11),]
-tr[tr$block=="blocking",2:(ncolumns+1)]<-tmp
-##train3 
-tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=15*6))
-for (i in 1:15)  tmp[(1:6)+(i-1)*6,]<-train3[sample(1:6,6),]
-tr[tr$block=="training3",2:(ncolumns+1)]<-tmp
-##test2 
-tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=1*20))
-for (i in 1:1)  tmp[(1:20)+(i-1)*20,]<-block2[sample(1:20,20),]
-tr[tr$block=="attenuation",2:(ncolumns+1)]<-tmp
-
-## set ctrl values
-tr$ctrl<-0
-tr$ctrl[1]<-1
-tr$ctrl[tr$block=="blocking"]<-2
-tr$ctrl[tr$block=="attenuation"]<-2
+## Blocking and Attenuation
+## This code generates a random sequence of trials (tr)
+## following the experimental procedure as done in
+## Kruschke & Blair, 2000, Experiment 1, which was
+## fit using EXIT in Kruschke, 2001
+KruschkeBlair2000Exp1<-function(){
+    ncolumns<-17
+    train1<-as.data.frame(matrix(0,ncol=ncolumns,nrow=2))
+    colnames(train1)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim")
+    train1[,c("t1","t2","t3","t4","t5","t6")]<--1
+    train1[1,c("x1","t1")]<-1;      train1[1,c("stim")]<-"A"
+    train1[2,c("x4","t3")]<-1;      train1[2,c("stim")]<-"D"
+    
+    train2<-as.data.frame(matrix(0,ncol=ncolumns,nrow=3))
+    colnames(train2)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim")
+    train2[,c("t1","t2","t3","t4","t5","t6")]<--1
+    train2[1,c("x1","x2","t1")]<-1; train2[1,c("stim")]<-"AB"
+    train2[2,c("x4","t3")]<-1;      train2[2,c("stim")]<-"D"
+    train2[3,c("x8","x9","t6")]<-1; train2[3,c("stim")]<-"HI"
+    
+    block1<-as.data.frame(matrix(0,ncol=ncolumns,nrow=11))
+    colnames(block1)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim")
+    block1[,c("t1","t2","t3","t4","t5","t6")]<--1
+    block1[1,c("x1","x2")]<-1; block1[1,c("stim")]<-"AB"
+    block1[2,c("x4")]<-1;      block1[2,c("stim")]<-"D"
+    block1[3,c("x8","x9")]<-1; block1[3,c("stim")]<-"HI"
+    block1[4,c("x2","x8")]<-1; block1[4,c("stim")]<-"BH"
+    block1[5,c("x2","x9")]<-1; block1[5,c("stim")]<-"BI"
+    block1[6,c("x2","x4")]<-1; block1[6,c("stim")]<-"BD"
+    block1[7,c("x1","x4")]<-1; block1[7,c("stim")]<-"AD"
+    block1[8,c("x1","x8")]<-1; block1[8,c("stim")]<-"AH"
+    block1[9,c("x1","x9")]<-1; block1[9,c("stim")]<-"AI"
+    block1[10,c("x4","x8")]<-1; block1[10,c("stim")]<-"DH"
+    block1[11,c("x4","x9")]<-1; block1[11,c("stim")]<-"DI"
+    
+    train3<-as.data.frame(matrix(0,ncol=ncolumns,nrow=6))
+    colnames(train3)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim")
+    train3[,c("t1","t2","t3","t4","t5","t6")]<--1
+    train3[1,c("x1","t1")]<-1;      train3[1,c("stim")]<-"A"
+    train3[2,c("x4","t3")]<-1;      train3[2,c("stim")]<-"D"
+    train3[3,c("x7","t5")]<-1;      train3[3,c("stim")]<-"G"
+    train3[4,c("x1","x2","x3","t2")]<-1;      train3[4,c("stim")]<-"ABC"
+    train3[5,c("x4","x5","x6","t4")]<-1;      train3[5,c("stim")]<-"DEF"
+    train3[6,c("x7","x8","x9","t6")]<-1;      train3[6,c("stim")]<-"GHI"
+    
+    block2<-as.data.frame(matrix(0,ncol=ncolumns,nrow=20))
+    colnames(block2)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim")
+    block2[,c("t1","t2","t3","t4","t5","t6")]<--1
+    block2[1,c("x1")]<-1;               block2[1,c("stim")]<-"A"
+    block2[2,c("x1","x2","x3")]<-1;     block2[2,c("stim")]<-"ABC"
+    block2[3,c("x4")]<-1;               block2[3,c("stim")]<-"D"
+    block2[4,c("x4","x5","x6")]<-1;     block2[4,c("stim")]<-"DEF"
+    block2[5,c("x7")]<-1;               block2[5,c("stim")]<-"G"
+    block2[6,c("x7","x8","x9")]<-1;     block2[6,c("stim")]<-"GHI"
+    block2[7,c("x2","x5")]<-1;          block2[7,c("stim")]<-"BE"
+    block2[8,c("x2","x6")]<-1;          block2[8,c("stim")]<-"BF"
+    block2[9,c("x3","x5")]<-1;          block2[9,c("stim")]<-"CE"
+    block2[10,c("x3","x6")]<-1;         block2[10,c("stim")]<-"CF"
+    block2[11,c("x2","x8")]<-1;         block2[11,c("stim")]<-"BH"
+    block2[12,c("x2","x9")]<-1;         block2[12,c("stim")]<-"BI"
+    block2[13,c("x3","x8")]<-1;         block2[13,c("stim")]<-"CH"
+    block2[14,c("x3","x9")]<-1;         block2[14,c("stim")]<-"CI"
+    block2[15,c("x1","x2")]<-1;         block2[15,c("stim")]<-"AB"
+    block2[16,c("x1","x3")]<-1;         block2[16,c("stim")]<-"AC"
+    block2[17,c("x4","x5")]<-1;         block2[17,c("stim")]<-"DE"
+    block2[18,c("x4","x6")]<-1;         block2[18,c("stim")]<-"DF"
+    block2[19,c("x7","x8")]<-1;         block2[19,c("stim")]<-"GH"
+    block2[20,c("x7","x9")]<-1;         block2[20,c("stim")]<-"GI"
+    
+    ## number of trials overall
+    ntrials<-20*2+20*3+1*11+15*6+1*20
+    
+    block_index<-c(rep("training1",20*2),rep("training2",20*3),rep("blocking",1*11),rep("training3",15*6),rep("attenuation",1*20))
+    ## set up all training trials
+    tr<-as.data.frame(matrix(0,ncol=ncolumns+2,nrow=ntrials))
+    colnames(tr)<-c("ctrl", "x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim", "block")
+    tr$block<-block_index
+    ##train1
+    tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=20*2))
+    for (i in 1:20)  tmp[(1:2)+(i-1)*2,]<-train1[sample(1:2,2),]
+    tr[tr$block=="training1",2:(ncolumns+1)]<-tmp
+    ##train2
+    tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=20*3))
+    for (i in 1:20)  tmp[(1:3)+(i-1)*3,]<-train2[sample(1:3,3),]
+    tr[tr$block=="training2",2:(ncolumns+1)]<-tmp
+    ##test1 (blocking)
+    tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=1*11))
+    for (i in 1:1)  tmp[(1:11)+(i-1)*11,]<-block1[sample(1:11,11),]
+    tr[tr$block=="blocking",2:(ncolumns+1)]<-tmp
+    ##train3 
+    tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=15*6))
+    for (i in 1:15)  tmp[(1:6)+(i-1)*6,]<-train3[sample(1:6,6),]
+    tr[tr$block=="training3",2:(ncolumns+1)]<-tmp
+    ##test2 
+    tmp<-as.data.frame(matrix(0,ncol=ncolumns,nrow=1*20))
+    for (i in 1:1)  tmp[(1:20)+(i-1)*20,]<-block2[sample(1:20,20),]
+    tr[tr$block=="attenuation",2:(ncolumns+1)]<-tmp
+    
+    ## set ctrl values
+    tr$ctrl<-0
+    tr$ctrl[1]<-1
+    tr$ctrl[tr$block=="blocking"]<-2
+    tr$ctrl[tr$block=="attenuation"]<-2
+    ## enable the bias cue
+    tr$x10<-1
+    
+    
+    exemplars<-
+        rbind(train1[train1[,"stim"]=="A",1:st$nFeat],
+              train1[train1[,"stim"]=="D",1:st$nFeat],
+              train3[train3[,"stim"]=="G",1:st$nFeat],
+              train2[train2[,"stim"]=="AB",1:st$nFeat],
+              train2[train2[,"stim"]=="HI",1:st$nFeat],
+              train3[train3[,"stim"]=="ABC",1:st$nFeat],
+              train3[train3[,"stim"]=="DEF",1:st$nFeat],
+              train3[train3[,"stim"]=="GHI",1:st$nFeat])
+    rownames(exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI")
+    exemplars[,"x10"]<-1
+    
+    return(list(tr=tr,exemplars=exemplars))
 }
-tr
+tr<-KruschkeBlair2000Exp1()$tr
+exemplars<-KruschkeBlair2000Exp1()$exemplars
+
+
 ## best fit values for EXIT with attention shifting 
 ## as reported in Kruschke, 2001 
-st<-list(nFeat=9, 
+st<-list(nFeat=9+1,# +bias cue 
          nCat=6, 
          phi=4.43, 
          c=.348, 
@@ -113,22 +137,9 @@ st<-list(nFeat=9,
          l_gain=1.27, 
          l_weight=.316,
          l_ex=.0121, 
-         beta=.001,
          iterations=10,
-         beta=1,
-         eta=1)
-
-st$exemplars<-
-    rbind(train1[train1[,"stim"]=="A",1:st$nFeat],
-          train1[train1[,"stim"]=="D",1:st$nFeat],
-          train3[train3[,"stim"]=="G",1:st$nFeat],
-          train2[train2[,"stim"]=="AB",1:st$nFeat],
-          train2[train2[,"stim"]=="HI",1:st$nFeat],
-          train3[train3[,"stim"]=="ABC",1:st$nFeat],
-          train3[train3[,"stim"]=="DEF",1:st$nFeat],
-          train3[train3[,"stim"]=="GHI",1:st$nFeat])
-rownames(st$exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI")
-
+         sigma=0)
+st$exemplars<-exemplars
 st$w_exemplars<-st$exemplars
 st$w_exemplars[]<-0
 st$w_in_out<-matrix(0,st$nCat,st$nFeat)
@@ -166,7 +177,10 @@ predictions[,c("t1","t2","t3","t4","t5","t6")]<-
 ## blocking overall
 ## please note the order of symptoms differs % percent is in decimals
 predictions[predictions$block=="blocking",][1:11,2:8]
-
+## notes: everything looks like the altered category output 
+## and the altered alpha values in the 10 iterations are taken to subsequent 
+## equations. Only this way the slp predictions approximate the reported ones.
+## see also the other replication attempt
 
 
 ##Attenuation
@@ -281,5 +295,4 @@ predictions[predictions$block=="blocking",2:8]
 
 ## slpExit here
 predictions[predictions$block=="attenuation",2:8]
-
 

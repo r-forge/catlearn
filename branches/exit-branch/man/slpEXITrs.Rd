@@ -76,7 +76,7 @@
   Argument \code{st} must be a list containing the following required
   items: \code{nFeat}, \code{nCat}, \code{phi}, \code{c}, 
   \code{P}, \code{l_gain}, \code{l_weight}, \code{l_ex},
-  \code{iterations}, \code{eta}, and \code{eta}. Arguments 
+  \code{iterations}, \code{sigma}. Arguments 
   \code{w_io_init} and \code{ex_weights_init} are optional 
   in case of custom initialization using \code{ctrl} set to \code{3}. 
 
@@ -116,8 +116,8 @@
   arbitrary value of 10, which produces a larger attention shift in each
   trial.
   
-  \code{beta} and \code{eta} - bias attention parameters as introduced 
-  for ADIT (Kruschke, 1996a, Equation 10, p.18).
+  \code{sigma} - bias salience (fixed at 1 for remaining features).
+  See Kruschke(2001a, Equation 4, p.1399).
  
   \code{w_in_out} - matrix with \code{nFeat} columns and \code{nCat} rows,
   defining the input-to-category association weights, i.e. how much each

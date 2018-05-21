@@ -8,7 +8,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
 }
 
 .subfunction<- function(st, tr, extendx){
-    
+    #extendx=F
     ## Preparation of processing vars
 
     ## first column indices of the features
@@ -21,6 +21,9 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
     ## response probability matrix will be the default output
     probs_out<-matrix(0, ncol=st$nCat, nrow=nrow(tr))
     
+    ## salience vector sigma
+    sig<-rep(1,st$nFeat)
+    sig[st$nFeat]<-st$sigma
     ## extended output
     if (extendx==T){
         E4_exemplar_weights<-list()
@@ -31,13 +34,9 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
     }
     
     
-    ## Initialization of bias to category nodes
-    w_bias<-rep(0,st$nCat)
-    
-    
     ## go through all the trials and apply model
     for(j in 1:nrow(tr)){
-        
+    #for(j in 1:69){   
         ## first define indicator variables for correct cats
         ## cCat: index of present cat; eCat: absent cats
         cCat<-eCat<-c()
@@ -55,18 +54,26 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         teacher[cCat]<- 1
         teacher[eCat]<- 0
         
+        
         ## Extract input activations for current trial 
         ## (i.e. which feature is present?)
         a_in<-as.numeric(tr[j,colFeat1:(colFeat1+st$nFeat-1)])
+       
+        ## get the current exemplar (include bias as exemplar...
+        ## i.e. bias = always present)
+        curEx<-c(which(sapply(1:nrow(st$exemplars), function(x){
+            sum(st$exemplars[x,1:(st$nFeat)]==a_in)
+        })==(st$nFeat)))
         
-        ## calculate exemplar activation a_ex(x)
-        ## with minkowski metric Equation (3)
+
+        # ## calculate exemplar activation a_ex(x)
+        # ## with minkowski metric Equation (3)
         a_ex<-exp(-st$c*rowSums(
-            abs(t(
+            sig*abs(t(
                 t(st$exemplars)-
                     as.numeric(a_in)))
         ))
-        
+
         
         ## is this a reset trial? (ctrl==1)
         ## reset exemplar weight and gain nodes
@@ -86,7 +93,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         
         ## calculate current activation of gain nodes g
         ## Equation (4) 
-        g<-a_in*exp(colSums(w_exemplars*a_ex))
+        g<-a_in*sig*exp(colSums(w_exemplars*a_ex))
         ## negative gains are set to 0
         g[g<0]<-0
         
@@ -98,7 +105,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         ## calculate category activation
         ## Equation (1) (or 40 with bias)
         ## Note: used for updates in Equations 9 and 10
-        out_act<-(a_in*alpha_i)%*%t(w_in_out)+w_bias
+        out_act<-(a_in*alpha_i)%*%t(w_in_out)
        
         ## and category probability
         ## Equation (2) (or 39 with bias)
@@ -175,20 +182,13 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         ## Equation (10)
         ## note: a_ex in equation 10 is quite redundant as it is always 1
         ## so I am not sure, whether it has a deeper meaning here...
-        ex_weights_delta<- st$l_ex*(g[a_in==1]-g_inits[a_in==1])*
-                            g_inits[a_in==1]*a_ex[a_ex==1]
-        
-        
+        ex_in<-st$exemplars[curEx,1:(st$nFeat)]
+        ex_weights_delta<- st$l_ex*(g[ex_in==1]-g_inits[ex_in==1])*
+                            g_inits[ex_in==1]*a_ex[curEx]
         ## adjusts exemplar-node-to-gain weights for
-        w_exemplars[a_ex==1,a_in==1]<-ex_weights_delta+w_exemplars[a_ex==1,a_in==1]
+        w_exemplars[curEx,ex_in==1]<-ex_weights_delta+w_exemplars[curEx,ex_in==1]
+
         
-        ## adjust bias to category weight
-        ## the formula here is adapted from Kruschke, 1996, ADIT
-        ## where the attention bias is calculated in Equation 10 (p.18)
-        ## there, however, is an additional term called eta,
-        ## which does not seem necessary here?
-        w_bias<-w_bias+(teacher-out_act)*
-            st$beta/(st$beta+st$nFeat^(1/st$eta))
         }
 
         
@@ -198,7 +198,6 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         weights_in_out[[j]]<-w_in_out
         gains[j,]<-g_inits
         attention[j,]<-alpha_i
-        bias_weight[j,]<-w_bias
     }
     
     }
@@ -212,7 +211,6 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         output$E1_w_in_out<-weights_in_out
         output$E4_gains<-gains
         output$E5_attention_strengths<-attention
-        output$bias_weights<-bias_weight
     }
     
     return(output)
