@@ -26,14 +26,14 @@ st<-list(nCats=4,
 st<-list(nCats=4, 
          nFeats=2, 
          beta=c(-4.5, -4.5), #rule boundaries; index 1 for rule dim 1: index 2: for dimension 2
-         y_r=.87, #rule gain
-         c=2.28296, #specificity
+         y_r=.87080, #rule gain
+         c=.58296, #specificity
          beta_g=-1.78984, #gate bias (positive values bias to exemplar module, negtive to rule module)
          y_g=1,  # gate gain
-         phi=5.07742, # response scaling
+         phi=4.07742, # response scaling
          cost=c(1,1), # index 1: exemplar; 2: rule module
          lambda_r=.03375, # rule learning
-         lambda_e=.52163, # exemplar learning 
+         lambda_e=.32163, # exemplar learning 
          lambda_a=1.96593, # attention learning
          lambda_g=5.41313, # gate learning
          prime_dim=c(2)) # tells the model on whitch dim the rule is 
@@ -41,7 +41,7 @@ st<-list(nCats=4,
 ### set to exemplar learning rate to 0 for checking whether the rule module (alone) works, and it does.
 ### Then the "near rule" predictions in the graph below are about 50% for exceptions, which means,
 ### it is kind of randomly predicted ty a rule 
-st$lambda_e=0
+#st$lambda_e=0
 
 ## full set of possible stimuli
 stimuli<-cbind(expand.grid(0:9,0:9),rep(0,100))
@@ -156,7 +156,7 @@ points(x=test_stims[,2],y=test_stims[,1], cex=squaresize, pch=15,
        col=map2color(testp[,categorypredictions],mypal, limits=c(0,1)))
 
 ## insert choice probabilities
-xxx<-as.character(round(testp[,exceptioncategory],2))
+xxx<-as.character(round(testp[,categorypredictions],2))
 text(x=test_stims[,2],y=test_stims[,1], cex=1, labels=xxx, col="white")
 ## best i could find...
 

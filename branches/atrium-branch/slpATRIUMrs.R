@@ -46,7 +46,7 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
     r_probs<-(w_r)%*%a_rule
     
     ## ALCOVE output activation (E3)
-    a_ej<- (cbind(exp(-.5*st$c*colSums(abs((t(st$exemplars)-as.numeric(tr[j,tfeats]))*alpha)))))
+    a_ej<- (cbind(exp(-.5*st$c*colSums(abs(t(st$exemplars)-as.numeric(tr[j,tfeats]))*alpha))))
     e_probs<-(w_e)%*%a_ej
     
     ## Gating Node (E5)
@@ -69,7 +69,7 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
     ## get correct category
     cCat<-which(tr[j,tcats]==1)
     eCat<-which(tr[j,tcats]!=1)
-    tr[j,]
+    
     ## Rule teachers (E7)
     t_r<-rep(0,st$nCats)
     t_r[cCat]<- max(1,r_probs[cCat])
@@ -108,16 +108,15 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
    
     
     ## Attention Update (E14)
-    delta_alpha<-sapply(1:st$nFeats, function(y){
+    delta_alpha<- -st$lambda_a*sapply(1:st$nFeats, function(y){
         sum(
         sapply(1:nrow(st$exemplars), function(x) {
-            st$lambda_a*
                 sum(
                     (t_e-e_probs)*w_e[,x]*
                     ((st$cost[1]*EA*a_g[1])/MA)
                     )*
                 a_ej[x]*st$c*
-                abs((st$exemplars[x,y])-as.numeric(tr[j,c("x1","x2")][y]))
+                abs((st$exemplars[x,y])-as.numeric(tr[j,tfeats][y]))
         })
         )
     })
