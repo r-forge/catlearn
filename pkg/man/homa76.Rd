@@ -1,17 +1,20 @@
-\name{homa76res}
+\name{homa76}
 \docType{data}
-\alias{homa76res}
-\title{Homa & Vosburgh (1976) results}
+\alias{homa76}
+\title{Category breadth CIRP}
 \description{
-  
-  The \code{homa76res} data frame has 104 rows and 5 columns of data from
-  an experiment on the effect of category breadth on response accuracy
-  in a category learning task (Homa & Vosburgh, 1976).  There were 36
-  participants per condition; the reported data is averaged across
-  participants.
+
+In some category-learning experiments, category members are distortions
+of an underlying base pattern. Where this is the case, 'category breadth'
+refers to the magnitude of such distortions. Broad categories take
+longer to learn than narrow categories. Once trained to an errorless
+criterion, the effect of category breadth on performance on novel items
+depends on category size. For small categories, narrow categories are
+better than broad ones. For larger categries, the reverse is true. Homa
+& Vosburgh (1976) provide the data for this CIRP.
   
 }
-\usage{data(shin92)}
+\usage{data(homa76)}
 \format{
   
   A data frame with the following columns:
@@ -19,9 +22,8 @@
   \describe{
     
   \item{phase}{Experimental phase (within-subjects). Takes values :
-  'train','imm', '1wk', '10wk'. The training phase is 'train', the
-  others are the immediate, 1-week delay, and 10-week delay test
-  phases.}
+  'train','imm'. The training phase is 'train', 'imm' is the immediate
+  test phase.}
     
   \item{cond}{Category breadth (between-subjects). Takes values :
   'mixed', 'uni-low'}
@@ -35,11 +37,14 @@
     stimuli, generated from prototypes unrelated to those used in
     training. These random stimuli are not mentioned in the Method of
     the paper, but are mentioned in the Results section - they are
-    presented at the end of each test session. Empty cell for training
+    presented at the end of the test session. Empty cell for training
     phase.}
 
   \item{catsize}{Category size (within-subjects). Takes values : 3, 6,
-  9. NA for training phase, and for random stimuli.}
+  9. NA for training phase, where category size is not a meaningful
+  variable given that the DV is blocks to criterion. Also NA for old
+  stimuli; Homa & Vosburgh's (1976) Results section collapses across
+  category size for old stimuli}
 
   \item{val}{For test phases: probability of a correct response, except
   for random stimuli, where 'val' is the probability with which the
@@ -51,9 +56,34 @@
   
 \details{
 
-These data were estimated from Figures 1-3 of Homa & Vosburgh
-(1976), using \code{plot digitizer} (Huwaldt, 2015).
-  
+Wills et al. (n.d.) discuss the derivation of this CIRP. In brief, the
+effects have been independently replicated. Homa & Vosburgh (1976) was
+selected as the only experiment to contain all three independently
+replicated effects. 
+
+Homa & Vosburgh's experiment involved the supervised classification of
+nine-dot random dot patterns. Stimuli had three different levels of
+distortion from the prototype - low (3.5 bit), medium (5.6 bit), and
+high (7.7 bit). There were three categories in training, one with 3
+members, one with 6 members, and one with 9 members. Participants were
+either trained on stimuli that were all low distortion (narrow
+categories), or on an equal mix of low, medium, and high distortion
+stimuli (broad categories). Training was to an errorless criterion. The
+test phase involved the presentation of the prototypes, old stimuli, and
+novel stimuli of low, medium, and high distortion. 
+
+The data for the prototype, and other novel test stimuli, were estimated
+from Figure 1 of Homa & Vosburgh (1976), using \code{plot
+digitizer} (Huwaldt, 2015). The data for old stimuli were estimated from
+Figure 3, using the same procedure. The data for the training phase,
+and for random stimuli, were reported in the text of Homa & Vosburgh
+(1976) and are reproduced here. All data are averages across participants.
+
+Homa & Vosburgh's (1976) experiment also includes results for further
+test phases, delayed by either 1 week, or 10 weeks, from the day of
+training. These data are not the focus of this category breadth CIRP and
+have not been included.
+
 }
 
 \source{
@@ -64,6 +94,9 @@ These data were estimated from Figures 1-3 of Homa & Vosburgh
   
   Huwaldt, J.A. (2015). Plot Digitizer
   [software]. \url{http://plotdigitizer.sourceforge.net/}
+
+  Wills et al. (n.d.). Benchmarks for category learning. \emph{Manuscript
+  in preparation}.
 
 }
 \keyword{datasets}

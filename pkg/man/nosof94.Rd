@@ -40,21 +40,14 @@
 }
 \details{
 
-  Wills & O'Connell (n.d.) discuss the derivation of this CIRP. In
-  brief, the effect has been demonstrated independently on three
-  occasions (Nosofsky et al., 1994; Shepard et al., 1961; Smith et al.,
-  2004). Kurtz et al. (2013) discuss and report a number of experiments
-  that indicate that the advantage of Type II over Type IV may depend on
-  specific details of the experimental design, including the stimulus
-  dimensions being easily verbalizable, and the participants being
-  explicitly instructed to look for rules.
-
-  Nosofsky et al. (1994) was selected as the CIRP because it had
-  acceptable sample size (N=40 per Type), and included simulations of
-  the results with a number of different formal models. Inclusion of
-  this dataset in \code{catlearn} thus permits a validation of
-  \code{catlearn} model implementations against published simulations.
-
+  Wills et al. (n.d.) discuss the derivation of this CIRP. In
+  brief, the effect has been independently replicagted. Nosofsky et
+  al. (1994) was selected as the CIRP because it had acceptable sample
+  size (N=40 per Type), and included simulations of the results with a
+  number of different formal models. Inclusion of this dataset in
+  \code{catlearn} thus permits a validation of \code{catlearn} model
+  implementations against published simulations.
+  
   In Nosofsky et al. (1994) the stimuli varied in shape (squares or
   triangles), type of interior line (solid or dotted), and size (large
   or small). Each participant learned two problems. Each problem was
@@ -80,23 +73,13 @@
 
 \references{
 
-  Kurtz, K.J., Levering, K.R., Stanton, R.D., Romero, J. & Norris,
-  S.N. (2013). Human learning of elemental category structures: Revising
-  the classic result of Shepard, Hovland, and Jenkins
-  (1961). \emph{Journal of Experimental Psychology: Learning, Memory &
-    Cognition, 39}, 552-572.
-
   Shepard, R.N., Hovland, C.I., & Jenkins, H.M. (1961). learning and
   memorization of classifications. \emph{Psychological Monographs, 75},
   Whole No. 517.
 
-  Smith, J.D., Minda, J.P. & Washburn, D.A. (2004). Category learning in
-  rhesus monkeys: A study of the Shepard, Hovland, and Jenkins (1961)
-  tasks. \emph{Journal of Experimental Psychology: General, 133}, 398-414.
-  
-  Wills, A.J. & O'Connell (n.d.). Averaging
-  abstractions. \emph{Manuscript in preparation}.
-   
+  Wills et al. (n.d.). Benchmarks for category learning. \emph{Manuscript
+  in preparation}.
+
   }
 
   \author{

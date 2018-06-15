@@ -37,15 +37,11 @@
 
 \details{
 
-  Wills et al. (2016) discuss the derivation of this CIRP. In brief, a
-  between-subjects manipulation of category size was selected to avoid a
-  potential response-bias confound in within-subject studies of the
-  category-size effect. The between-subjects effect has been
-  demonstrated independently on three occasions (DiNardo & Toppino,
-  1984; Homa et al., 1987; Shin & Nosofsky, 1992). Experiment 3 of Shin
-  & Nosofsky (1992) was selected due to the availability of a
-  multi-dimensional scaling solution for the stimuli, see
-  \code{\link{shin92train}}. 
+  Wills et al. (2017) discuss the derivation of this CIRP, with Wills et
+  al. (n.d.) providing further details. In brief, the effect has been
+  independently replicated. Experiment 3 of Shin & Nosofsky (1992) was
+  selected due to the availability of a multi-dimensional scaling
+  solution for the stimuli, see \code{\link{shin92train}}.
   
   Experiment 3 of Shin & Nosofsky (1992) involved the classification of
   nine-vertex polygon stimuli drawn from two categories. Category size
@@ -69,24 +65,13 @@
 
 \references{
 
-  DiNardo, M.J. & Toppino, T.C. (1984). Formation of ill-defined
-  concepts as a function of category size and category
-  exposure. \emph{Bulletin of the Psychonomic Society, 22}, 317-320.
+  Wills et al. (n.d.). Benchmarks for category learning. \emph{Manuscript
+  in preparation}.
   
-  Homa, D., Burruel, L. & Field, D. (1987). The changing composition of
-  abstracted categories under manipulations of decisional change, choice
-  difficulty, and category size. \emph{Journal of Experimental
-  Psychology: Learning, Memory, and Cognition, 13}, 401-412.
-  
-  Homa, D., Cross, J., Cornell, D., Goldman, D. & Shwartz,
-  S. (1973). Prototype abstraction and classification of new instances
-  as a function of number of instances defining the
-  prototype. \emph{Journal of Experimental Psychology, 101}, 116-122.
-
-  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2016).
+  Wills, A.J., O'Connell, G., Edmunds, C.E.R. & Inkster, A.B. (2017).
   Progress in modeling through distributed collaboration: Concepts,
   tools, and category-learning examples. \emph{The Psychology of
-  Learning and Motivation}.
+  Learning and Motivation, 66}, 79-115.
   
 }
 
