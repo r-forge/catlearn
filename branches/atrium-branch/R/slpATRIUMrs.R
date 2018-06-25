@@ -9,15 +9,17 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
     ## number of dimension rules
     nRules<-length(st$prime_dim)
     ## vector of category and feature indices (columnname strings)
-    tcats<-colnames(tr)[grep("t1$",colnames(tr)):(grep("t1$",colnames(tr))+(st$nCats-1))]
-    tfeats<-colnames(tr)[grep("x1$",colnames(tr)):(grep("x1$",colnames(tr))+(st$nFeats-1))]
+    tcats<-colnames(tr)[grep("t1$",colnames(tr)):(grep("t1$",colnames(tr))+
+                                                    (st$nCat-1))]
+    tfeats<-colnames(tr)[grep("x1$",colnames(tr)):(grep("x1$",colnames(tr))+
+                                                     (st$nFeat-1))]
     
     ## tracking arrays
-    response_probabilities<-matrix(0, ncol=st$nCats,nrow=nrow(tr))
+    response_probabilities<-matrix(0, ncol=st$nCat,nrow=nrow(tr))
     track_w_g<-matrix(0, ncol=nrow(st$exemplars),nrow=nrow(tr))
     # track_w_e<-matrix(0, ncol=nrow(st$exemplars),nrow=nrow(tr))
     track_a_g<- matrix(0, ncol=2,nrow=nrow(tr))
-    track_alpha<- matrix(0, ncol=st$nFeats,nrow=nrow(tr))
+    track_alpha<- matrix(0, ncol=st$nFeat,nrow=nrow(tr))
     
     for (j in 1:nrow(tr)){
      # for (j in 1:348){
@@ -25,28 +27,29 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
     if (tr[j,"ctrl"]==1){
         ## initialize
         ## rule response gains
-        w_r<-matrix(0,nrow=st$nCats, ncol=nRules*2)
+        w_r<-matrix(0,nrow=st$nCat, ncol=nRules*2)
             #rownames(w_r)<-tcats  ## debugging only
         ## exemplar response gains
-        w_e<-matrix(0,nrow=st$nCats, ncol=nrow(st$exemplars))
+        w_e<-matrix(0,nrow=st$nCat, ncol=nrow(st$exemplars))
             #rownames(w_e)<-tcats  ## debugging only
         ## exemplar gate weights
         w_g<-matrix(0,nrow=1, ncol=nrow(st$exemplars))
         ## dimension attention
-        alpha<-rep(1/st$nFeats,st$nFeats)
+        alpha<-rep(1/st$nFeat,st$nFeat)
     }
     
     ## Rule Activation (E1)
     a_rule<-cbind(as.vector(sapply(st$prime_dim,function(x1){
-        t(cbind(c(1-(1+exp(-st$y_r*(tr[j,tfeats[x1]]+st$beta[x1])))^-1),
-                c((1+exp(-st$y_r*(tr[j,tfeats[x1]]+st$beta[x1])))^-1))) 
+        t(cbind(c(1-(1+exp(-st$y_r[x1]*(tr[j,tfeats[x1]]-st$beta[x1])))^-1),
+                c((1+exp(-st$y_r[x1]*(tr[j,tfeats[x1]]-st$beta[x1])))^-1))) 
         })))
             
     ## Rule output activation (E2)
     r_probs<-(w_r)%*%a_rule
     
     ## ALCOVE output activation (E3)
-    a_ej<- (cbind(exp(-.5*st$c*colSums(abs(t(st$exemplars)-as.numeric(tr[j,tfeats]))*alpha))))
+    a_ej<- (cbind(exp(-.5*st$c*colSums(abs(t(st$exemplars)-
+                                             as.numeric(tr[j,tfeats]))*alpha))))
     e_probs<-(w_e)%*%a_ej
     
     ## Gating Node (E5)
@@ -71,12 +74,12 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
     eCat<-which(tr[j,tcats]!=1)
     
     ## Rule teachers (E7)
-    t_r<-rep(0,st$nCats)
+    t_r<-rep(0,st$nCat)
     t_r[cCat]<- max(1,r_probs[cCat])
     t_r[eCat]<- min(0,r_probs[eCat])
     
     ## Exemplar teachers (E7)
-    t_e<-rep(0,st$nCats)
+    t_e<-rep(0,st$nCat)
     t_e[cCat]<- max(1,e_probs[cCat])
     t_e[eCat]<- min(0,e_probs[eCat])
    
@@ -108,7 +111,7 @@ slp_ATRIUMrs<-function(st,tr,xtdo=FALSE){
    
     
     ## Attention Update (E14)
-    delta_alpha<- -st$lambda_a*sapply(1:st$nFeats, function(y){
+    delta_alpha<- -st$lambda_a*sapply(1:st$nFeat, function(y){
         sum(
         sapply(1:nrow(st$exemplars), function(x) {
                 sum(

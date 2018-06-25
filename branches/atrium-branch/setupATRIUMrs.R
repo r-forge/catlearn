@@ -1,12 +1,13 @@
 
 ## "Replicate" Fits of Erickson & Kruschke 1998
 ## the fitted settings are these:
-## but makes no sense - they used psychologically scaled dimension values (appendix C)
-st<-list(nCats=4, 
-         nFeats=2, 
-         nRules=1, 
-         beta=c(-4.5,-4.5), #rule bias (-boundary); index 1: first; 2: second dimension
-         y_r=.87080, #rule gain
+## but makes no sense - they used psychologically scaled dimension values 
+## (appendix C)
+st<-list(nCat=4, 
+         nFeat=2, 
+         beta=c(4.5,4.5), #rule bias (-boundary); index 1: first; 2: second 
+         # dimension
+         y_r=c(.87080,.87080), #rule gain
          c=1.28296, #specificity
          beta_g=-1.78984, #gate bias
          y_g=1,  # gate gain
@@ -18,17 +19,21 @@ st<-list(nCats=4,
          lambda_g=.41313, # gate learning
          prime_dim=2 # tells the model on which dim the rule is
             ) 
-## note: prime_dim 1 in the paper is the column "x2" in tr here, which is prime_dim=2
-## (can also be a vector with multiple dimensions, the rules will be generated automatically.
+## note: prime_dim 1 in the paper is the column "x2" in tr here, which is
+##  prime_dim=2
+## (can also be a vector with multiple dimensions, the rules will be generated 
+## automatically.
 ## i.e. nRules=length(prime_dim)
 
 ## trying out other settings
-st<-list(nCats=4, 
-         nFeats=2, 
-         beta=c(-4.5, -4.5), #rule boundaries; index 1 for rule dim 1: index 2: for dimension 2
-         y_r=.87080, #rule gain
-         c=.58296, #specificity
-         beta_g=-1.78984, #gate bias (positive values bias to exemplar module, negtive to rule module)
+st<-list(nCat=4, 
+         nFeat=2, 
+         beta=c(4.5, 4.5), #rule boundaries; index 1 for rule dim 1: index 2: 
+         #for dimension 2
+         y_r=c(.87080,.87080), #rule gain
+         c=.38296, #specificity
+         beta_g=-1.78984, #gate bias (positive values bias to exemplar module, 
+         #negtive to rule module)
          y_g=1,  # gate gain
          phi=4.07742, # response scaling
          cost=c(1,1), # index 1: exemplar; 2: rule module
@@ -38,11 +43,14 @@ st<-list(nCats=4,
          lambda_g=5.41313, # gate learning
          prime_dim=c(2)) # tells the model on whitch dim the rule is 
 
-### set to exemplar learning rate to 0 for checking whether the rule module (alone) works, and it does.
-### Then the "near rule" predictions in the graph below are about 50% for exceptions, which means,
+### set to exemplar learning rate to 0 for checking whether the rule module 
+### (alone) works, and it does.
+### Then the "near rule" predictions in the graph below are about 50% for 
+### exceptions, which means,
 ### it is kind of randomly predicted ty a rule 
 #st$lambda_e=0
-
+exp(-.5*1000*(.1))
+c(10^-5,10^-5)
 ## full set of possible stimuli
 stimuli<-cbind(expand.grid(0:9,0:9),rep(0,100))
 sr<-t(cbind(
@@ -61,18 +69,20 @@ sr<-t(cbind(
 ))
 # plot of the category structure:
 # layout(matrix(1))
-# plot(test_stims, pch=0,cex=5, xlab="Secondary Dimension",ylab="Primary Dimension")
+# plot(test_stims, pch=0,cex=5, xlab="Secondary Dimension",ylab="Primary 
+# Dimension")
 # points(sr[sr[,3]==1,1:2],pch=16,cex=3)
 # points(sr[sr[,4]==1,1:2],pch=15,cex=3)
 # points(x=sr[sr[,5]==1,1],y=sr[sr[,5]==1,1],pch=1,cex=3, lwd=3)
 # points(x=sr[sr[,6]==1,1],y=sr[sr[,6]==1,1],pch=0,cex=3, lwd=3)
 
+1/(1+exp(5))
 
 st$exemplars<-sr[,1:2]
 colnames(st$exemplars)<-c("x1","x2")
 trainingblocks<-29
 tr<-as.data.frame(matrix(0,nrow=(trainingblocks*12),
-                         ncol=(1+st$nCats+st$nFeats+2)))
+                         ncol=(1+st$nCat+st$nFeat+2)))
 for (i in 1:trainingblocks){
     samp<-sample(1:12,12)
     tr[(1:12)+12*(i-1),2:7]<-sr[samp,]
