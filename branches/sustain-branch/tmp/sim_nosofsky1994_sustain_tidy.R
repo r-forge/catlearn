@@ -33,6 +33,7 @@ nosof94plot(love.res)
 out.store <- nosof94sustain()
 nosof94plot(out.store)
 round(gureck$error - out.store$error, 2)
+round(love.res$error - out.store$error, 2)
 
 nosof94plot(gureck)
 
@@ -64,6 +65,14 @@ for(j in 1:600) {
         }
     }
 }
+
+## Looking for outliers
+library(tidyverse)
+btc1 <- btc %>% filter(cond == 1)
+hist(btc1$subblk)
+## Run 17 seems pretty extreme
+trial.store <- out %>% filter(subj == 17 & cond == 1 & blk == 1)
+trial.store <- trial.store[1:8,5:12]
 
 out.ag <- aggregate(out$pc, list(out$blk, out$subblk, out$cond, out$subj), mean)
 colnames(out.ag) <- c('blk','subblk', 'cond', 'subj', 'error')

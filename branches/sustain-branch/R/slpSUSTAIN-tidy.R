@@ -112,7 +112,8 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
             ## stimulus
             w <- st$w
             lambda <- st$lambda
-            cluster <- st$cluster
+            cluster <- matrix(as.vector(trial[colskip:(length(trial))]),
+                                 nrow = 1)
         }
         
         ## Equation 4 - Calculate distances of stimulus from each cluster's
@@ -167,11 +168,8 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
             ## second most active unit. Here, we should create a new
             ## cluster.
 
-            ## Let's try dropping that edge case, as I'm not sure
-            ## sustain python implements it.
-
-            ##in.order <- C.out[fac.queried][order(C.out[fac.queried])]
-            ##if(in.order[1] == in.order[2]) new.cluster <- TRUE
+            in.order <- C.out[fac.queried][order(C.out[fac.queried])]
+            if(in.order[1] == in.order[2]) new.cluster <- TRUE
             
         }
 
