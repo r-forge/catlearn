@@ -167,8 +167,11 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
             ## second most active unit. Here, we should create a new
             ## cluster.
 
-            in.order <- C.out[fac.queried][order(C.out[fac.queried])]
-            if(in.order[1] == in.order[2]) new.cluster <- TRUE
+            ## Let's try dropping that edge case, as I'm not sure
+            ## sustain python implements it.
+
+            ##in.order <- C.out[fac.queried][order(C.out[fac.queried])]
+            ##if(in.order[1] == in.order[2]) new.cluster <- TRUE
             
         }
 

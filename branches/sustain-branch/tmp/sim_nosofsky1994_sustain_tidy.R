@@ -1,17 +1,40 @@
 ## catlearn simulation of Nosofsky et al. (1994) with slpSUSTAIN
-
+rm(list=ls())
 source('../R/nosof94plot.R') # unchanged from trunk
 source('../R/slpSUSTAIN-tidy.R') # new to branch
 source('../R/nosof94train.R') # updated in branch
 source('../R/nosof94sustain.R') # new to branch
 
+## Simulation results digitised from Love et al. (2004)
 love.res <- read.csv("sustain-nosof94-love2004-tidied.csv")
 nosof94plot(love.res)
-gureck.res <- read.table("shepard1-1000runs.dat", sep = " ")
-gureck.res <- t(gureck.res)
 
-out <- nosof94sustain()
-nosof94plot(out)
+## Simulation results produced by sustain_python
+gureck.res <- read.table("shepard1-10kruns.dat", sep = " ")
+gureck.res <- t(gureck.res)
+gureck.res <- as.data.frame(gureck.res[1:32,])
+colnames(gureck.res) <- c("1", "2", "3", "4", "5", "6")
+library(tidyverse)
+gureck.long <- gather(gureck.res, key = 'type', value = 'error')
+block <- rep(rep(1:16, each = 2), times = 6)
+gureck.long <- cbind(block, gureck.long)
+gureck <- gureck.long %>%
+    group_by(type, block) %>%
+    summarise(error = mean(error))
+
+max(abs(love.res$error - gureck$error))
+
+round(love.res$error - gureck$error, 3)
+
+nosof94plot(gureck)
+nosof94plot(love.res)
+
+### Our simulation
+out.store <- nosof94sustain()
+nosof94plot(out.store)
+round(gureck$error - out.store$error, 2)
+
+nosof94plot(gureck)
 
 ## The following code is a bit of a hack to handle the way the Love et
 ## al. simulation handles the 'to-criterion' aspect of the experiment.
@@ -55,8 +78,8 @@ colnames(out.ag.f) <- c('block','type','error')
 nosof94plot(out.ag.f) 
 
 
+round(gureck$error - out.ag.f$error, 2)
 
-    
     
         
         
