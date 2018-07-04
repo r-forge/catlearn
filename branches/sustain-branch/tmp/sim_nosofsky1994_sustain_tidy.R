@@ -40,17 +40,17 @@ nosof94plot(gureck)
 ## The following code is a bit of a hack to handle the way the Love et
 ## al. simulation handles the 'to-criterion' aspect of the experiment.
 
-load('rawout.RData')
+load('rawout-1kruns.RData')
 out$rnd <- runif(nrow(out))
 out$corr <- 0
 out$corr[out$pc < out$rnd] <- 1
-out$subj <- rep(1:600, each = 256)
+out$subj <- rep(1:6000, each = 256)
 out$subblk <- rep(1:32, each = 8)
 out.tc <- aggregate(out$corr, list(out$subblk, out$cond, out$subj), sum)
 colnames(out.tc) <- c('subblk', 'cond', 'subj', 'ncor')
 
 btc <- NULL
-for(j in 1:600) {
+for(j in 1:6000) {
     ncblk <- 0
     for(i in 1:32) {
         pos <- (j-1) * 32 + i
@@ -77,7 +77,7 @@ trial.store <- trial.store[1:8,5:12]
 out.ag <- aggregate(out$pc, list(out$blk, out$subblk, out$cond, out$subj), mean)
 colnames(out.ag) <- c('blk','subblk', 'cond', 'subj', 'error')
 
-for(i in 1:600) {
+for(i in 1:6000) {
     first <- btc$subblk[i]
     out.ag$error[out.ag$subj == i & out.ag$subblk > btc$subblk[i]] <- 0
 }
@@ -85,7 +85,6 @@ for(i in 1:600) {
 out.ag.f <- aggregate(out.ag$error,list(out.ag$blk,out.ag$cond),mean)
 colnames(out.ag.f) <- c('block','type','error')
 nosof94plot(out.ag.f) 
-
 
 round(gureck$error - out.ag.f$error, 2)
 
