@@ -131,6 +131,10 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   'Reset network' means revert \code{w}, \code{cluster},and
   \code{lambda} back to the values passed in \code{st}.
 
+  Unsupervised learning in \code{slpSUSTAIN} is at an early stage of
+  testing, as we have not yet established any CIRP for unsupervised
+  learning. 
+
   \code{opt1, opt2, \dots} - optional columns, which may have any names
   you wish, and you may have as many as you like, but they must be
   placed after the ctrl column, and before the remaining columns (see

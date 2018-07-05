@@ -39,6 +39,7 @@ nosof94plot(gureck)
 
 ## The following code is a bit of a hack to handle the way the Love et
 ## al. simulation handles the 'to-criterion' aspect of the experiment.
+## This was not used in the CRAN version
 
 load('rawout-1kruns.RData')
 out$rnd <- runif(nrow(out))
@@ -87,39 +88,6 @@ colnames(out.ag.f) <- c('block','type','error')
 nosof94plot(out.ag.f) 
 
 round(gureck$error - out.ag.f$error, 2)
-
-    
-        
-        
-    
-    
-
-##############
-
-## Simple script to run sustain on nosof94 shepard rep
-source('../R/slpSUSTAIN-tidy.R')
-## nosof94train Version in this branch is newer than on trunk, so load
-source('../R/nosof94train.R') 
-
-## Parameters are the same for all six problems
-st <- list(r = 9.01245,
-           beta = 1.252233,
-           d = 16.924073,
-           eta = 0.092327,
-           tau = 0.0,
-           lambda = c(1, 1, 1),
-           dims = c(2, 2, 2),
-           cluster = NA,
-           w = NA,
-           colskip = 4)
-
-
-tr <- nosof94train(cond = 2, blocks = 32, missing = 'pad', absval = 0,
-                   blkstyle = 'eights')
-
-out <- slpSUSTAIN(st, tr, xtdo = FALSE)
-out
-
 
 #### Code for checking stateful aspect of function.
 st <- list(r = 9.01245,
