@@ -205,3 +205,43 @@ category/categories.
   into a CIRP, and then one adds a train function and a simulation
   function and attempts to reproduce the results in Table 3 (with the
   parameters Kruschke defines).
+* Notes on latest version
+
++ slpEXIT:
+
++ slpEXIT is searching for -1 for an absent category in tr. It should
+  be searching for 0. Luckily, the code copes, but best to fix for
+  clarity. 
+
++ The operation of 'ctrl' differs from other models. Your =3 is the
+  operation usually defined as =1. We'll need to switch those over.
+
++ The Kruschke 1996 training array:
+
+++ Isn't an array, it's a data frame. This is unlike other slp models,
+   slows things down and will make conversion to C++ harder.
+
+++ Has the colums in a non-standard order. Hopefully we can fix this
+   without having to re-write the simulation code
+
+++ The 'exemplars' output of Kruschke1996Exp1 is also a nice feature,
+   but non-standard for training functions. It'll have to go, I'm
+   afraid.
+
++ The simulation fo Kruschke 1996:
+
+++ Doesn't use the parameters that Kruschke used in 2003, despite that
+being the simulation you're comparing it to! I'm going for the option
+of using the Kruschke 2001 parameters, as you do, but comparing it to
+the Kruschke 2001 simulation results! (Table 2)
+
+++ Doesn't average across the two instantiations of the design, but
+needs to. For example in your simulation PC.PR is .49 rare for
+instantiation 1, but .61 rare for instantiation 2. The average of
+these is 0.55, which is quite close to 0.582 reported by Kruschke. Not
+close enough, though. Hopefully because...
+
+++ The simulation is far from complete. We need to get the *same*
+numbers as Kruschke (2001), not just similar ones. And that'll require
+simulations averaged across multiple randomized training
+runs. Kruschke (2003) used 40 runs.
