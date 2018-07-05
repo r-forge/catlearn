@@ -10,7 +10,7 @@
   
   Create randomized training blocks for CIRP \code{nosof94}, in a format
   suitable for the \code{slpALCOVE} or \code{slpSUSTAIN} models, and
-  other models that use the same input representation format. 
+  other models that use the same input representation formats. 
 
 }
 \usage{
@@ -40,8 +40,8 @@ missing = 'geo', blkstyle = 'accurate')
 
   \item{blkstyle}{If set to 'accurate', reproduce the randomization of
     this experiment, as described in Nosofsky et al. (1994). If set to
-    'eights', generate blocks of eight trials, as per
-    \code{sustain_python}}
+    'eights', use instead the randomization used in the Gureckis (2016)
+    simulation of this experiment.}
   
 }  
   
@@ -57,15 +57,15 @@ model input.
 A matrix is produced, with one row for each trial, and with the
 following columns:
 
-\code{ctrl} - Set to 1 (reset model) for trial 1, set to zero (normal
-trial) for all other trials.
+\code{ctrl} - Set to 1 (reset model) for trial 1 of each simulated
+subject, set to zero (normal trial) for all other trials.
 
 \code{blk} - training block
 
 \code{stim} - Stimulus number, ranging from 1 to 8. The numbering scheme
- is the same as in Nosofsky et al. (1994, Figure 1), under
-the mapping of dim_1_left = 0, dim_1_right = 1, dim_2_front = 0,
-dim_2_back = 1, dim_3_bottom = 0, dim_3_top = 1. 
+ is the same as in Nosofsky et al. (1994, Figure 1), under the mapping
+ of dim_1_left = 0, dim_1_right = 1, dim_2_front = 0, dim_2_back = 1,
+ dim_3_bottom = 0, dim_3_top = 1.
 
 \code{x1, x2, \dots} - input representation. Where \code{missing='geo'},
 x1, x2, and x3 are returned, each set at 1 or 0. This is the binary
@@ -83,27 +83,19 @@ absent)
 experiment, indicating all input dimensions are present on all
 trials). Only produced if \code{missing = 'geo'}.
 
-In Nosofsky et al. (1994), block 1 was randomized differently to later
-blocks. This feature is retained in this implementation.
-
-In the Gureckis (2016) simulation of these data, eight-trial
-blocks are used; set \code{blkstyle = 'eights'} to reproduce this
-feature of this simulation.
-
 Although the trial ordering is random, a random seed is used, so
 multiple calls of this function with the same parameters should produce
 the same output. This is usually desirable for reproducibility and
 stability of non-linear optimization. To get a different order, use the
 seed argument to set a different seed.
 
-This routine was originally developed to support simulations reported in
-Wills & O'Connell (n.d.).
+This routine was originally developed to support Wills et al. (n.d.).
 
 }
 
 \author{
   
-  Andy Wills
+  Andy Wills, Lenard Dome
   
 }
 \references{
@@ -113,14 +105,10 @@ Wills & O'Connell (n.d.).
   learning: A replication and extension of Shepaard, Hovland, and
   Jenkins (1961). \emph{Memory and Cognition, 22}, 352--369
 
-  Shepard, R.N., Hovland, C.I., & Jenkins, H.M. (1961). learning and
-  memorization of classifications. \emph{Psychological Monographs, 75},
-  Whole No. 517.
-
   Gureckis, T. (2016). https://github.com/NYUCCL/sustain_python
 
-  Wills, A.J. & O'Connell (n.d.). Averaging
-   abstractions. \emph{Manuscript in preparation}.
+  Wills et al. (n.d.). Benchmarks for category learning. \emph{Manuscript
+  in preparation}.
 
 }
 \seealso{
