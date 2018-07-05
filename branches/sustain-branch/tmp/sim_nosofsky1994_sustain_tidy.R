@@ -1,7 +1,7 @@
 ## catlearn simulation of Nosofsky et al. (1994) with slpSUSTAIN
 rm(list=ls())
 source('../R/nosof94plot.R') # unchanged from trunk
-source('../R/slpSUSTAIN-tidy.R') # new to branch
+source('../R/slpSUSTAIN.R') # new to branch
 source('../R/nosof94train.R') # updated in branch
 source('../R/nosof94sustain.R') # new to branch
 
@@ -24,7 +24,7 @@ gureck <- gureck.long %>%
 
 max(abs(love.res$error - gureck$error))
 
-round(love.res$error - gureck$error, 3)
+round(love.res$error - gureck$error, 2)
 
 nosof94plot(gureck)
 nosof94plot(love.res)
@@ -33,7 +33,7 @@ nosof94plot(love.res)
 out.store <- nosof94sustain()
 nosof94plot(out.store)
 round(gureck$error - out.store$error, 2)
-round(love.res$error - out.store$error, 2)
+##round(love.res$error - out.store$error, 2)
 
 nosof94plot(gureck)
 

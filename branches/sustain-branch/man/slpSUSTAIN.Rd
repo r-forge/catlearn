@@ -28,7 +28,7 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   the queried dimension (e.g. column 1 = category A; column 2 = category
   B), see Love et al. (2004, Eq. 8). Each row is a single trial and
   columns are in the order presented in \code{tr}, see below. In the
-  case of unsupervised learning, probabilities calculated for all
+  case of unsupervised learning, probabilities are calculated for all
   dimensions (as there is no queried dimension for unsupervised
   learning).}
 
@@ -65,7 +65,8 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   al., 2017). It takes a matrix (tr) as an argument, where each row
   represents a single training trial, while each column represents some
   information required by the model, such as the stimulus
-  representation, indications of supervised/unsupervised learning, etc.
+  representation, indications of supervised/unsupervised learning, etc
+  (details below).
 
   Argument \code{st} must be a list containing the following items:
 
@@ -78,11 +79,10 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   \code{eta} - Learning rate parameter
 
   \code{tau} - Threshold parameter for cluster recruitment under
-  unsupervised learning condition (Love et al., 2004, Eq. 11). If every
-  trial is a supervised learning trial, set tau to 0. slpSUSTAIN
-  can accomodate both supervised and unsupervised learning within the
-  same simulation, using the \code{t} column in \code{tr} (see
-  below).
+  unsupervised learning conditions (Love et al., 2004, Eq. 11). If every
+  trial is a supervised learning trial, set tau to 0. slpSUSTAIN can
+  accomodate both supervised and unsupervised learning within the same
+  simulation, using the \code{ctrl} column in \code{tr} (see below).
   
   \code{lambda} - Vector containing the initial receptive field tuning
   value for each stimulus dimension; the order corresponds to the order
@@ -91,19 +91,20 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   1, 1].
 
   \code{cluster} - A matrix of the initial positions of each recruited
-  cluster. If set to NA, a single cluster will be created, centered on
-  the stimulus presented on the first trial (i.e. row 1 of the tr
-  matrix).
+  cluster. If set to NA then, each time the network is reset, a single
+  cluster will be created, centered on the stimulus presented on the
+  current trial.
 
-  \code{w} - A matrix of initial connection weights. If set to NA,
-  zero-strength weights to a single cluster will be created.
+  \code{w} - A matrix of initial connection weights. If set to NA then,
+  each time the network is reset, zero-strength weights to a single
+  cluster will be created.
 
   \code{dims} - Vector containing the length of each dimension
   (excluding category dimension, see \code{tr}, below), i.e the number
   of nominal spaces in the representation of each dimension. For Figure
   1 of Love et al. (2004), dims = [2, 2, 2].
 
-  \code{colskip} - Number of optional coloumns skipped in \code{tr},
+  \code{colskip} - Number of optional columns skipped in \code{tr},
   PLUS ONE. So, if there are no optional columns, set colskip to 1.
 
   Argument \code{tr} must be a matrix, where each row is one trial
@@ -127,7 +128,7 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
 
   5 = freeze unsupervised learning
 
-  'Reset network' means revert \code{w}, \code{cluster}, and
+  'Reset network' means revert \code{w}, \code{cluster},and
   \code{lambda} back to the values passed in \code{st}.
 
   \code{opt1, opt2, \dots} - optional columns, which may have any names
@@ -147,7 +148,6 @@ slpSUSTAIN(st, tr, xtdo = FALSE)
   stimulus, dimension 1 is [0 1] and dimension 2 is [0 1 0] with
   category membership [0 1], then the input representation is [0 1 0 1 0
   0 1].
-
   \code{t} - Indicator of supervised vs. unsupervised learning. The
   values can be either 1 = supervised learning or 0 = unsupervised
   learning. It can also vary trial by trial, within the same simulation.

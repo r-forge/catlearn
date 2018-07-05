@@ -47,25 +47,7 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
     ## SUSTAIN to other slp functions. To avoid this potentially
     ## confusing difference, the following line is needed
     colskip <- st$colskip + 1
-    
-    ## If cluster is NA, set up a single cluster centered on the
-    ## first training stimulus. (The length == 1 thing is to avoid a
-    ## tedious warning message).
-
-    if(length(st$cluster) == 1) {
-        if(is.na(st$cluster)) {
-            st$cluster <- matrix(as.vector(tr[1, colskip:(ncol(tr))]),
-                                 nrow = 1)
-        }
-    }
-
-    ## If w is NA, set up zero weights to a single cluster
-    if(length(st$w) == 1) {
-        if(is.na(st$w)) {
-            st$w <- matrix(rep(0, ncol(st$cluster)), nrow = 1)
-        }
-    }
-    
+        
     ## Imports from st
     lambda <- st$lambda
     w <-st$w
@@ -112,8 +94,27 @@ slpSUSTAIN <- function(st, tr, xtdo = FALSE) {
             ## stimulus
             w <- st$w
             lambda <- st$lambda
-            cluster <- matrix(as.vector(trial[colskip:(length(trial))]),
-                                 nrow = 1)
+            cluster <-st$cluster
+
+            ## If cluster is NA, set up a single cluster centered on
+            ## the first training stimulus. (The length == 1 thing is
+            ## to avoid a tedious warning message).
+
+            if(length(cluster) == 1) {
+                if(is.na(cluster)) {
+                    cluster <- matrix(as.vector(trial[colskip:(ncol(tr))]),
+                                         nrow = 1)
+                }
+            }
+
+            ## If w is NA, set up zero weights to a single cluster
+            
+            if(length(w) == 1) {
+                if(is.na(w)) {
+                    w <- matrix(rep(0, ncol(cluster)), nrow = 1)
+                }
+            }
+
         }
         
         ## Equation 4 - Calculate distances of stimulus from each cluster's

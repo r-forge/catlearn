@@ -6,7 +6,7 @@ nosof94sustain <- function(params = c(9.01245, 1.252233, 16.924073, 0.092327))
         bigtr <- rbind(bigtr,
                        nosof94train(cond, blocks = 16, absval = 0,
                                     blkstyle = "eights", missing = 'pad',
-                                    subjs = 1000, seed = 7624))
+                                    subjs = 100, seed = 7624))
         }
     ## Set initial model state
     init.state <- list(r = params[1], beta = params[2], d = params[3], eta = params[4],
@@ -25,7 +25,7 @@ nosof94sustain <- function(params = c(9.01245, 1.252233, 16.924073, 0.092327))
     ## Convert to error rate
     out$pc <- 1 - out$pc
     ## Archive raw output
-    save(out, file = "rawout.RData")
+    ## save(out, file = "rawout.RData")
     ## Aggregate across runs
     out.ag <- aggregate(out$pc,list(out$blk,out$cond),mean)
     colnames(out.ag) <- c('block','type','error')
