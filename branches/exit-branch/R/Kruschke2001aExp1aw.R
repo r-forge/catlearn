@@ -1,77 +1,125 @@
 ## Inverse Base Rate Effect
+## Attempt to replicate Kruschke (2001) simulation of Kruschke (1996),
+## Experiment 1
 rm(list=ls())
+library(tidyr)
+library(dplyr)
 source("slpEXITrs.R")
 source("krus96train.R")
-tr <- krus96train()
+
+## Training array from krus96train function
+
+## 56 subjects because this is the closest we can get to Kruschke's
+## simulations, which he reports as using "the same stim-
+## ulus/feedback sequences as the human participants who gen- erated
+## the data". Kruschke (1996) Experiment 1 had 56 participants, none
+## of whom were excluded.
+
+tr <- krus96train(subj = 56, seed = 7777)
 
 ## Parameters from Kruschke (2001)
+st <- list(nFeat = 6+1, nCat = 4,
+           phi = 4.42, c = 2.87, P = 2.48,
+           l_gain = 4.42, l_weight = .212, l_ex = 1.13,
+           sigma = .401, iterations = 10)
 
-st <- list(nFeat = 6+1, nCat = 4, phi = 4.42, c = 2.87, P = 2.48, l_gain = 4.42,
-           l_weight = .212, l_ex = 1.13, sigma = .401, iterations = 10)
+exemplars <- rbind(c(1,1,0,0,0,0,1),
+                   c(1,0,1,0,0,0,1),
+                   c(0,0,0,1,1,0,1),
+                   c(0,0,0,1,0,1,1))
 
-                                        # the bias cue is part of the exemplar... (column 7 =1 all the time)
+st$exemplars <- exemplars
+st$w_exemplars <- exemplars
+st$w_exemplars[] <- 0
+st$w_in_out <- matrix(0, st$nCat, st$nFeat)
 
-    exemplars<-rbind(c(1,1,0,0,0,0,1,1,0,0,0),
-                     c(1,0,1,0,0,0,1,0,1,0,0),
-                     c(0,0,0,1,1,0,1,0,0,1,0),
-                     c(0,0,0,1,0,1,1,0,0,0,1))
+## Run simulation
+predics <- slp_EXITrs(st,tr,xtdo=F)$response_probabilities
+colnames(predics) <- c("C1", "R1", "C2", "R2")
+out.all <- cbind(tr,predics)
+
+## Reduce and aggregate results to compare with Kruschke's simulation.
+out <- out.all[out.all$block == 16,]
+
+out.ag.C1 <- aggregate(out$C1, list(out$stim), mean)
+colnames(out.ag.C1) <- c("stim", "C1")
+
+out.ag.R1 <- aggregate(out$R1, list(out$stim), mean)
+colnames(out.ag.R1) <- c("stim", "R1")
+
+out.ag.C2 <- aggregate(out$C2, list(out$stim), mean)
+colnames(out.ag.C2) <- c("stim", "C2")
+
+out.ag.R2 <- aggregate(out$R2, list(out$stim), mean)
+colnames(out.ag.R2) <- c("stim", "R2")
+
+out.ag <- cbind(out.ag.C1, out.ag.R1[,2], out.ag.C2[,2],
+                    out.ag.R2[,2])
+
+colnames(out.ag) <- c("stim", "C1", "R1", "C2", "R2")
+
+## Abstract stimulus code
+out.ag$abstim[out.ag$stim %in% c("I1", "I2")] <- "I"
+out.ag$abstim[out.ag$stim %in% c("PC1", "PC2")] <- "PC"
+out.ag$abstim[out.ag$stim %in% c("PR1", "PR2")] <- "PR"
+out.ag$abstim[out.ag$stim %in% c("PC1.PR1", "PC2.PR2")] <- "PC.PR"
+out.ag$abstim[out.ag$stim %in% c("I1.PC1.PR1", "I2.PC2.PR2")] <- "I.PC.PR"
+out.ag$abstim[out.ag$stim %in% c("I1.PC2", "I2.PC1")] <- "I.PCo"
+out.ag$abstim[out.ag$stim %in% c("I1.PR2", "I2.PR1")] <- "I.PRo"
+out.ag$abstim[out.ag$stim %in% c("PC1.PR2", "PC2.PR1")] <- "PC.PRo"
+out.ag$abstim[out.ag$stim %in% c("I1.PC1.PR2", "I2.PC2.PR1")] <- "I.PC.PRo"
+
+## Abstract response code
+set1 <- c("I1", "PC1", "PR1", "PC1.PR1", "I1.PC1.PR1", "I1.PC2",
+          "I1.PR2", "PC1.PR2", "I1.PC1.PR2")
+
+set2 <- c("I2", "PC2", "PR2", "PC2.PR2", "I2.PC2.PR2", "I2.PC1",
+          "I2.PR1", "PC2.PR1", "I2.PC2.PR1")
+ 
+out.ag$C[out.ag$stim %in% set1] <- out.ag$C1[out.ag$stim %in% set1]
+out.ag$R[out.ag$stim %in% set1] <- out.ag$R1[out.ag$stim %in% set1]
+out.ag$Co[out.ag$stim %in% set1] <- out.ag$C2[out.ag$stim %in% set1]
+out.ag$Ro[out.ag$stim %in% set1] <- out.ag$R2[out.ag$stim %in% set1]
+
+out.ag$C[out.ag$stim %in% set2] <- out.ag$C2[out.ag$stim %in% set2]
+out.ag$R[out.ag$stim %in% set2] <- out.ag$R2[out.ag$stim %in% set2]
+out.ag$Co[out.ag$stim %in% set2] <- out.ag$C1[out.ag$stim %in% set2]
+out.ag$Ro[out.ag$stim %in% set2] <- out.ag$R1[out.ag$stim %in% set2]
+
+## Aggregate across abstract stim type
+
+out.ag.C <- aggregate(out.ag$C, list(out.ag$abstim), mean)
+colnames(out.ag.C) <- c("abstim", "C")
+
+out.ag.R <- aggregate(out.ag$R, list(out.ag$abstim), mean)
+colnames(out.ag.R) <- c("abstim", "R")
+
+out.ag.Co <- aggregate(out.ag$Co, list(out.ag$abstim), mean)
+colnames(out.ag.Co) <- c("abstim", "Co")
+
+out.ag.Ro <- aggregate(out.ag$Ro, list(out.ag$abstim), mean)
+colnames(out.ag.Ro) <- c("abstim", "Ro")
+
+out.ag.abs <- cbind(out.ag.C, out.ag.R[,2], out.ag.Co[,2],
+                    out.ag.Ro[,2])
+
+colnames(out.ag.abs) <- c("symptom", "C", "R", "Co", "Ro")
+
+## Convert to long format, and order as per Kruschke 1996
+stimorder <- c("I", "PC", "PR", "PC.PR", "I.PC.PR", "I.PCo", "I.PRo",
+               "PC.PRo", "I.PC.PRo")
+
+disorder <- c("C", "R", "Co", "Ro")
+
+longun <- gather(out.ag.abs, key = "disease", value = "prop", 2:5)
+longun <- arrange(longun, match(symptom, stimorder), match(disease, disorder))
+
+## Load Kruschke's sim results (2001)
+krus.sim <- read.csv("../krus96_sim_krus01.csv", stringsAsFactors = FALSE)
+
+comp <- merge(krus.sim, longun)
+comp$diff <- round(comp$kprop- comp$prop, 2)
+
+print(comp[abs(comp$diff) > .05,])
 
 
-    st$exemplars<-exemplars[,1:7]
-    st$w_exemplars<-exemplars[,1:7]
-    st$w_exemplars[]<-0
-    st$w_in_out<-matrix(0,st$nCat,st$nFeat)
-
-st$exemplars
-predics<-slp_EXITrs(st,tr,xtdo=F)$response_probabilities
-## Note the predictions are sensitive to the trial sequence
-## and there are only slight differences in I1 and I2 etc... (see full output)
-
-## in Kruschke2003 reply to Winman et al, he reports these EXIT fits
-# I	        77.00	11.30	7.70	3.90
-# PC	    89.80	1.80	5.40	2.90
-# PR	    3.00	87.20	7.80	2.00
-# PC.PR	    36.30	56.60	4.70	2.40
-# I.PC.PR	58.80	39.40	1.00	0.80
-# I.PCo	    33.40	8.70	56.10	1.80
-# I.PRo	    30.20	3.80	1.30	64.60
-# PC.PRo	41.10	0.70	1.10	57.00
-# I.PC.PRo	76.90	0.60	0.30	22.20
-
-# note: e.g. PC =PC1 and PCo = PC2 
-# note: I rearranged the reported table to match the output order here
-
-
-## reduced stims:
-stims<-c("I1", "I1.PC1.PR1","I1.PC2","I1.PR2","PC1","PR1", "PC1.PR1","PC1.PR2","I1.PC1.PR2")
-testtrials<-which(tr[,"block"]==16)
-reduced_stims<-tr[testtrials,"stim"] %in% stims
-cbind(tr[testtrials[reduced_stims],"stim"],round(predics[testtrials[reduced_stims],],2))
-## if the g shift is only applied to Equation 8 
-## (the issue with carry over to subsequent error signals)
-## then: "PC1.PR1"  is predicted in the incorrect direction; "PC1" and "I1.PC1.PR2" are too high
-## if the shift is applied to subsequent error signals Equations 9 and 10
-## then the picture generally fits to the reported values in the table (despite sample randomness)
-
-## so in general: everything looks like the altered category output 
-## and the altered alpha values in the 10 iterations are taken to subsequent 
-## equations. Only this way the slp predictions approximate the reported ones.
-
-## full
-cbind(tr[testtrials,"stim"],round(predics[testtrials,],2))
-
-
-## training learning -> goes to perfect performance quickly
-predics<-slp_EXITrs(st,tr,xtdo=F)$response_probabilities
-tr1<-tr[,"t1"]==1
-tr2<-tr[,"t2"]==1
-tr3<-tr[,"t3"]==1
-tr4<-tr[,"t4"]==1
-plot(predics[tr1,1])
-points(predics[tr2,2],pch=2)
-points(predics[tr3,3],pch=3)
-points(predics[tr4,4],pch=4)
-
-#### Generating CIRP
-krus96 <- read.csv("../krus96.csv")
-save(krus96, file = "../data/krus96.RData")
