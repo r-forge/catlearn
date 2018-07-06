@@ -1,91 +1,22 @@
-source("slpEXITrs.R")
 ## Inverse Base Rate Effect
-## And this code generates a random sequence of trials (tr)
-## following the experimental procedure as done in
-## Kruschke & Blair, 2000, Experiment 1, which was
-## fit using EXIT in Kruschke, 2001
+rm(list=ls())
+source("slpEXITrs.R")
+source("krus96train.R")
+tr <- krus96train()
 
-Kruschke1996Exp1<-function(){
-    sr<-rbind(c(1,1,0,0,0,0,1,1,0,0,0),
-              c(1,1,0,0,0,0,1,1,0,0,0),
-              c(1,1,0,0,0,0,1,1,0,0,0),
-              c(1,0,1,0,0,0,1,0,1,0,0),
-              c(0,0,0,1,1,0,1,0,0,1,0),
-              c(0,0,0,1,1,0,1,0,0,1,0),
-              c(0,0,0,1,1,0,1,0,0,1,0),
-              c(0,0,0,1,0,1,1,0,0,0,1))
-    
-    trainingitems<-as.data.frame(cbind(rep(0,nrow(sr)),sr,rep("",nrow(sr))))
-    colnames(trainingitems)<-c("ctrl","x1","x2","x3","x4","x5","x6","x7", "t1","t2","t3","t4","stim")
-    ## note "x7"=bias cue, which is always on
-    trainingitems[,"stim"]<-c(rep("I1.PC1",3),"I1.PR1",rep("I2.PC2",3),"I2.PR2")
+## Parameters from Kruschke (2001)
+
+st <- list(nFeat = 6+1, nCat = 4, phi = 4.42, c = 2.87, P = 2.48, l_gain = 4.42,
+           l_weight = .212, l_ex = 1.13, sigma = .401, iterations = 10)
+
+                                        # the bias cue is part of the exemplar... (column 7 =1 all the time)
+
     exemplars<-rbind(c(1,1,0,0,0,0,1,1,0,0,0),
                      c(1,0,1,0,0,0,1,0,1,0,0),
                      c(0,0,0,1,1,0,1,0,0,1,0),
                      c(0,0,0,1,0,1,1,0,0,0,1))
 
-    trainingblocks<-15
-    tr<-as.data.frame(matrix(0,ncol=14,nrow=trainingblocks*nrow(sr)))
-    for (i in 1:trainingblocks){
-        samp<-sample(1:nrow(sr),nrow(sr))
-        tr[(1:nrow(sr))+nrow(sr)*(i-1),2:12]<-sr[samp,]
-        tr[(1:nrow(sr))+nrow(sr)*(i-1),13]<-trainingitems[samp,"stim"]
-        tr[(1:nrow(sr))+nrow(sr)*(i-1),14]<-i
-    }
-    tr[1,1]<-1
-    colnames(tr)<-c(colnames(trainingitems),"block")
-    
-    testitems<-rbind(c(1,0,0,0,0,0,1,0,0,0,0),
-                     c(0,1,0,0,0,0,1,0,0,0,0),
-                     c(0,0,1,0,0,0,1,0,0,0,0),
-                     c(0,0,0,1,0,0,1,0,0,0,0),
-                     c(0,0,0,0,1,0,1,0,0,0,0),
-                     c(0,0,0,0,0,1,1,0,0,0,0),
-                     c(0,1,1,0,0,0,1,0,0,0,0),
-                     c(0,0,0,0,1,1,1,0,0,0,0),
-                     c(1,1,1,0,0,0,1,0,0,0,0),
-                     c(0,0,0,1,1,1,1,0,0,0,0),
-                     c(1,0,0,0,1,0,1,0,0,0,0),
-                     c(1,0,0,0,0,1,1,0,0,0,0),
-                     c(0,1,0,1,0,0,1,0,0,0,0),
-                     c(0,0,1,1,0,0,1,0,0,0,0),
-                     c(0,1,0,0,0,1,1,0,0,0,0),
-                     c(0,0,1,0,1,0,1,0,0,0,0),
-                     c(1,1,0,0,0,1,1,0,0,0,0),
-                     c(0,0,1,1,1,0,1,0,0,0,0))
-    nrow(testitems)         
-    testrials<-as.data.frame(cbind(rep(2,nrow(testitems)),testitems,rep(0,nrow(testitems)),rep(0,nrow(testitems))))
-    colnames(testrials)<-colnames(tr)
-    testrials$block<-16
-    testrials$stim<-c("I1","PC1","PR1","I2","PC2","PR2",                         ### I, PC, PR
-                      "PC1.PR1","PC2.PR2", "I1.PC1.PR1","I2.PC2.PR2",            ### PC.PR, I.PC.PR
-                      "I1.PC2","I1.PR2","I2.PC1","I2.PR1",                       ### I.PCo, I.PRo
-                      "PC1.PR2","PC2.PR1",                                       ### PC.PRo
-                      "I1.PC1.PR2","I2.PC2.PR1")                                 ### I.PC.PRo
-    tr<-rbind(tr,testrials)
-    return(list(tr=tr,exemplars=exemplars[,1:7]))
-}
-tr<-Kruschke1996Exp1()$tr
-exemplars<-Kruschke1996Exp1()$exemplars
 
-## Parameters from Kruschke (2001)
-
-st<-list(nFeat=6+1, nCat=4, phi=4.42, c=2.87, P=2.48, l_gain=4.42, l_weight=.212, l_ex=1.13, sigma=.401, iterations=10)
-
-## Parameters from Kruschke (2003)
-st<-list(nFeat=6+1, ## +1 =bias
-         nCat=4, 
-         phi=5.00, ## Choice decisiveness
-         c=9.62,  ## Exemplar specificity
-         P=17.0, ## attention capacity
-         l_gain=2.65, ## attention shifting rate
-         l_weight=.135, ## output association learning rate
-         l_ex=1.0313, ## attention learning rate
-         sigma=.938, ## bias salience
-         iterations=10)
-
-
-# the bias cue is part of the exemplar... (column 7 =1 all the time)
     st$exemplars<-exemplars[,1:7]
     st$w_exemplars<-exemplars[,1:7]
     st$w_exemplars[]<-0

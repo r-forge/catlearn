@@ -245,3 +245,10 @@ close enough, though. Hopefully because...
 numbers as Kruschke (2001), not just similar ones. And that'll require
 simulations averaged across multiple randomized training
 runs. Kruschke (2003) used 40 runs.
+
+** Creating krus96train
+- catlearn style rules - max column width 80, use spaces to separate code wihtin a line 
+
+- trainingitems line can be coded more simply, see code.
+
+
