@@ -18,9 +18,9 @@ source("krus96train.R")
 
 ### Note: 
 ### with seed 7777 there are only 3 percentage deviations above 1%
-### with seed 8888 there are only 2 percentage deviations above 1%
+### with seed 8888,2,1 there are only 2 percentage deviations above 1%
 ### with seed 5555 there are      8 percentage deviations above 1%
-tr <- krus96train(subj = 56, seed = 8888)
+tr <- krus96train(subj = 56, seed = 1)
 #tr <- krus96train(subj = 1, seed = round(runif(1,1,1000)))
 
 ## Parameters from Kruschke (2001; see Appendix)
@@ -30,17 +30,22 @@ st <- list(nFeat = 6+1, nCat = 4,
            sigma = c(rep(1,6),.401), 
            iterations = 10)
 
-## note - an additional column =0 indicates absence of bias 
+## note - an additional column =0 indicates absence of bias in all exemplars,
+## except the bias "exemplar" (last line)
 exemplars <- rbind(c(1,1,0,0,0,0,0),
-                   c(1,0,1,0,0,0,0),
-                   c(0,0,0,1,1,0,0),
-                   c(0,0,0,1,0,1,0)) ## bias "cue"/exemplar
-## using an extra bias exemplar instead makes no difference, which makes sense.
+                    c(1,0,1,0,0,0,0),
+                    c(0,0,0,1,1,0,0),
+                    c(0,0,0,1,0,1,0),
+                    c(0,0,0,0,0,0,1)) ## bias "cue"/exemplar
+## unmute this to "drop" the bias exemplar
 # exemplars <- rbind(c(1,1,0,0,0,0,0),
 #                    c(1,0,1,0,0,0,0),
 #                    c(0,0,0,1,1,0,0),
-#                    c(0,0,0,1,0,1,0),
-#                    c(0,0,0,0,0,0,1)) ## bias "cue"/exemplar
+#                    c(0,0,0,1,0,1,0)) 
+
+### Unmute this to "drop" bias exemplar
+## using an extra bias exemplar instead makes no difference, which makes sense.
+
 
 
 st$exemplars <- exemplars
@@ -138,4 +143,5 @@ comp$diff <- round(comp$kprop- comp$prop, 2)
 print(comp[abs(comp$diff) > .01,])
 nrow(comp[abs(comp$diff) > .01,])
 
-print(comp)
+slp_EXITrs(st,tr,xtdo=F)$w_exemplars
+slp_EXITrs(st,tr,xtdo=F)$w_in_out

@@ -8,7 +8,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
 }
 
 .subfunction<- function(st, tr, extendx){
-    #extendx=F
+    
     ## Preparation of processing vars
 
     ## first column indices of the features
@@ -24,16 +24,6 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
     ## salience vector sigma
     sig<-rep(1,st$nFeat)
     sig[]<-st$sigma
-    
-    ## extended output
-    if (extendx==T){
-        E4_exemplar_weights<-list()
-        weights_in_out<-list()
-        gains<-matrix(0,ncol=st$nFeat,nrow=nrow(tr))
-        attention<-matrix(0,ncol=st$nFeat,nrow=nrow(tr))
-        bias_weight<-matrix(0,ncol=st$nCat ,nrow=nrow(tr))
-        ## still needs state output, see Andys notes
-    }
     
     
     ## go through all the trials and apply model
@@ -114,6 +104,10 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         ## Equation (2) (or 39 with bias)
         probs<-exp(out_act*st$phi)/sum(exp(out_act*st$phi))
         
+        ## duplicate alpha_i and out_act for later
+        alpha_i2<-alpha_i
+        out_act2<-out_act
+        
         ### from here it is learning ###########################################
         
         ## is this a frozen learning trial? (ctrl==2)
@@ -137,6 +131,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
                 
                 ## second term (wI*a_inI - alpha_I*a_out)
                 E2<-t(as.numeric(a_in)*t(w_in_out)-
+                          #as.numeric(alpha_i^(st$P-1))%*%(out_act))
                           as.numeric(alpha_i^(st$P-1))%*%(out_act))
                 
                 
@@ -187,7 +182,11 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
             ### that could happen out of unawareness, or on purpose...
             ### Note: Since the same iterations are applied in RASHNL,
             ### we should check whether this happes there too...
-
+                
+            ## overwright shifted stuff with the earlier duplicates? 
+            ## this makes the predictions substantially worse
+            #alpha_i<-alpha_i2
+            #out_act<-out_act2
              
             ## Learning of Associations
             ## Gradient of error for weight change
@@ -207,7 +206,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
                 (
                     t(
                         as.numeric(g - g_inits)*
-                        t(st$exemplars*a_ex)*g_inits
+                        t(st$exemplars*a_ex)*as.numeric(g_inits)
                       )
                 )
             
@@ -216,25 +215,14 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
 
         
     probs_out[j,]<-probs
-    if (extendx==T){
-        E4_exemplar_weights[[j]] <-w_exemplars
-        weights_in_out[[j]]<-w_in_out
-        gains[j,]<-g_inits
-        attention[j,]<-alpha_i
-    }
     
     }
-    if (extendx==F){
+
         output<-list()
         output$response_probabilities<-probs_out
-    } else {
-        output<-list()
-        output$response_probabilities<-probs_out
-        output$E4_exemplar_weights<-E4_exemplar_weights
-        output$E1_w_in_out<-weights_in_out
-        output$E4_gains<-gains
-        output$E5_attention_strengths<-attention
-    }
+        output$w_in_out<-w_in_out
+        output$w_exemplars<-w_exemplars
+
     
     return(output)
 }

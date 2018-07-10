@@ -141,7 +141,10 @@ st<-list(nFeat=9+1,# +bias cue
          l_ex=.0121, 
          iterations=10,
          sigma=c(rep(1,9),0))
-st$exemplars<-exemplars[1:8,]
+
+st$exemplars<-exemplars
+## unmute this to "drop" bias "exemplar"
+#st$exemplars<-exemplars[1:8,]
 st$w_exemplars<-st$exemplars
 st$w_exemplars[]<-0
 st$w_in_out<-matrix(0,st$nCat,st$nFeat)
@@ -175,7 +178,7 @@ predictions[,c("t1","t2","t3","t4","t5","t6")]<-
 # AD	52.00	3.70	33.10	3.70	3.70	3.70
 # DH/DI	4.40	4.40	44.40	4.40	4.40	38.10
 
-stims<-predictions[predictions$block=="blocking",][1:11,2]
+## Deviations in 1-100%
 if (T){
 pdevs<-cbind(c("BH/BI","AH/AI","DH/DI","D","AB","HI", "BD","AD"),
       round(rbind(
@@ -208,15 +211,6 @@ pdevs<-cbind(c("BH/BI","AH/AI","DH/DI","D","AB","HI", "BD","AD"),
 }
 colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
 pdevs
-
-## And the current slpEXIT predictions
-## blocking overall
-## please note the order of symptoms differs % percent is in decimals
-#predictions[predictions$block=="blocking",] [1:11,2:8]
-## notes: everything looks like the altered category output 
-## and the altered alpha values in the 10 iterations are taken to subsequent 
-## equations. Only this way the slp predictions approximate the reported ones.
-## see also the other replication attempt
 
 
 ##Attenuation
@@ -252,10 +246,7 @@ pdevs
 # DE/DF	4.50	4.50	34.40	47.40	4.50	4.50
 # GH/GI	4.20	4.20	4.20	4.20	27.80	55.50
 
-
-## slpExit predictions
-## please note order of symptoms differs; and % in decimals
-#predictions[predictions$block=="attenuation",2:8]
+## Deviations in 1-100%
 
 if (T){
     pdevs<-cbind(c("BE/BF","CE/CF","BH/BI","CH/CI","DE/DF",
@@ -388,6 +379,7 @@ pdevs
 ## deviations, they are tied to the equations with
 ## l_gain and l_ex
 
+slp_EXITrs(st,tr, xtdo=F)$w_in_out
 
 ##(non-existent) attenuation
 ## Model predictions
@@ -459,4 +451,3 @@ if (T){
 colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
 pdevs
 ### alright perfect again all deviations < 0.3%
-
