@@ -7,7 +7,8 @@
 ## following the experimental procedure as done in
 ## Kruschke & Blair, 2000, Experiment 1, which was
 ## fit using EXIT in Kruschke, 2001
-KruschkeBlair2000Exp1<-function(){
+KruschkeBlair2000Exp1<-function(seed){
+    set.seed(seed)
     ncolumns<-17
     train1<-as.data.frame(matrix(0,ncol=ncolumns,nrow=2))
     colnames(train1)<-c("x1","x2","x3","x4","x5","x6","x7","x8","x9","x10", "t1","t2","t3","t4","t5","t6","stim")
@@ -118,15 +119,16 @@ KruschkeBlair2000Exp1<-function(){
               train3[train3[,"stim"]=="ABC",1:st$nFeat],
               train3[train3[,"stim"]=="DEF",1:st$nFeat],
               train3[train3[,"stim"]=="GHI",1:st$nFeat])
-    rownames(exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI")
-    exemplars[,"x10"]<-1
-    
+    exemplars[,"x10"]<-0
+    exemplars<-rbind(exemplars,c(0,0,0,0,0,0,0,0,0,1))
+    rownames(exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI","bias")
     return(list(tr=tr,exemplars=exemplars))
 }
-tr<-KruschkeBlair2000Exp1()$tr
-exemplars<-KruschkeBlair2000Exp1()$exemplars
+se<-round(runif(1,1,10000))
+tr<-KruschkeBlair2000Exp1(seed=se)$tr
+exemplars<-KruschkeBlair2000Exp1(seed=se)$exemplars
 
-
+source("slpEXITrs.R")
 ## best fit values for EXIT with attention shifting 
 ## as reported in Kruschke, 2001 
 st<-list(nFeat=9+1,# +bias cue 
@@ -138,14 +140,14 @@ st<-list(nFeat=9+1,# +bias cue
          l_weight=.316,
          l_ex=.0121, 
          iterations=10,
-         sigma=0)
-st$exemplars<-exemplars
+         sigma=c(rep(1,9),0))
+st$exemplars<-exemplars[1:8,]
 st$w_exemplars<-st$exemplars
 st$w_exemplars[]<-0
 st$w_in_out<-matrix(0,st$nCat,st$nFeat)
 
-
-predictions<-as.data.frame(matrix(NA,ncol=8,nrow=ntrials))
+nrow(tr)
+predictions<-as.data.frame(matrix(NA,ncol=8,nrow=nrow(tr)))
 colnames(predictions)<-c("block","stim","t1","t2","t3","t4","t5","t6")
 predictions$stim<-tr$stim;predictions$block<-tr$block
 predictions[,c("t1","t2","t3","t4","t5","t6")]<-
@@ -173,10 +175,44 @@ predictions[,c("t1","t2","t3","t4","t5","t6")]<-
 # AD	52.00	3.70	33.10	3.70	3.70	3.70
 # DH/DI	4.40	4.40	44.40	4.40	4.40	38.10
 
+stims<-predictions[predictions$block=="blocking",][1:11,2]
+if (T){
+pdevs<-cbind(c("BH/BI","AH/AI","DH/DI","D","AB","HI", "BD","AD"),
+      round(rbind(
+(colMeans(predictions[predictions$block=="blocking" & 
+                predictions$stim %in% c("BH","BI"),][,3:8])-
+        c(6.60,	6.50,	6.50,	6.50,	6.50,	67.40)/100),
+(colMeans(predictions[predictions$block=="blocking" & 
+                          predictions$stim %in% c("AH","AI"),][,3:8])-
+        c(54.10,	3.90,	3.90,	3.90,	3.90,	30.20)/100),
+(colMeans(predictions[predictions$block=="blocking" & 
+                          predictions$stim %in% c("DH","DI"),][,3:8])-
+        c(4.40,	4.40,	44.40,	4.40,	4.40,	38.10)/100),
+(predictions[predictions$block=="blocking" & 
+                predictions$stim %in% c("D"),][,3:8]-
+    c(1.10,	1.10,	94.40,	1.10,	1.10,	1.10)/100),
+(predictions[predictions$block=="blocking" & 
+                 predictions$stim %in% c("AB"),][,3:8]-
+     c(80.30,	3.90,	3.90,	3.90,	3.90,	3.90)/100),
+(predictions[predictions$block=="blocking" & 
+                 predictions$stim %in% c("HI"),][,3:8]-
+     c(1.20,	1.20,	1.20,	1.20,	1.20,	93.80)/100),
+(predictions[predictions$block=="blocking" & 
+                 predictions$stim %in% c("BD"),][,3:8]-
+     c(	5.80,	5.70,	71.20,	5.70,	5.70,	5.70)/100),
+(predictions[predictions$block=="blocking" & 
+                 predictions$stim %in% c("AD"),][,3:8]-
+     c(	52.00,	3.70,	33.10,	3.70,	3.70,	3.70)/100)
+),
+4)*100)
+}
+colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
+pdevs
+
 ## And the current slpEXIT predictions
 ## blocking overall
 ## please note the order of symptoms differs % percent is in decimals
-predictions[predictions$block=="blocking",][1:11,2:8]
+#predictions[predictions$block=="blocking",] [1:11,2:8]
 ## notes: everything looks like the altered category output 
 ## and the altered alpha values in the 10 iterations are taken to subsequent 
 ## equations. Only this way the slp predictions approximate the reported ones.
@@ -219,62 +255,139 @@ predictions[predictions$block=="blocking",][1:11,2:8]
 
 ## slpExit predictions
 ## please note order of symptoms differs; and % in decimals
-predictions[predictions$block=="attenuation",2:8]
+#predictions[predictions$block=="attenuation",2:8]
+
+if (T){
+    pdevs<-cbind(c("BE/BF","CE/CF","BH/BI","CH/CI","DE/DF",
+                   "GH/GI", "A","D","G","AB","AC","ABC","DEF","GHI"),
+             round(rbind(
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                    predictions$stim %in% c("BE","BF"),][,3:8])-
+                          c(5.40,	26.80,	5.40,	51.50,	5.40,	5.40)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                    predictions$stim %in% c("CE","CF"),][,3:8])-
+                          c(4.40,	47.80,	4.40,	34.50,	4.40,	4.40)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                    predictions$stim %in% c("BH","BI"),][,3:8])-
+                          c(4.80,	23.40,	4.80,	4.80,	4.30,	57.90)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                    predictions$stim %in% c("CH","CI"),][,3:8])-
+                          c(4.10,	44.30,	4.10,	4.10,	3.80,	39.60)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                 predictions$stim %in% c("DE","DF"),][,3:8])-
+                          c(4.50,	4.50,	34.40,	47.40,	4.50,	4.50)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                predictions$stim %in% c("GH","GI"),][,3:8])-
+                          c(4.20,	4.20,	4.20,	4.20,	27.80,	55.50)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("A"),][,3:8]-
+                          c(94.40,	1.10,	1.10,	1.10,	1.10,	1.10)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("D"),][,3:8]-
+                          c(1.10,	1.10,	94.40,	1.10,	1.10,	1.10)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("G"),][,3:8]-
+                          c(1.10,	1.10,	1.10,	1.10,	94.30,	1.10)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("AB"),][,3:8]-
+                          c(53.30,	26.90,	4.90,	4.90,	4.90,	4.90)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("AC"),][,3:8]-
+                          c(28.60,	55.80,	3.90,	3.90,	3.90,	3.90)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("ABC"),][,3:8]-
+                          c(13.70,	72.40,	3.50,	3.50,	3.50,	3.50)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("DEF"),][,3:8]-
+                          c(3.30,	3.30,	12.40,	74.20,	3.30,	3.30)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("GHI"),][,3:8]-
+                             c(2.60,	2.60,	2.60,	2.60,	8.10,81.40)/100)
+                 ),
+                 4)*100)
+}
+colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
+pdevs
 
 
+#####################################################
 
-
-
-## best fit values for EXIT without attention shifting 
+## best fit values for EXIT WITHOUT attention shifting 
 ## as reported in Kruschke, 2001 
-st<-list(nFeat=9, 
+st<-list(nFeat=9+1,# +bias cue 
          nCat=6, 
-         phi=4.43, 
+         phi=4.35, 
          c=.348, 
-         P=1.07,
+         P=1.16,
          l_gain=0, 
-         l_weight=.316,
-         l_ex=.0121, 
-         beta=.001,
+         l_weight=.186,
+         l_ex=0, 
          iterations=10,
-         eta=1)
-
-st$exemplars<-
-    rbind(train1[train1[,"stim"]=="A",1:st$nFeat],
-          train1[train1[,"stim"]=="D",1:st$nFeat],
-          train3[train3[,"stim"]=="G",1:st$nFeat],
-          train2[train2[,"stim"]=="AB",1:st$nFeat],
-          train2[train2[,"stim"]=="HI",1:st$nFeat],
-          train3[train3[,"stim"]=="ABC",1:st$nFeat],
-          train3[train3[,"stim"]=="DEF",1:st$nFeat],
-          train3[train3[,"stim"]=="GHI",1:st$nFeat])
-rownames(st$exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI")
-
+         sigma=c(rep(1,9),0))
+st$exemplars<-exemplars
 st$w_exemplars<-st$exemplars
 st$w_exemplars[]<-0
 st$w_in_out<-matrix(0,st$nCat,st$nFeat)
 
 
-predictions<-as.data.frame(matrix(NA,ncol=8,nrow=ntrials))
-colnames(predictions)<-
-    c("block","stim","t1","t2","t3","t4","t5","t6")
-predictions$stim<-tr$stim; predictions$block<-tr$block
+nrow(tr)
+predictions<-as.data.frame(matrix(NA,ncol=8,nrow=nrow(tr)))
+colnames(predictions)<-c("block","stim","t1","t2","t3","t4","t5","t6")
+predictions$stim<-tr$stim;predictions$block<-tr$block
 predictions[,c("t1","t2","t3","t4","t5","t6")]<-
-    round(slp_EXITrs(st,tr,xtdo=F)$response_probabilities,2)
+    round(slp_EXITrs(st,tr, xtdo=F)$response_probabilities,3)
+
 
 ## blocking (see figure 2 in Kruschke, 2001,
 ##Model predictions
-# BH/BI	18.10	7.30	7.30	7.30	7.30	52.70	52.7
-# AB	92.80	1.40	1.40	1.40	1.40	1.40	1.4
-# D	    1.20	1.20	93.90	1.20	1.20	1.20	1.2
-# HI	1.80	1.80	1.80	1.80	1.80	91.20	91.2
-# BD	14.20	5.70	62.80	5.70	5.70	5.70	5.7
-# AH/AI	69.90	2.70	2.70	2.70	2.70	19.30	19.3
-# AD	63.50	2.40	26.70	2.40	2.40	2.40	2.4
-# DH/DI	4.50	4.50	49.40	4.50	4.50	32.50	32.5
+# BH/BI	18.10	7.30	7.30	7.30	7.30	52.70	
+# AB	92.80	1.40	1.40	1.40	1.40	1.40
+# D	    1.20	1.20	93.90	1.20	1.20	1.20
+# HI	1.80	1.80	1.80	1.80	1.80	91.20
+# BD	14.20	5.70	62.80	5.70	5.70	5.70
+# AH/AI	69.90	2.70	2.70	2.70	2.70	19.30
+# AD	63.50	2.40	26.70	2.40	2.40	2.40
+# DH/DI	4.50	4.50	49.40	4.50	4.50	32.50
 
 ## slpExit here
-predictions[predictions$block=="blocking",2:8]
+stims<-predictions[predictions$block=="blocking",][1:11,2]
+if (T){
+    pdevs<-cbind(c("BH/BI","AH/AI","DH/DI","D","AB","HI", "BD","AD"),
+                 round(rbind(
+                     (colMeans(predictions[predictions$block=="blocking" & 
+                                               predictions$stim %in% c("BH","BI"),][,3:8])-
+                          c(18.10,	7.30,	7.30,	7.30,	7.30,	52.70)/100),
+                     (colMeans(predictions[predictions$block=="blocking" & 
+                                               predictions$stim %in% c("AH","AI"),][,3:8])-
+                          c(69.90,	2.70,	2.70,	2.70,	2.70,	19.30)/100),
+                     (colMeans(predictions[predictions$block=="blocking" & 
+                                               predictions$stim %in% c("DH","DI"),][,3:8])-
+                          c(4.50,	4.50,	49.40,	4.50,	4.50,	32.50)/100),
+                     (predictions[predictions$block=="blocking" & 
+                                      predictions$stim %in% c("D"),][,3:8]-
+                          c(1.20,	1.20,	93.90,	1.20,	1.20,	1.20)/100),
+                     (predictions[predictions$block=="blocking" & 
+                                      predictions$stim %in% c("AB"),][,3:8]-
+                          c(92.80,	1.40,	1.40,	1.40,	1.40,	1.40)/100),
+                     (predictions[predictions$block=="blocking" & 
+                                      predictions$stim %in% c("HI"),][,3:8]-
+                          c(1.80,	1.80,	1.80,	1.80,	1.80,	91.20)/100),
+                     (predictions[predictions$block=="blocking" & 
+                                      predictions$stim %in% c("BD"),][,3:8]-
+                          c(14.20,	5.70,	62.80,	5.70,	5.70,	5.70)/100),
+                     (predictions[predictions$block=="blocking" & 
+                                      predictions$stim %in% c("AD"),][,3:8]-
+                          c(63.50,	2.40,	26.70,	2.40,	2.40,	2.40)/100)
+                 ),
+                 4)*100)
+}
+colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
+pdevs
+## perfect... (note 1=1% 100=100%)
+## Note: So if the small deviations with attention learning are meaningful
+## deviations, they are tied to the equations with
+## l_gain and l_ex
+
 
 ##(non-existent) attenuation
 ## Model predictions
@@ -294,5 +407,56 @@ predictions[predictions$block=="blocking",2:8]
 # GH/GI	4.10	4.10	4.10	4.10	20.90	62.70
 
 ## slpExit here
-predictions[predictions$block=="attenuation",2:8]
+if (T){
+    pdevs<-cbind(c("BE/BF","CE/CF","BH/BI","CH/CI","DE/DF",
+                   "GH/GI", "A","D","G","AB","AC","ABC","DEF","GHI"),
+                 round(rbind(
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                               predictions$stim %in% c("BE","BF"),][,3:8])-
+                          c(6.70,	37.70,	3.70,	37.70,	7.10,	7.10)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                               predictions$stim %in% c("CE","CF"),][,3:8])-
+                          c(2.80,	39.30,	3.80,	39.30,	7.40,	7.40)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                               predictions$stim %in% c("BH","BI"),][,3:8])-
+                          c(4.30,	24.20,	4.50,	4.50,	2.80,	59.60)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                               predictions$stim %in% c("CH","CI"),][,3:8])-
+                          c(1.80,	24.90,	4.70,	4.70,	2.90,	61.20)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                               predictions$stim %in% c("DE","DF"),][,3:8])-
+                          c(5.90,	5.90,	28.50,	47.90,	5.90,	5.90)/100),
+                     (colMeans(predictions[predictions$block=="attenuation" & 
+                                               predictions$stim %in% c("GH","GI"),][,3:8])-
+                          c(4.10,	4.10,	4.10,	4.10,	20.90,	62.70)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("A"),][,3:8]-
+                          c(90.00,	3.50,	1.60,	1.60,	1.60,	1.60)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("D"),][,3:8]-
+                          c(1.60,	1.60,	90.30,	3.40,	1.60,	1.60)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("G"),][,3:8]-
+                          c(1.90,	1.90,	1.90,	1.90,	89.80,	2.50)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("AB"),][,3:8]-
+                          c(41.70,	39.10,	4.80,	4.80,	4.80,	4.80)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("AC"),][,3:8]-
+                          c(22.40,	52.00,	6.40,	6.40,	6.40,	6.40)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("ABC"),][,3:8]-
+                          c(11.30,	69.30,	4.80,	4.80,	4.80,	4.80)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("DEF"),][,3:8]-
+                          c(4.90,	4.90,	9.50,	70.70,	4.90,	4.90)/100),
+                     (predictions[predictions$block=="attenuation" & 
+                                      predictions$stim %in% c("GHI"),][,3:8]-
+                          c(2.10,	2.10,	2.10,	2.10,	4.60,	87.10)/100)
+                 ),
+                 4)*100)
+}
+colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
+pdevs
+### alright perfect again all deviations < 0.3%
 

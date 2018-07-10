@@ -74,7 +74,10 @@ krus96train <-
         colnames(testrials) <- colnames(tr)
     
         tr <- rbind(tr, testrials)
+        traintrials<-nrow(tr)
+        tr[(traintrials+1):nrow(tr),"ctrl"]<-2
         bigtr <- rbind(bigtr, tr)
+
     }
 
    if(!ctxt) bigtr <- bigtr[,c(1:9, 11:14)]

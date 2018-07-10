@@ -54,15 +54,15 @@
   over the network learning states for exemplar weight nodes, 
   attention gain nodes (and thereby learned attention weights) as well 
   as feature input to category output weights. If \code{ctrl} is set to 
-  \code{1} all these network parameters are (set)re-) intialized at 0. 
-  Setting \code{ctrl} to \code{0} represents a normal learning trial. 
+  \code{0} all network parameters are intialized at 0 in the first trial
+  (row 1 in \code{tr} and learning proceeds in subsequent trials.
+  If \code{ctrl} is set to \code{1} the network parameters for
+  \code{w_in_out} and \code{w_exemplars} are (re-)set to the parameters
+  user defined in \code{w_io_init} and \code{ex_weights_init} (see below).
   If \code{ctrl} is set to \code{2} the network learning is frozen 
-  at the current state of learning (e.g. for testing predictions on 
-  new trials without teaching signals). 
-  If \code{ctrl} is set to \code{3} the network parameters for
-  \code{w_in_out} and \code{w_exemplars} are reset to the custom pre-
-  defined settings via \code{w_io_init} and \code{ex_weights_init} 
-  (see below).
+  (e.g. for testing predictions on new trials without teaching signals).
+  If \code{ctrl} is set to \code{3} then \code{w_in_out} and \code{w_exemplars}
+  are reset to 0.
   
   \code{tr} ## should there be missing dimension flags as in ALCOVE?
   
@@ -116,7 +116,11 @@
   arbitrary value of 10, which produces a larger attention shift in each
   trial.
   
-  \code{sigma} - bias salience (fixed at 1 for remaining features).
+  \code{sigma} - feature salience. Has to be defined in one of the two following
+  ways: 1. a single numeric which then is equally applied to all features, or 2.
+  as a vector of length n, where n is the number of real features (+ 1 if
+  a bias cue is defined in \code{tr}). This vector is then applied
+  to the features in the same order as defined in \code{tr}.
   See Kruschke(2001a, Equation 4, p.1399).
  
   \code{w_in_out} - matrix with \code{nFeat} columns and \code{nCat} rows,
@@ -125,19 +129,7 @@
   columns follow the same order as \code{x1, x2, \dots} in \code{tr}, 
   and likewise, the \code{nCat} rows follow the order of  
   \code{t1, t2, \dots}. If \code{ctrl} in \code{tr} is set to \code{1} 
-  (initialization- or reset-trial) while defining \code{w_in_out}<-NULL, 
-  a default matrix with 0 entries will be used for intilization. 
-  Alternatively, if \code{ctrl} in \code{tr} is set to \code{1} 
-  while providing custom starting values for \code{w_in_out}, the 
-  user-defined matrix \code{w_in_out} will be used  in that trial. 
-  The function also provides the option to define a second matrix for 
-  re-initialization, for being able to re-initialize the network at a 
-  different state. This can be done b setting \code{ctrl} in \code{tr} 
-  to \code{3}. In the corresponding trial the node weights are 
-  reset corresponding to the matrix \code{w_io_init} which then has to be 
-  defined according to the description above. If \code{tr} is 
-  never set to \code{3}, then a definition of \code{w_io_init} is not
-  required.
+  the corresponding matrix is set to \code{w_in_out}.
 
   \code{exemplars} - matrix with \code{nFeat} columns and n rows, where
   n is the number of exemplars, such that each row represents a single
@@ -149,6 +141,9 @@
   \code{w_exemplars} - matrix which is structurally equivalent to 
   \code{exemplars}. However, the matrix represents the associative weight
   from the exemplar nodes to the gain nodes, as given in Equation 4.
+  If \code{ctrl} in \code{tr} is set to \code{1} 
+  the corresponding network matrix is set to \code{w_exemplars}.
+  
   The \code{nFeat} columns follow the same order as 
   \code{x1, x2, \dots} in \code{tr}. The n-rows follow the same order 
   as in the \code{exemplars} matrix defined below. The order or exemplar
