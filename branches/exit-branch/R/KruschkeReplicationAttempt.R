@@ -111,21 +111,21 @@ KruschkeBlair2000Exp1<-function(seed){
     
     
     exemplars<-
-        rbind(train1[train1[,"stim"]=="A",1:st$nFeat],
-              train1[train1[,"stim"]=="D",1:st$nFeat],
-              train3[train3[,"stim"]=="G",1:st$nFeat],
-              train2[train2[,"stim"]=="AB",1:st$nFeat],
-              train2[train2[,"stim"]=="HI",1:st$nFeat],
-              train3[train3[,"stim"]=="ABC",1:st$nFeat],
-              train3[train3[,"stim"]=="DEF",1:st$nFeat],
-              train3[train3[,"stim"]=="GHI",1:st$nFeat])
+        rbind(train1[train1[,"stim"]=="A",1:9],
+              train1[train1[,"stim"]=="D",1:9],
+              train3[train3[,"stim"]=="G",1:9],
+              train2[train2[,"stim"]=="AB",1:9],
+              train2[train2[,"stim"]=="HI",1:9],
+              train3[train3[,"stim"]=="ABC",1:9],
+              train3[train3[,"stim"]=="DEF",1:9],
+              train3[train3[,"stim"]=="GHI",1:9])
     exemplars[,"x10"]<-0
     exemplars<-rbind(exemplars,c(0,0,0,0,0,0,0,0,0,1))
     rownames(exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI","bias")
     return(list(tr=tr,exemplars=exemplars))
 }
 se<-round(runif(1,1,10000))
-tr<-KruschkeBlair2000Exp1(seed=se)$tr
+tr<-KruschkeBlair2000Exp1(seed=7777)$tr
 exemplars<-KruschkeBlair2000Exp1(seed=se)$exemplars
 
 source("slpEXITrs.R")
