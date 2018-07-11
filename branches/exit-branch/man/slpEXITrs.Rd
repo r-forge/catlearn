@@ -8,8 +8,8 @@
   ***CAUTION*** The model codes include equations which are NOT explicitly
   stated in the model descriptions in Kruschke's (2001b).
   The 'changes' are detailed below, and we strongly recommend their 
-  consideration, as they do have substantial impact on the model plausibility,
-  how the model can (or can not) be interpreted, and how it fits data. 
+  consideration, as they seem to have impact on how the model can (or can not) 
+  be interpreted, and how it fits data. 
   However, the implemented 'changes' were necessary to correctly replicate the 
   model predictions reported in Kruschke (2001a Appendix; for the inverse 
   base-rate effect Experiment 1 from Kruschke, 1996a), and the predictions
@@ -31,21 +31,21 @@
   error gradient for the weight updates. In our replication efforts, the 
   alternative use of the pre-shift values for alpha and the output activation 
   resulted in very different predictions,for both simulated experiments. 
-  Unfortunately, this is a major concern, implying that, in the referenced 
-  studies, the learning of input-to-output weights was (most probably) 
-  attenuated by the gain-shift iterations, which seems, at least, theoretically 
-  questionable. In light of the conclusions based on the model fits, 
-  we think that the application of EXIT requires a special awareness about this 
-  mechanistic issue. We would strongly recommend to reconsider the application
-  or interpretation of EXIT with regard to the described model implementation. 
-  Please also consider using 'more optimal' error gradients, and check whether 
-  the model still performs well in fitting data. Therefore, our EXIT version 
-  provides the option to select one of two alternatives for calculating the 
-  error gradient in Equation 9, i.e.  a) the use values of alpha and the output 
-  activation, which were also used to make the corresponding trial prediction 
-  (pre-g-shift), or b) the use of the corresponding values re-calculated after 
-  the attention gain shift (post-g-shift), which were used to 'correctly'
-  reproduce Kruschke's inverse-base rate effect predictions.
+  Unfortunately, this is a potential a major concern, implying that, 
+  in the referenced studies, the learning of input-to-output weights was 
+  attenuated by the gain-shift iterations, which seemingly was not the 
+  intention of the author or the model, as it was neither explicitly stated
+  nor discussed with respect to 'traditional' error terms. Thus, we would 
+  strongly recommend to reconsider the application or interpretation of EXIT 
+  with regard to the described model implementation. Please also consider using 
+  'more optimal' error gradients, and check whether the model still performs 
+  well in fitting data. Therefore, our EXIT version  provides the option to 
+  select one of two alternatives for calculating the error gradient in Equation 
+  9, i.e.  a) the use values of alpha and the output activation, which were also
+  used to make  the corresponding trial prediction (pre-g-shift), or b) the use 
+  of the corresponding values re-calculated after the attention gain shift 
+  (post-g-shift), which were used to 'correctly' reproduce Kruschke's 
+  inverse-base rate effect predictions.
   2. The second, not explicitly stated, prerequisite for replicating the
   mentioned predictions, concerns the definition of the exemplars. To make
   the model work, each exemplar must contain a present 'bias-node' in addition 
@@ -56,8 +56,8 @@
   (in Equation 10). The implementation of the bias cue is described in more 
   detail in Kruschke (2001a, Appendix). In the corresponding equations 3 and 4 
   an additional sigma parameter is introduced, which is supposed to scale down 
-  the overall salience of the bias cue. However, the reported fit of sigma with 
-  respect to the described definition of exemplars is meaningless in Equation 3. 
+  the overall salience of the bias cue. However, with respect to the 
+  conducted model fits implementing sigma in Equation 3 is meaningless. 
   I.e. in Kruschke's (2001a) model fits, sigma is always set to 1 for the 
   features, and was allowed to vary freely for the bias cue. In Eq.3, sigma is 
   used for weighing the distances between the the present bias cue (stimulus) 
@@ -65,9 +65,10 @@
   always 0 for the bias cue, when each exemplar is defined to have a value of 1 
   for the bias cue. Hence, the product of sigma (bias) and the exemplar-to-
   stimulus difference (bias) is always 0 in this equation 3, and therefore 
-  meaningless (as long as sigma is set to 1 for other features). Thus, in 
-  Kruschke's fits, sigma only governs/fits the salience/attention to the bias 
-  cue in Eq.4 (but not in Eq. 3). In Eq.4 the attention to the bias cue is
+  meaningless (as long as sigma is set to 1 for other features, and as long
+  there is no other bias cue, e.g. reflecting different contexts). Thus, in 
+  Kruschke's analyses, sigma only governs/fits the attention to the 
+  bias cue in Eq.4 (but not in Eq. 3). In Eq.4 the attention to the bias cue is
   first mediated by all exemplars associations, then additionally weighed by 
   sigma for the bias cue. However, please be aware, that in our
   simulations the exemplar-mediated attention to the bias cue (i.e. within the 
@@ -76,33 +77,17 @@
   means that the major amount of attention to the bias cue, in fact, is 
   determined by sigma (almost) alone. And, indeed, eliminating the bias cue from 
   the exemplars (no attention shift learning for the bias), hardly changed our 
-  simulation results (yet deviating from the reported predictions). As the 
-  input-to-output weights for the bias cue reflect the category base-rates, 
-  sigma determines, how much these base rates are mixed with the predictions 
-  from the stimulus feature associations in Eq.4. In other words, sigma freely 
-  fits what the attention allocation mechanism is supposed to learn about the 
-  bias cue, which simply pulls all predictions towards the base rates. As 
-  Kruschke (2001a) commits to the idea that attention to the bias cue is 
-  learned/shifted, we have the feeling, that this implementation of sigma 
-  is not psychologically meaningful, but simply (over-)fits the data in 
-  experiments, where participants tend to respond in accordance to the 
-  base-rates. And, indeed, our simulatied predictions for the blocking and 
-  attenuation experiment (Kruschke, 2001b) substantially deviate from the 
-  reported predictions, when assigning just a tiny bit of salience (sigma) to 
-  the bias cue, although Kruschke argues, that this should not make any 
-  difference, as all base rates were equal in the blocking experiment. Of 
-  course, something is learned about the attention to the bias cue, but it seems
-  rather unclear whether it contributes to better or worse predictions. Thus,
-  one should consider models without variations sigma for truely understanding
-  how (or why) the model is able to account for the inverse base rate effect.
+  simulation results. As the input-to-output weights for the bias cue reflect 
+  the category base-rates, sigma determines, how much these base rates are mixed 
+  with the predictions from the stimulus feature associations in Eq.4. In other 
+  words, sigma seems to freely fit what the attention allocation mechanism is 
+  supposed to learn about the bias cue, by simply pulling all predictions 
+  towards the base rates.  Of course, something is learned about the attention 
+  to the bias cue, but it seems rather unclear whether it contributes to better 
+  or worse predictions.
   Thus, although we  do not want to advise to circumvent the use of sigma, we 
   would recommend to be very carefull with the conclusions from the model fits,
-  especially in additional light of point 1 above, which does not allow to
-  straight forwardly interpret the model results as put forward by Kruschke
-  (2001a,b) in terms of the involved psychological processes. (Since the EXIT
-  model was used to competitively rule out that the inverse base rate effect is 
-  not explained by eliminative inference (meaning better explained by EXIT),
-  in Kruschke (2001b), there might be reason to review this conclusion.)
+  especially in additional light of point 1 above. 
   3. Please note, that with the described 'adjustments' we were able to 
   reproduce the Kruschke's (2001a, IBRE from Kruschke1996a) predictions. We used 
   the best fitting parameter values as reported (in the Appendix), and 
