@@ -20,7 +20,16 @@ source("krus96train.R")
 ### with seed 7777 there are only 3 percentage deviations above 1%
 ### with seed 8888,2,1 there are only 2 percentage deviations above 1%
 ### with seed 5555 there are      8 percentage deviations above 1%
-tr <- krus96train(subj = 56, seed = 1)
+
+## AW: This is just a randomization issue. If you run 500 participants with seed 555
+## there are no deviations above .01. So, it would seem Kruschke got
+## lucky with the 56 sequences he used, in the sense that they were
+## particularly representative. Of course, he'd also argue that these
+## were the right 56 to use because that's what the participants
+## got... Either way, we can emulate that success using 56 subjects
+## and a seed of 1
+
+tr <- krus96train()
 #tr <- krus96train(subj = 1, seed = round(runif(1,1,1000)))
 
 ## Parameters from Kruschke (2001; see Appendix)
@@ -32,11 +41,11 @@ st <- list(nFeat = 6+1, nCat = 4,
 
 ## note - an additional column =0 indicates absence of bias in all exemplars,
 ## except the bias "exemplar" (last line)
-exemplars <- rbind(c(1,1,0,0,0,0,0),
-                    c(1,0,1,0,0,0,0),
-                    c(0,0,0,1,1,0,0),
-                    c(0,0,0,1,0,1,0),
-                    c(0,0,0,0,0,0,1)) ## bias "cue"/exemplar
+#exemplars <- rbind(c(1,1,0,0,0,0,0),
+#                    c(1,0,1,0,0,0,0),
+#                    c(0,0,0,1,1,0,0),
+#                    c(0,0,0,1,0,1,0),
+#                    c(0,0,0,0,0,0,1)) ## bias "cue"/exemplar
 ## unmute this to "drop" the bias exemplar
 # exemplars <- rbind(c(1,1,0,0,0,0,0),
 #                    c(1,0,1,0,0,0,0),
@@ -47,6 +56,12 @@ exemplars <- rbind(c(1,1,0,0,0,0,0),
 ## using an extra bias exemplar instead makes no difference, which makes sense.
 
 
+## AW: Below is what the exemplar representation should actually be:
+
+exemplars <- rbind(c(1,1,0,0,0,0,1),
+                   c(1,0,1,0,0,0,1),
+                   c(0,0,0,1,1,0,1),
+                   c(0,0,0,1,0,1,1))
 
 st$exemplars <- exemplars
 st$w_exemplars <- exemplars
@@ -140,6 +155,7 @@ krus.sim <- read.csv("../krus96_sim_krus01.csv", stringsAsFactors = FALSE)
 comp <- merge(krus.sim, longun)
 comp$diff <- round(comp$kprop- comp$prop, 2)
 
+print(comp)
 print(comp[abs(comp$diff) > .01,])
 nrow(comp[abs(comp$diff) > .01,])
 

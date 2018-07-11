@@ -1,5 +1,5 @@
 krus96train <-
-    function(blocks = 15, subjs = 1, ctxt = TRUE, seed = 7624) {
+    function(blocks = 15, subjs = 56, ctxt = TRUE, seed = 1) {
    set.seed(seed)
 
     ## note "x7"=bias cue, which is always on
