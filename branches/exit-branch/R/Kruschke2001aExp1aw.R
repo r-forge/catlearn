@@ -29,7 +29,7 @@ source("krus96train.R")
 ## got... Either way, we can emulate that success using 56 subjects
 ## and a seed of 1
 
-tr <- krus96train()
+tr <- krus96train(blocks = 15, subjs = 56, ctxt = TRUE, seed = 1)
 #tr <- krus96train(subj = 1, seed = round(runif(1,1,1000)))
 
 ## Parameters from Kruschke (2001; see Appendix)
@@ -37,7 +37,8 @@ st <- list(nFeat = 6+1, nCat = 4,
            phi = 4.42, c = 2.87, P = 2.48,
            l_gain = 4.42, l_weight = .222, l_ex = 1.13,
            sigma = c(rep(1,6),.401), 
-           iterations = 10)
+           iterations = 10,
+           preshift=F)
 
 ## note - an additional column =0 indicates absence of bias in all exemplars,
 ## except the bias "exemplar" (last line)
@@ -71,7 +72,7 @@ st$w_in_out <- matrix(0, st$nCat, st$nFeat)
 ## Run simulation
 predics <- slp_EXITrs(st,tr,xtdo=F)$response_probabilities
 colnames(predics) <- c("C1", "R1", "C2", "R2")
-out.all <- cbind(tr[tr[,"ctrl"]==2,],predics[tr[,"ctrl"]==2,])
+out.all <- cbind(tr[tr[,"ctrl"]==2,],predics[tr[,"block"]==16,])
 
 ## Reduce and aggregate results to compare with Kruschke's simulation.
 out <- out.all[out.all$block == 16,]
@@ -158,6 +159,8 @@ comp$diff <- round(comp$kprop- comp$prop, 2)
 print(comp)
 print(comp[abs(comp$diff) > .01,])
 nrow(comp[abs(comp$diff) > .01,])
+mean(comp$diff*100)
 
-slp_EXITrs(st,tr,xtdo=F)$w_exemplars
-slp_EXITrs(st,tr,xtdo=F)$w_in_out
+slp_EXITrs(st,tr,xtdo=T)$w_exemplars
+slp_EXITrs(st,tr,xtdo=T)$w_in_out
+slp_EXITrs(st,tr,xtdo=T)$g

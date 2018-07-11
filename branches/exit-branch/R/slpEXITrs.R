@@ -28,7 +28,8 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
     
     ## go through all the trials and apply model
     for(j in 1:nrow(tr)){
-    #for(j in 1:100){   ## debugging only
+    
+        #for(j in 1:30){   ## debugging only
     
         ## first define indicator variables for correct cats
         ## cCat: index of present cat; eCat: absent cats
@@ -37,8 +38,8 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         ## ("try", in case there are no cats e.g. during test trials)
         try(cCat<-which(tr[j,colt1:(colt1+st$nCat-1)] == 1),
             silent==TRUE)
-        try(eCat<- which(tr[j,colt1:(colt1+st$nCat-1)] != 1),
-            silent==TRUE)
+        # try(eCat<- which(tr[j,colt1:(colt1+st$nCat-1)] != 1),
+        #     silent==TRUE)
         
         ## teaching signals:
         ## t=0 if outcome is absent and t=1 if outcome present.
@@ -48,7 +49,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         
         ## input activations for current trial 
         a_in<-as.numeric(tr[j,colFeat1:(colFeat1+st$nFeat-1)])
-       
+
         # ## calculate exemplar activation a_ex(x)
         # ## with minkowski metric Equation (3)
         a_ex<-exp(-st$c*colSums(
@@ -56,7 +57,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
                 t(st$exemplars)-
                     as.numeric(a_in))))
         ))
-
+        
         ## is this the first trial?
         ## Note: whith a bigtr and multiple concatenaed subject trials
         ## this does not work, and "ctrl" needs to be set to 1 
@@ -90,7 +91,6 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         ## Equation (4) 
         g<-a_in*sig*exp(colSums(w_exemplars*a_ex))
 
-
         ## calculate current attention strengths alpha_i
         ## Equation (5) 
         alpha_i<-g/((sum(g^st$P))^(1/st$P))
@@ -105,9 +105,10 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
         probs<-exp(out_act*st$phi)/sum(exp(out_act*st$phi))
         
         ## duplicate alpha_i and out_act for later
+        if (st$preshift==T){
         alpha_i2<-alpha_i
         out_act2<-out_act
-        
+        }
         ### from here it is learning ###########################################
         
         ## is this a frozen learning trial? (ctrl==2)
@@ -131,7 +132,6 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
                 
                 ## second term (wI*a_inI - alpha_I*a_out)
                 E2<-t(as.numeric(a_in)*t(w_in_out)-
-                          #as.numeric(alpha_i^(st$P-1))%*%(out_act))
                           as.numeric(alpha_i^(st$P-1))%*%(out_act))
                 
                 
@@ -157,7 +157,7 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
                 ## re-calculate category activation
                 ## Note: calculated in each iteration according to Kruschke
                 ## Equation (1) 
-                out_act<-(alpha_i)%*%t(w_in_out)
+                out_act<-(alpha_i*a_in)%*%t(w_in_out)
                 
             }
             ### Important note:
@@ -185,9 +185,10 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
                 
             ## overwright shifted stuff with the earlier duplicates? 
             ## this makes the predictions substantially worse
-            #alpha_i<-alpha_i2
-            #out_act<-out_act2
-             
+            if (st$preshift==T){
+            alpha_i<-alpha_i2
+            out_act<-out_act2
+            }
             ## Learning of Associations
             ## Gradient of error for weight change
             ## Equation (9)
@@ -220,9 +221,11 @@ slp_EXITrs<-function(st, tr,xtdo=FALSE) {
 
         output<-list()
         output$response_probabilities<-probs_out
+        if (extendx==T){
         output$w_in_out<-w_in_out
         output$w_exemplars<-w_exemplars
-
+        output$g<-g
+        }
     
     return(output)
 }

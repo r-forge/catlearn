@@ -55,7 +55,7 @@ krus96train <-
     bigtr <- NULL
     for(subj in 1:subjs) {
         
-        tr <- data.frame(matrix(0, ncol=14, nrow = blocks * nrow(sr)))
+        tr <- data.frame(matrix(0, ncol=14, nrow = (blocks * nrow(sr))))
     
         for (i in 1:blocks){
             samp <- sample(1:nrow(sr), nrow(sr))
@@ -72,10 +72,9 @@ krus96train <-
         testrials <- data.frame(2, blocks + 1, teststim, testitems)
 
         colnames(testrials) <- colnames(tr)
-    
-        tr <- rbind(tr, testrials)
         traintrials<-nrow(tr)
-        tr[(traintrials+1):nrow(tr),"ctrl"]<-2
+        tr <- rbind(tr, testrials)
+        tr[(traintrials+1):(nrow(tr)),"ctrl"]<-2
         bigtr <- rbind(bigtr, tr)
 
     }

@@ -119,19 +119,20 @@ KruschkeBlair2000Exp1<-function(seed){
               train3[train3[,"stim"]=="ABC",1:9],
               train3[train3[,"stim"]=="DEF",1:9],
               train3[train3[,"stim"]=="GHI",1:9])
-    exemplars[,"x10"]<-0
-    exemplars<-rbind(exemplars,c(0,0,0,0,0,0,0,0,0,1))
-    rownames(exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI","bias")
+    exemplars[,"x10"]<-1
+    #exemplars<-rbind(exemplars,c(0,0,0,0,0,0,0,0,0,1))
+    rownames(exemplars)<-c("A","D","G","AB","HI","ABC","DEF","GHI")
     return(list(tr=tr,exemplars=exemplars))
 }
 se<-round(runif(1,1,10000))
-tr<-KruschkeBlair2000Exp1(seed=7777)$tr
+tr<-(KruschkeBlair2000Exp1(seed=se)$tr)
+trx<-as.matrix(tr[,1:17])
 exemplars<-KruschkeBlair2000Exp1(seed=se)$exemplars
 
 source("slpEXITrs.R")
 ## best fit values for EXIT with attention shifting 
 ## as reported in Kruschke, 2001 
-st<-list(nFeat=9+1,# +bias cue 
+st<-list(nFeat=10,# +bias cue 
          nCat=6, 
          phi=4.43, 
          c=.348, 
@@ -140,21 +141,23 @@ st<-list(nFeat=9+1,# +bias cue
          l_weight=.316,
          l_ex=.0121, 
          iterations=10,
-         sigma=c(rep(1,9),0))
+         sigma=c(rep(1,9),0),
+         preshift=F)
 
 st$exemplars<-exemplars
 ## unmute this to "drop" bias "exemplar"
-#st$exemplars<-exemplars[1:8,]
+## and last column of 0's instead?
+#st$exemplars[1:8,10]<-0
 st$w_exemplars<-st$exemplars
 st$w_exemplars[]<-0
 st$w_in_out<-matrix(0,st$nCat,st$nFeat)
 
-nrow(tr)
+nrow(trx)
 predictions<-as.data.frame(matrix(NA,ncol=8,nrow=nrow(tr)))
 colnames(predictions)<-c("block","stim","t1","t2","t3","t4","t5","t6")
 predictions$stim<-tr$stim;predictions$block<-tr$block
 predictions[,c("t1","t2","t3","t4","t5","t6")]<-
-    round(slp_EXITrs(st,tr, xtdo=F)$response_probabilities,3)
+    round(slp_EXITrs(st,trx, xtdo=F)$response_probabilities,3)
 
 ## The Kruschke Table (Kruschke & Blair,2000)
 ## Human Data
@@ -211,7 +214,7 @@ pdevs<-cbind(c("BH/BI","AH/AI","DH/DI","D","AB","HI", "BD","AD"),
 }
 colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
 pdevs
-
+mean(unlist(abs(pdevs[,2:7])))
 
 ##Attenuation
 ## Human Data
@@ -299,13 +302,13 @@ if (T){
 }
 colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
 pdevs
-
+mean(unlist(abs(pdevs[,2:7])))
 
 #####################################################
 
 ## best fit values for EXIT WITHOUT attention shifting 
 ## as reported in Kruschke, 2001 
-st<-list(nFeat=9+1,# +bias cue 
+st<-list(nFeat=10,# +bias cue 
          nCat=6, 
          phi=4.35, 
          c=.348, 
@@ -314,7 +317,8 @@ st<-list(nFeat=9+1,# +bias cue
          l_weight=.186,
          l_ex=0, 
          iterations=10,
-         sigma=c(rep(1,9),0))
+         sigma=c(rep(1,9),0),
+         preshift=F)
 st$exemplars<-exemplars
 st$w_exemplars<-st$exemplars
 st$w_exemplars[]<-0
@@ -374,6 +378,7 @@ if (T){
 }
 colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
 pdevs
+mean(unlist(abs(pdevs[,2:7])))
 ## perfect... (note 1=1% 100=100%)
 ## Note: So if the small deviations with attention learning are meaningful
 ## deviations, they are tied to the equations with
@@ -450,4 +455,5 @@ if (T){
 }
 colnames(pdevs)<-c("stim","t1","t2","t3","t4","t5","t6")
 pdevs
+mean(unlist(abs(pdevs[,2:7])))
 ### alright perfect again all deviations < 0.3%
