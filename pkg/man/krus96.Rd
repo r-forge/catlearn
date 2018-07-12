@@ -1,6 +1,7 @@
 \name{krus96}
 \docType{data}
 \alias{krus96}
+\encoding{UTF-8}
 \title{Inverse Base-rate Effect AP}
 \description{
 
@@ -78,13 +79,13 @@
 
   \author{
     
-    Andy J. Wills, Rene Schegelmilch
+    Andy J. Wills, René Schlegelmilch
     
   }
 
 \seealso{
 
-\code{\link{krus96train}}, \code{\link{krus96oat}}    
+\code{\link{krus96train}}   
 
   }
 

@@ -1,5 +1,6 @@
 \name{krus96train}
 \alias{krus96train}
+\encoding{UTF-8}
 \title{
 
   Input representation of krus96 for models input-compatible with
@@ -15,7 +16,7 @@
 }
 \usage{
 
-krus96train(blocks = 15, subjs = 1, ctxt = TRUE, seed = 7624)
+krus96train(blocks = 15, subjs = 56, ctxt = TRUE, seed = 1)
 
 
 }
@@ -74,7 +75,7 @@ This routine was originally developed to support Wills et al. (n.d.).
 
 \author{
   
-  Rene Schegelmilch, Andy Wills
+   René Schlegelmilch, Andy Wills
   
 }
 \references{
@@ -89,5 +90,5 @@ This routine was originally developed to support Wills et al. (n.d.).
 }
 \seealso{
   
-  \code{\link{krus96train}}, \code{\link{krus96oat}}
+  \code{\link{krus96}}
 }

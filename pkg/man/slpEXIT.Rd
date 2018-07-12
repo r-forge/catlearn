@@ -1,5 +1,6 @@
-\name{slpEXITrs}
-\alias{slpEXITrs}
+\name{slpEXIT}
+\alias{slpEXIT}
+\encoding{UTF-8}
 \title{
   EXIT Category Learning Model
 }
@@ -11,9 +12,12 @@
   slpEXIT(st, tr, xtdo = FALSE)
 }
 \arguments{
+  
   \item{st}{List of model parameters}
+  
   \item{tr}{R-by-C matrix of training items}
-  \item{tr}{if \code{TRUE} extended output is returned}
+  
+  \item{xtdo}{if \code{TRUE} extended output is returned}
 }  
 
 \value{

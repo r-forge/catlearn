@@ -1,5 +1,6 @@
 \name{krus96exit}
 \alias{krus96exit}
+\encoding{UTF-8}
 \title{
   
    Simulation of AP krus96 with EXIT model

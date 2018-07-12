@@ -41,7 +41,11 @@ https://cran.r-project.org/submit.html
 
 * Common warnings
 ** Rd file is non-ascii
-Convert to ascii
+Specifying encoding:
+
+\encoding{UTF-8}
+
+or convert to ascii
 
 iconv -f utf8 -t ascii slpRW.Rd > slpRW.Rd~
 

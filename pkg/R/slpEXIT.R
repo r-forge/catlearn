@@ -3,6 +3,9 @@
     
 slpEXIT <-function(st, tr,xtdo=FALSE) {
 
+    ## Kludgy fix to avoid a R CMD build warning
+    silent <- NULL
+    
     ## Preparation of processing vars
 
     ## first column indices of the features
