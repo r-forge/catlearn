@@ -29,6 +29,7 @@
 6. Change exemplar -> gain_node weights (by Equation 10)
 
 * Andy's feedback on Rene's code
+** Version 1
 So, I've done some code review, not super-detailed, but enough
 possible issues were raised I thought I'd send them to you now and we
 could iterate.
@@ -48,7 +49,7 @@ Also, there's current no 'ctrl=2' option i.e. the ability to run the
 model without learning? This is quite important for modelling test
 phases.
 
-** The  Rd file
+*** The  Rd file
 
 - Does it really not matter whether the absent teaching signal is 0 or
   -1? It seems to me this code:
@@ -72,7 +73,7 @@ presence/absence coding, so the nosof94 experiment would have to be
 represented differently for EXIT (i.e. one feature per cue, so two per
 dimension).
 
-** Intial values of alpha
+*** Intial values of alpha
 You raise a good point about what values alpha take on the first
 trial. It's a good point because although alpha derives from other terms
 in the model, one of those terms is the a_in vector, which needs alpha
@@ -90,7 +91,7 @@ ADIT.
 
 So, dont' expose eta to the user, define it from P.  
 
-** No cues present trials (bias cue)?
+*** No cues present trials (bias cue)?
 
 You also sensibly ask about what happens if all cues are absent.  The
 answer is that this never happens in EXIT because of the bias cue
@@ -107,7 +108,7 @@ other cues in the JEP:LMC simulations. So, you'll need a vector of
 saliences per cue as a further input to the function (as per the
 appendix of Kruschke's 2001 JEP:LMC paper). 
 
-** a_ex
+*** a_ex
 The initialisation of a_ex on x=1 trial seems wrong 
 
             a_ex<-exp(-st$c*sum(
@@ -117,7 +118,7 @@ The initialisation of a_ex on x=1 trial seems wrong
 - the first item in the difference term is zero, which implies that no
   stimulus features are present on that trial, which is incorrect?
 
-** Adding exemplars
+*** Adding exemplars
 
 The process of adding exemplars as they're needed seems to be a bit
 wrong, as a new exemplar will be added even if the stimulus is
@@ -133,7 +134,7 @@ seen yet, because any exemplar that hasn't been seen yet has zero
 strength exemplar->gain links and so its presence is of no
 consequence (at least, I think so...)
 
-** Negative alpha:
+*** Negative alpha:
 In your code, you write:
 
        ## calculate attention strengths alpha_i
@@ -149,7 +150,7 @@ alpha. However, Kruschke says negative g's are set to zero
 wanted to be safe, you could reset negative g's to zero here before
 calculating alpha (rather than resetting negative alpha)
 
-** Teacher values
+*** Teacher values
 
 These are defined on page 816. Note that this code:
 
@@ -160,7 +161,7 @@ These are defined on page 816. Note that this code:
 implements a humble teacher, which is not what EXIT uses, I
 think. Take another look at p. 816.
 
-** 10 iterations stuff (Equ. 8)
+*** 10 iterations stuff (Equ. 8)
 
 EXIT does this:
 
@@ -178,8 +179,7 @@ are computed.)"
 
 and I don't think your code does that, either?
 
-
-** Learning cue->category weights
+*** Learning cue->category weights
 
 You write:
         
@@ -190,14 +190,14 @@ I don't think that's what EXIT does, I think it adjusts for both
 categories. It's just the teaching signal is different for the absent
 category/categories.
 
-** Exemplar->gain weight update
+*** Exemplar->gain weight update
 
 - Yes, I think every exemplar has its weights potentially updated. I
   say potentially because of course if a_ex is zero, no changes will
   happen. But in terms of the code, yes, you go through the update
   process for each exemplar.
 
-* Next steps 
+*** Next steps 
 
 - A good way to test the proper operation of this code is to try and
   reproduce the EXIT simulation in Table 3 of Kruschke (2001,
@@ -205,7 +205,7 @@ category/categories.
   into a CIRP, and then one adds a train function and a simulation
   function and attempts to reproduce the results in Table 3 (with the
   parameters Kruschke defines).
-* Notes on latest version
+** Version 2
 Some good work you've done here! But I'm afraid it's not ready for
 release yet, and I need your help to get it there. To explain...
 
@@ -257,13 +257,10 @@ Andy
 
 
 
-
-* Notes on next version
-** slpEXIT
-
+** Version 3
 I'm afraid you're going to have to explain to me why you've dropped
 the input activation from Equation 1. It is not obvious to me why it
-is 'totally redundant'.
+is 'totally redundant'. -- NOW EXPLAINED
 
 I did not get the comments like "Equation (1) (or 40 with
 bias)". There is no equation 40. Perhaps this was some kind of joke I
@@ -283,7 +280,6 @@ even when extdo = FALSE (cf. slpALCOVE). I've fixed this.
 I dropped ctrl=3 because we weren't using it and because I can't see
 the use case for it.
 
-
 Gaah, spaces! You put spaces between words, so give the reader the
 same courtesy for your code! I've added them throughout. 
 
@@ -292,13 +288,8 @@ your code, meaning the user cannot inspect the code by typing:
 
 slpEXIT
 
-This is considered poor practice in open source projects. 
+This is considered poor practice in open source projects. I fixed it.
 
 I cut out the 'preshift' bits because we both agree this not how EXIT
 works. 
 
-\code{c}, 
-  \code{P}, \code{l_gain}, \code{l_weight}, \code{l_ex},
-  \code{iterations}, \code{sigma}. Arguments 
-  \code{w_io_init} and \code{ex_weights_init} are optional 
-  in case of custom initialization using \code{ctrl} set to \code{3}. 
