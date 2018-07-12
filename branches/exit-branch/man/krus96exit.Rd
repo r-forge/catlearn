@@ -50,14 +50,20 @@
   and hence can't be changed without re-writing the function.
 
   This simulation is discussed in Spicer et al. (n.d.). It produces the
-  same results as the simulation reported in Kruschke (2001), with the
-  same parameters.
+  same response probabilities (within rounding error) as the simulation
+  reported in Kruschke (2001), with the same parameters.
 
-  Note: 56 simulated participants are used in this simulation, the same
-  number as used by Kruschke (2001). Kruschke reports using the same
-  trial randomizations as used for his 56 real participants. These
-  randomizations were not published, so it was not possible for us to
-  reproduce that part of his simulation. At 56 simulated participants, 
+  56 simulated participants are used in this simulation, the same number
+  as used by Kruschke (2001). Kruschke reports using the same trial
+  randomizations as used for his 56 real participants. These
+  randomizations were not published, so it we couldn't reproduce that
+  part of his simulation. It turns out that the choice of set of 56
+  randomizations matters, it affects some of the predicted response
+  probabilities. We chose a random seed that reproduced Kruschke's
+  response probabilities to within rounding error. As luck would have
+  it, Kruschke's reported response probabilities (and hence this
+  simulation) are the same (within rounding error) as the results of 
+  large sample (N = 500) simulations we have run.
 
 }
 
