@@ -14,16 +14,22 @@
   model predictions reported in Kruschke (2001a Appendix; for the inverse 
   base-rate effect Experiment 1 from Kruschke, 1996a), and the predictions
   reported in Kruschke (2001b; for the blocking and attenuation Experiment 1 
-  from Kruschke, & Blair, 2000). Please read the following issues carefully:
+  from Kruschke, & Blair, 2000). Please read the following issues
+  carefully:
+  
   1. Kruschke's (2001b) describes that the gain (g) shift in Equation 8 is
   iterated 10 times. After each iteration alpha (Equation 5) and the 
   output activation (Equation 1) are re-calculated and used for the next 
-  iteration to update g a bit more. What is not stated, but implemented in
+  iteration to update g a bit more.
+
+  What is not stated, but implemented in
   our EXIT version, is, that alpha and the output activation are 
   recalculated after the 10th iteration, and then passed to the error gradient 
   for the input-to-output weight update (Equation 9). This (as mentioned above) 
   was necessary to replicate the reported predictions given the best-
-  fitting parameters. Crucially, this means that the error gradient that updates 
+  fitting parameters.
+
+  Crucially, this means that the error gradient that updates 
   the input-to-output weights DOES NOT reflect the prediction error from
   the current trial. Instead, the network now already 'knows' how to 
   allocate attention (g) more optimal, and makes a second prediction for the 

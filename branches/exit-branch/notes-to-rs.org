@@ -258,3 +258,47 @@ Andy
 
 
 
+* Notes on next version
+** slpEXIT
+
+I'm afraid you're going to have to explain to me why you've dropped
+the input activation from Equation 1. It is not obvious to me why it
+is 'totally redundant'.
+
+I did not get the comments like "Equation (1) (or 40 with
+bias)". There is no equation 40. Perhaps this was some kind of joke I
+do not get? Anyway, I've cut these comments because I think they will
+be confusing. Let me know if you think we need to retain them (and, if
+so, what they mean). 
+
+Equation 3 - Seems a bit clunkily coded, but left for now.
+
+Stateful operation - Various bits of your code meant your model
+implementation was not stateful (e.g. would not work properly if
+someone specified non-zero weights in the initial state). I think I've
+fixed this. Also, the model is expected to be stateful, even where
+xtdo = FALSE, which means you need to return w_in_out and w_exemplars,
+even when extdo = FALSE (cf. slpALCOVE). I've fixed this.
+
+I dropped ctrl=3 because we weren't using it and because I can't see
+the use case for it.
+
+
+Gaah, spaces! You put spaces between words, so give the reader the
+same courtesy for your code! I've added them throughout. 
+
+I doubt this was intentional, but by using .subfunction, you obfuscate
+your code, meaning the user cannot inspect the code by typing:
+
+slpEXIT
+
+This is considered poor practice in open source projects. 
+
+I cut out the 'preshift' bits because we both agree this not how EXIT
+works. 
+
+\code{c}, 
+  \code{P}, \code{l_gain}, \code{l_weight}, \code{l_ex},
+  \code{iterations}, \code{sigma}. Arguments 
+  \code{w_io_init} and \code{ex_weights_init} are optional 
+  in case of custom initialization using \code{ctrl} set to \code{3}. 
