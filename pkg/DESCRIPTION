@@ -1,8 +1,8 @@
 Package: catlearn
 Type: Package
 Title: Formal Psychological Models of Categorization and Learning
-Version: 0.5.2
-Date: 2018-07-05
+Version: 0.5.3
+Date: 2018-07-12
 Author: Andy Wills, Lenard Dome, Charlotte Edmunds, Garrett Honke, Angus Inkster, Rene Schegelmilch, Stuart Spicer
 Maintainer: Andy Wills <andy@willslab.co.uk>
 Description: Formal psychological models of categorization and learning, independently-replicated data sets against which to test them, and simulation archives.
@@ -10,7 +10,9 @@ License: GPL (>= 2)
 Imports:
 	Rcpp (>= 0.12.6),
 	doParallel,
-	foreach
+	foreach,
+	tidyr,
+	dplyr
 LinkingTo: Rcpp
 LazyData: true
 
