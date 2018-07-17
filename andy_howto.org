@@ -44,7 +44,6 @@ Write automated tests for new functions. Run all automated tests. Tutorial here:
 
 http://r-pkgs.had.co.nz/tests.html
 
-
 * Common warnings
 ** Rd file is non-ascii
 Specifying encoding:
