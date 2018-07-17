@@ -39,6 +39,12 @@ http://win-builder.r-project.org/
 
 https://cran.r-project.org/submit.html
 
+* Automated tests
+Write automated tests for new functions. Run all automated tests. Tutorial here:
+
+http://r-pkgs.had.co.nz/tests.html
+
+
 * Common warnings
 ** Rd file is non-ascii
 Specifying encoding:
@@ -51,12 +57,13 @@ iconv -f utf8 -t ascii slpRW.Rd > slpRW.Rd~
 
 * Install the package
  - Navigate inside the _development_ directory, e.g. ~/r_packages/catlearn
- - Install the package (NOTE: because of the R-forge directory
-   structue, it will always be 'pkg' in the following command. The
-   path is the _production_ library of the local R installation - i.e.
-   the location in which R expects finished packages to be located).
+ - Install the package using the following inside R:
 
-   R CMD INSTALL -l ~/R/x86_64-pc-linux-gnu-library/3.3 pkg
+install.packages("catlearn_0.5.4.tar.gz", repos = NULL, type = "source")
+
+DO NOT USE "R CMD INSTALL" ... it seems to have broken with R 3.5, at
+least for this package, and generates segfaults.
+
 * Make your changes
 NOTE: These changes should be made to the local _development_ copy.
 * Re-install package
