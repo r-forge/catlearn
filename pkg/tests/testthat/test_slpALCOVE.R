@@ -1,20 +1,13 @@
 ## ALCOVE unit test, based on size 3 condition of shin92 CIRP
 context("slpALCOVE")
-library(catlearn)
 
-test.slpALCOVE <- function() {
-
-    load("../data/test_slpalcove.RData")
-    tout <- slpALCOVE(st,tr)
-    !sum((tout$prob[,1] - cor.out)^2)
-    
-    }
+load("../data/test_slpalcove.RData") ## Load cor.out
+tout <- slpALCOVE(st,tr)
+tout <- tout$prob[,1]
 
 test_that("slpALCOVE reproduces shin92 CIRP, size 3 condition.", {
-    expect_true(test.slpALCOVE())
+    expect_equal(tout, cor.out)
 })
-
-detach("package:catlearn", unload=TRUE)
 
 ## Record of generation of RData 
 ## Set hidden units
