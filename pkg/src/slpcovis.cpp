@@ -378,7 +378,7 @@ for(i=0;i<length;i++){
   if (expacc == 1)
     {updrules[crule] = updsal(corcon,errcon,
                               updrules[crule],expacc);
-     crule = crule;}
+     }
   else
     {if (crx == true)
 	{rrule = int(R::runif(0,32767)) % updrules.size();}

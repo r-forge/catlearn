@@ -3,7 +3,7 @@ using namespace Rcpp;
 
 List slpRW (List st, NumericMatrix tr, bool xtdo = false) {
   // Some basic variables
-  long i, j, k;
+  long i, k;
   long nrow = tr.nrow(), ncol = tr.ncol();
 
   // Extract stuff from the 'st' list.

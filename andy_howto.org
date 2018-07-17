@@ -212,4 +212,17 @@ Andy
   package release. 
 
 * Notes on v.0.5 release
+* Code cut from .cpp files to avoid CRAN warnings
+** slpcovis.cpp
+Line 381: crule = crule; 
 
+Seems pointless, and generates a compiler warning -- because why would
+anyone intend to assign a variable to itself, an action that can have
+no consequence? Compiler assumes it's a typo.
+
+REMOVED.
+** slpRW.cpp, slpBM.cpp
+Variable j is initialised but not used. This generates a compiler
+warning -- for same reasons as above.
+
+REMOVED/
