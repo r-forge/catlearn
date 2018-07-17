@@ -16,4 +16,4 @@ Imports:
 	dplyr
 LinkingTo: Rcpp
 LazyData: true
-
+Suggests: testthat
