@@ -1,8 +1,8 @@
 Package: catlearn
 Type: Package
 Title: Formal Psychological Models of Categorization and Learning
-Version: 0.5.4
-Date: 2018-07-12
+Version: 0.6
+Date: 2018-07-17
 Encoding: UTF-8
 Author: Andy Wills, Lenard Dome, Charlotte Edmunds, Garrett Honke, Angus Inkster, René Schlegelmilch, Stuart Spicer
 Maintainer: Andy Wills <andy@willslab.co.uk>
