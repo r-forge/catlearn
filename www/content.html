@@ -1,5 +1,5 @@
 <p><IMG SRC="catlearn-logo.png" ALT="catlearn logo">
-
+  
 <p>Catlearn is a <b>framework and archive</b> for <b>distributed
     collaboration</b> in formal modeling of categorization and
     learning in psychology</b>.  It provides an archival record of:
@@ -36,100 +36,79 @@ It supplements, rather than supplants, journal article publication.
 please consider contributing content (models, datasets, simulations)
 to this project.
 
-<p>The latest stable version of catlearn (v. 0.5) contains the
+<p>The latest stable version of catlearn (v. 0.6) contains the
 following (<b>bold</b> indicates new to version
-  0.5, <i>italics</i> indicates major update):
+  0.6, <i>italics</i> indicates major update):
 
   <ul>
     
     <li><u>Models</u>:</li>
     <ol>
       <li>ALCOVE</li>
-      <li><b>Bush-Mosteller</b></li>
+      <li>Bush-Mosteller</li>
       <li>COVIS</li>
-      <li><b>GCM</b></li>
       <li>DIVA</li>
-      <li><b>MBMF</b> (model-based, model-free
+      <li><b>EXIT</b></li>
+      <li>GCM</li>
+      <li>MBMF (model-based, model-free
 	hybrid)</li>
-      <li><i>Rescorla-Wagner</i></li>
+      <li>Rescorla-Wagner</li>
+      <li><b>SUSTAIN</b></li>
     </ol>
-    
 
-    <li><u>Archived simulations</u>: Reproducible simulations
-    of ALCOVE and proto-ALCOVE against the datasets (CIRP) in this
-    archive.</li>
-
-    <li><b>Archived optimizations</b>: Reproducible records of the
-    optimization procedure by which the parameters of the archived
-    simulations were derived.</li>
-
-    <li><u>Input representations</u>: Reusable functions to
-    generate model input representations for the datasets (CIRP) in
-    this archive.</li>
-
-    <li><u>CIRP</u> (i.e. datasets for independently replicated
-	phenomena)</li>
+    <li><u>Datasets</u></li>
     <ol>
+      <li><b>krus96 (inverse base-rate effect)</b></li>
       <li>nosof88 (stimulus frequency)</li>
       <li>nosof94 (Type I-VI problems)</li>
       <li>shin92 (category size)</li>
     </ol>
   
+    <li><u>Archived simulations</u>:</li>
+    <ol>
+      <li><b>krus96exit</b></li>
+    <li>nosof88exalcove</li>
+    <li>nosof88protoalcove</li>
+    <li>nosof94bnalcove</li>
+    <li>nosof94exalcove</li>
+    <li><b>nosof94sustain</b></li>
+    <li>shin92exalcove</li>
+    <li>shin92protoalcove</li>
+    </ol>
+    
+
+    <li><u>Archived optimizations</u></b>: Reproducible records of the
+    optimization procedure by which the parameters of the archived
+    simulations were derived.</li>
+
+    <li><i><u>Input representations</u></i>: Reusable functions to
+    generate model input representations for the datasets (CIRP) in
+    this archive.</li>
+
+   
 
     <li><u>OAT</u> (i.e. automated tests of model output against
       CIRP)</li>
 
     <li><u>Support functions</u>:</li>
     <ol>
-      <li><b>act2probat</b> (convert output model activation to a
+      <li>act2probat (convert output model activation to a
 	predicted rating).</li>
     </ol>
 </ul>
 
 <h1>Installation</h1>
 
-<ol>
-  <li>Install the latest version of R from <a href =
-"https://cran.r-project.org/">CRAN</a>.
+Since the v0.6 release (July 2018), <b>caltearn has been developed on
+github</b>. Click <a href="https://github.com/ajwills72/catlearn">here</a>
+for installation instructions.
 
-  <li>(optional but recommended for those new to R) Install <a href =
-  "https://www.rstudio.com/">RStudio</a>
-
-  <li>Install catlearn:
-  <ul> 
-     <li><b>Stable version (v. 0.5) </b> (choose this if unsure): From
-     within R, type: <p>install.packages('catlearn')
-     <li><i>Unstable version</i> (latest features): From within R,
-     type: <p>install.packages('catlearn',
-     repos='http://R-Forge.R-project.org') <p><b>NOTE</b>: In order to
-     install the unstable version on a Mac or a Linux machine, you
-     will need to install additional software for building R packages
-     from source. These are available on CRAN, in the same place you
-     download R. Windows users do not need to worry about this.
-  </ul> 
-</ol>
 
 <h1>Contribute to catlearn</h1> 
 
 If you'd like to contribute to this project by adding models,
 datasets, or simulations to the catlearn package,
 contact <b>andy@willslab.co.uk</b>
-
-<h1>Documentation</h1>
-<p> CRG = Catlearn Research Group
-
-<ul>
-
-  <li>CRG (2016a). <i>Contributing to catlearn</i>. <a
-  href = 'intro-catlearn.pdf'>
-  http://catlearn.r-forge.r-project.org/intro-catlearn.pdf </a>
-  
-  <li>CRG (2016b). <i>Description of ALCOVE</i>. <a href =
-  'desc-alcove.pdf'>
-  http://catlearn.r-forge.r-project.org/desc-alcove.pdf </a>
-
-</ul>
-
 
 <h1>Invite us to give a talk or workshop?</h2>
 
@@ -146,6 +125,19 @@ at <a href = "https://www.plymouth.ac.uk/">Plymouth University</a>
 
 
 <h2>Previous talks and workshops</h2>
+
+<p><b>Progress in modelling through distributed
+    collaboration</b> 
+  <br><i>Andy Wills</i>, 19th June 2018
+  <br>International Category Learning Symposium, Plymouth, UK.
+
+<p><b>An introduction to the Open Models project</b>
+  <br><i>Andy Wills</i>, 28th March 2018.
+  <br>Associative Learning Symposium, Gregynog, Wales.
+
+<p><b>An introduction to the Open Models project</b>
+  <br><i>Andy Wills</i>, 27th October 2017.
+  <br>School of Psychology, Cardiff University, UK.
 
 <p><b>A Practical Introduction to Distributed Collaboration for Formal
     Modeling</b>
