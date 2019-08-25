@@ -165,6 +165,10 @@ Argument \code{st} must be a list containing the following required
 
 \code{lambda_g} - (Equation 15) gate-node learning rate. Has to be a positive 
   numeric value.
+  
+\code{exemplars} Must be numeric matrix with n rows, representing the n exemplars, and m columns representing the m dimensions \code{x1,x2 \dots}.
+The matrix cells must contain the corresponding values of the exemplars on 
+each dimension.
 
 
 \author{René Schlegelmilch}
